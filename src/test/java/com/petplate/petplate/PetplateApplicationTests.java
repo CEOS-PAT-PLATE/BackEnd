@@ -3,34 +3,41 @@ package com.petplate.petplate;
 import com.petplate.petplate.common.EmbeddedType.Nutrient;
 import com.petplate.petplate.common.EmbeddedType.StandardNutrient;
 import com.petplate.petplate.common.EmbeddedType.Vitamin;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
+import java.util.Map;
 
 @SpringBootTest
 class PetplateApplicationTests {
 
-	@Test
-	void contextLoads() {
+    @Test
+    @DisplayName("영양소 분량 테스트")
+    void contextLoads() {
 
-		Nutrient nutrient=Nutrient.builder()
-				.carbonHydrate((float) 24)
-				.fat((float) 100)
-				.vitamin(Vitamin.builder().vitaminD((float) 3.6).vitaminA((float) 3.5).vitaminB( (float) 3.2).vitaminE((float)2.1).build())
-				.phosphorus((float) 1.4)
-				.calcium((float)9.8)
-				.protein((float) 50)
-				.build();
+        Nutrient nutrient = Nutrient.builder()
+                .carbonHydrate(110)
+                .fat(300)
+                .vitamin(Vitamin.builder().vitaminD(3.6).vitaminA(3.5).vitaminB(3.2).vitaminE(2.1).build())
+                .phosphorus(1.4)
+                .calcium(9.8)
+                .protein(50)
+                .build();
 
-		//가장 부족한 영양소 이름
-		StandardNutrient deficientNutrient = StandardNutrient.findDeficientNutrient(nutrient);
-		System.out.println(deficientNutrient.getName());
+        List<Map.Entry<StandardNutrient, Double>> standardNutrientOrderByAmount = StandardNutrient.getStandardNutrientOrderByAmount(nutrient);
+        for (Map.Entry<StandardNutrient, Double> standardNutrientDoubleEntry : standardNutrientOrderByAmount) {
+            System.out.println("standardNutrientDoubleEntry = " + standardNutrientDoubleEntry.getKey().getName()+" amount: " + standardNutrientDoubleEntry.getValue());
+        }
 
-		//가장 많은 영양소 이름
-		StandardNutrient sufficientNutrient = StandardNutrient.findSufficientNutrient(nutrient);
-		System.out.println(sufficientNutrient.getName());
+        //가장 부족한 영양소 이름
+        StandardNutrient deficientNutrient = StandardNutrient.findDeficientNutrient(nutrient);
+        System.out.println(deficientNutrient.getName());
 
-
-
-	}
+        //가장 많은 영양소 이름
+        StandardNutrient sufficientNutrient = StandardNutrient.findSufficientNutrient(nutrient);
+        System.out.println(sufficientNutrient.getName());
+    }
 
 }
