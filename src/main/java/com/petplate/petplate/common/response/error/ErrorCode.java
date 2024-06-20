@@ -11,12 +11,13 @@ public enum ErrorCode {
     /**
      * 400 Bad Request
      */
-    BAD_REQUEST("잘못된 요청입니다.");
+    BAD_REQUEST("잘못된 요청입니다."),
 
 
     /**
      * 401 Unauthorized
      */
+    UNAUTHORIZE("인증에 실패하였습니다"),
 
     /**
      * 403 Forbidden
@@ -26,7 +27,7 @@ public enum ErrorCode {
     /**
      * 404 Not Found
      */
-
+    NOT_FOUND("존재하지 않는 값입니다");
 
 
     /**
@@ -45,9 +46,7 @@ public enum ErrorCode {
      */
 
 
-    /**
-     * 500 Internal Server Error
-     */
+
 
 
 
