@@ -14,28 +14,26 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Nutrient {
 
-
+    @Column(nullable = false)
+    private double carbonHydrate;
 
     @Column(nullable = false)
-    private float carbonHydrate;
+    private double protein;
 
     @Column(nullable = false)
-    private float protein;
+    private double fat;
 
     @Column(nullable = false)
-    private float fat;
+    private double calcium;
 
     @Column(nullable = false)
-    private float calcium;
-
-    @Column(nullable = false)
-    private float phosphorus;
+    private double phosphorus;
 
     @Embedded
     private Vitamin vitamin;
 
     @Builder
-    public Nutrient(float carbonHydrate, float protein, float fat, float calcium, float phosphorus,
+    public Nutrient(double carbonHydrate, double protein, double fat, double calcium, double phosphorus,
             Vitamin vitamin) {
         this.carbonHydrate = carbonHydrate;
         this.protein = protein;

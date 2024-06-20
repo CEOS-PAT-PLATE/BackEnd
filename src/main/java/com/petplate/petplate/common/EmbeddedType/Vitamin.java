@@ -14,19 +14,19 @@ import lombok.NoArgsConstructor;
 public class Vitamin {
 
     @Column(nullable = false)
-    private float vitaminA;
+    private double vitaminA;
 
     @Column(nullable = false)
-    private float vitaminB;
+    private double vitaminB;
 
     @Column(nullable = false)
-    private float vitaminD;
+    private double vitaminD;
 
     @Column(nullable = false)
-    private float vitaminE;
+    private double vitaminE;
 
     @Builder
-    public Vitamin(float vitaminA, float vitaminB, float vitaminD, float vitaminE) {
+    public Vitamin(double vitaminA, double vitaminB, double vitaminD, double vitaminE) {
         this.vitaminA = vitaminA;
         this.vitaminB = vitaminB;
         this.vitaminD = vitaminD;
