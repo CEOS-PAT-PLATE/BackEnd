@@ -1,5 +1,6 @@
 package com.petplate.petplate.pet.domain.entity;
 
+import com.petplate.petplate.medicalcondition.domain.entity.Allergy;
 import com.petplate.petplate.medicalcondition.domain.entity.Disease;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,17 +26,17 @@ public class PetAllergy {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pet_id",nullable = false)
+    @JoinColumn(name = "pet_id", nullable = false)
     private Pet pet;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "disease_id",nullable = false)
-    private Disease disease;
+    @JoinColumn(name = "allergy_id", nullable = false)
+    private Allergy allergy;
 
     @Builder
-    public PetAllergy(Pet pet,Disease disease){
+    public PetAllergy(Pet pet, Allergy allergy) {
         this.pet = pet;
-        this.disease = disease;
+        this.allergy = allergy;
     }
 
 }
