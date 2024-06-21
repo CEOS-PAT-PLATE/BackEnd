@@ -1,4 +1,4 @@
-package com.petplate.petplate.pet.domain.dto.request;
+package com.petplate.petplate.pet.dto.request;
 
 import com.petplate.petplate.pet.domain.Activity;
 import jakarta.validation.constraints.Max;

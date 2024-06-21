@@ -1,4 +1,4 @@
-package com.petplate.petplate.pet.domain.dto.response;
+package com.petplate.petplate.pet.dto.response;
 
 import com.petplate.petplate.medicalcondition.domain.entity.Disease;
 import lombok.Getter;
