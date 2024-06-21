@@ -1,4 +1,4 @@
-package com.petplate.petplate.pet.domain.dto.response;
+package com.petplate.petplate.pet.dto.response;
 
 import com.petplate.petplate.pet.domain.Activity;
 import com.petplate.petplate.pet.domain.entity.Pet;

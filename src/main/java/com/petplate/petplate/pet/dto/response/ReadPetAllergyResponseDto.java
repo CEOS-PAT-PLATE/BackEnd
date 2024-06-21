@@ -1,7 +1,6 @@
-package com.petplate.petplate.pet.domain.dto.response;
+package com.petplate.petplate.pet.dto.response;
 
 import com.petplate.petplate.medicalcondition.domain.entity.Allergy;
-import jakarta.persistence.Column;
 import lombok.Getter;
 
 @Getter
