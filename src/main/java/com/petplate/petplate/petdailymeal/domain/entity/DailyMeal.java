@@ -16,11 +16,14 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class DailyMeal extends BaseEntity {
+public class DailyMeal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,16 +33,21 @@ public class DailyMeal extends BaseEntity {
     @Column(nullable = false)
     private float kcal;
 
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP")
+    private LocalDate createdAt;
+
     @Embedded
     private Nutrient nutrient;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pet_id",nullable = false)
+    @JoinColumn(name = "pet_id", nullable = false)
     private Pet pet;
 
+    // 이미 펫이 해당 날짜에 DailyMeal이 존재하는 경우 생성되면 안됨.(서비스에서 해결)
     @Builder
-    public DailyMeal(float kcal, Nutrient nutrient, Pet pet) {
-        this.kcal = kcal;
+    public DailyMeal(Nutrient nutrient, Pet pet) {
+        this.kcal = 0;
         this.nutrient = nutrient;
         this.pet = pet;
     }
