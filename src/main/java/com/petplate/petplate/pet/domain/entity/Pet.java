@@ -36,9 +36,6 @@ public class Pet extends BaseEntity {
     @Column(nullable = false)
     private boolean isNeutering;
 
-    @Embedded
-    private Nutrient appropriateNutrient;
-
     private ProfileImg profileImg;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,11 +51,6 @@ public class Pet extends BaseEntity {
         this.isNeutering = isNeutering;
         this.profileImg = null;
         this.owner = owner;
-    }
-
-    // 해당 반려견의 체중, 활동량, 나이, 중성화 여부를 가지고 적절한 하루 섭취 영양소를 계산해줌.
-    private void calculateAppropriateNutrient() {
-
     }
 
     public void updateInfo(String name, Integer age, Double weight, Activity activity, Boolean isNeutering) {
