@@ -15,19 +15,19 @@ import lombok.NoArgsConstructor;
 public class Nutrient {
 
     @Column(nullable = false)
-    private double carbonHydrate;
+    private double carbonHydrate;  // 단위 g
 
     @Column(nullable = false)
-    private double protein;
+    private double protein;  // 단위 g
 
     @Column(nullable = false)
-    private double fat;
+    private double fat;  // 단위 g
 
     @Column(nullable = false)
-    private double calcium;
+    private double calcium;  // 단위 g
 
     @Column(nullable = false)
-    private double phosphorus;
+    private double phosphorus;  // 단위 g
 
     @Embedded
     private Vitamin vitamin;

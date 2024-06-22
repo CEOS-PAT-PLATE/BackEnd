@@ -14,16 +14,16 @@ import lombok.NoArgsConstructor;
 public class Vitamin {
 
     @Column(nullable = false)
-    private double vitaminA;
+    private double vitaminA;  // 단위 mcg RAE
 
     @Column(nullable = false)
-    private double vitaminB;
+    private double vitaminB;  // 단위 mg
 
     @Column(nullable = false)
-    private double vitaminD;
+    private double vitaminD;  // 단위 mcg
 
     @Column(nullable = false)
-    private double vitaminE;
+    private double vitaminE;  // 단위 mcg RAE
 
     @Builder
     public Vitamin(double vitaminA, double vitaminB, double vitaminD, double vitaminE) {
