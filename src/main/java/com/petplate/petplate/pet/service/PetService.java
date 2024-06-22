@@ -58,7 +58,7 @@ public class PetService {
         return pet;
     }
 
-    public List<ReadPetResponseDto> readAllPets(Long userId) {
+    public List<ReadPetResponseDto> getAllPets(Long userId) {
         List<ReadPetResponseDto> responses = new ArrayList<>();
 
         petRepository.findByOwnerId(userId)
@@ -66,8 +66,8 @@ public class PetService {
         return responses;
     }
 
-    public ReadPetResponseDto readPet(Long userId, Long petId) {
-        Pet pet = getPet(userId, petId);
+    public ReadPetResponseDto getPet(Long userId, Long petId) {
+        Pet pet = findPet(userId, petId);
 
         ReadPetResponseDto response = ReadPetResponseDto.from(pet);
 
@@ -75,22 +75,22 @@ public class PetService {
     }
 
     @Transactional
-    public void modifyPetInfo (Long userId, Long petId, ModifyPetInfoRequestDto requestDto) {
-        Pet pet = getPet(userId, petId);
+    public void updatePetInfo (Long userId, Long petId, ModifyPetInfoRequestDto requestDto) {
+        Pet pet = findPet(userId, petId);
 
         pet.updateInfo(requestDto.getName(), requestDto.getAge(), requestDto.getWeight(), requestDto.getActivity(), requestDto.getIsNeutering());
     }
 
     @Transactional
-    public void modifyProfileImg(Long userId, Long petId, @Valid ModifyPetProfileImgRequestDto requestDto) {
-        Pet pet = getPet(userId, petId);
+    public void updateProfileImg(Long userId, Long petId, @Valid ModifyPetProfileImgRequestDto requestDto) {
+        Pet pet = findPet(userId, petId);
         pet.updateProfileImg(requestDto.getProfileImg());
     }
 
-    public List<ReadPetAllergyResponseDto> readAllergies(Long userId, Long petId) {
+    public List<ReadPetAllergyResponseDto> getAllAllergies(Long userId, Long petId) {
         List<ReadPetAllergyResponseDto> responses = new ArrayList<>();
 
-        Pet pet = getPet(userId, petId);
+        Pet pet = findPet(userId, petId);
         petAllergyRepository.findByPetId(petId).forEach(petAllergy->{
             responses.add(ReadPetAllergyResponseDto.from(petAllergy.getAllergy()));
         });
@@ -98,10 +98,10 @@ public class PetService {
         return responses;
     }
 
-    public List<ReadPetDiseaseResponseDto> readDiseases(Long userId, Long petId) {
+    public List<ReadPetDiseaseResponseDto> getAllDiseases(Long userId, Long petId) {
         List<ReadPetDiseaseResponseDto> responses = new ArrayList<>();
 
-        Pet pet = getPet(userId, petId);
+        Pet pet = findPet(userId, petId);
         petDiseaseRepository.findByPetId(petId).forEach(petDisease -> {
             responses.add(ReadPetDiseaseResponseDto.from(petDisease.getDisease()));
         });
@@ -109,7 +109,7 @@ public class PetService {
         return responses;
     }
 
-    private Pet getPet(Long userId, Long petId) {
+    private Pet findPet(Long userId, Long petId) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
