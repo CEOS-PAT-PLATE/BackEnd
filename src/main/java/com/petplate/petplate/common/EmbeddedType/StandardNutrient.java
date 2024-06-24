@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 public enum StandardNutrient {
-    // 탄수화물은 적정섭취량 정보 없음.
+    // 탄수화물 기초대사량 당 적정 섭취량 필요
     CARBON_HYDRATE("탄수화물", 0, "g", "탄수화물에 대한 설명"
             , Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요"))
             , Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
@@ -25,16 +25,16 @@ public enum StandardNutrient {
     PHOSPHORUS("인", 0.11, "g", "인에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    VITAMIN_A("비타민A", 50.1, "mcg RAE", "비타민A에 대한 설명",
+    VITAMIN_A("비타민A", 167.0, "iu", "비타민A에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))), // 레티놀
     VITAMIN_B("비타민B", 0.041, "mg", "비타민B에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),  // b6 + b12
-    VITAMIN_D("비타민D", 0.38, "mcg", "비타민D에 대한 설명",
+    VITAMIN_D("비타민D", 15.20, "iu", "비타민D에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    VITAMIN_E("비타민E", 0.025, "mcg", "비타민E에 대한 설명",
+    VITAMIN_E("비타민E", 1.00, "iu", "비타민E에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요")));
 
