@@ -31,7 +31,7 @@ public class DailyMeal {
     private Long id;
 
     @Column(nullable = false)
-    private float kcal;
+    private double kcal;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP")
