@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -226,7 +227,7 @@ public class PetService {
      * @param petId
      * @return 영양소 비율
      */
-    public ReadPetNutrientRatioResponseDto getPetNutrientRatioToday(Long userId, Long petId) {
+    public List<ReadPetNutrientRatioResponseDto> getPetNutrientRatioToday(Long userId, Long petId) {
         Pet pet = findPet(userId, petId);
         LocalDate today = LocalDate.now();
 
@@ -234,7 +235,17 @@ public class PetService {
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, today)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
-        return ReadPetNutrientRatioResponseDto.of(dailyMeal.getNutrient(), pet.getWeight());
+        List<ReadPetNutrientRatioResponseDto> responses = new ArrayList<>();
+
+        // 비율 계산
+        Map<StandardNutrient, Double> nutrientsMap =
+                StandardNutrient.getNutrientsMap(dailyMeal.getNutrient(), pet.getWeight(), pet.getActivity());
+
+        nutrientsMap.forEach((nutrient, ratio) ->{
+            responses.add(ReadPetNutrientRatioResponseDto.of(nutrient.getName(), ratio));
+        });
+
+        return responses;
     }
 
     /**
@@ -246,14 +257,24 @@ public class PetService {
      * @param date
      * @return 영양소 비율
      */
-    public ReadPetNutrientRatioResponseDto getPetNutrientRatio(Long userId, Long petId, LocalDate date) {
+    public List<ReadPetNutrientRatioResponseDto> getPetNutrientRatio(Long userId, Long petId, LocalDate date) {
         Pet pet = findPet(userId, petId);
 
         // 오늘 먹은 식사 내역이 없는 경우 예외 발생 => 이 부분은 그냥 예외가 발생하는 대신 DailyMeal을 생성해도 될듯?
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, date)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
-        return ReadPetNutrientRatioResponseDto.of(dailyMeal.getNutrient(), pet.getWeight());
+        List<ReadPetNutrientRatioResponseDto> responses = new ArrayList<>();
+
+        // 비율 계산
+        Map<StandardNutrient, Double> nutrientsMap =
+                StandardNutrient.getNutrientsMap(dailyMeal.getNutrient(), pet.getWeight(), pet.getActivity());
+
+        nutrientsMap.forEach((nutrient, ratio) ->{
+            responses.add(ReadPetNutrientRatioResponseDto.of(nutrient.getName(), ratio));
+        });
+
+        return responses;
     }
 
     /**
@@ -274,7 +295,7 @@ public class PetService {
         ReadPetNutrientResponseDto response = new ReadPetNutrientResponseDto();
 
         Nutrient nutrient = dailyMeal.getNutrient();
-        StandardNutrient mostSufficientNutrient = StandardNutrient.findMostSufficientNutrient(nutrient, pet.getWeight());
+        StandardNutrient mostSufficientNutrient = StandardNutrient.findMostSufficientNutrient(nutrient, pet.getWeight(), pet.getActivity());
 
 
         return ReadPetNutrientResponseDto.from(mostSufficientNutrient.getName(), mostSufficientNutrient.getUnit(), mostSufficientNutrient.getDescription(), nutrient.getNutrientWeightByName(mostSufficientNutrient.getName()));
@@ -298,7 +319,7 @@ public class PetService {
         ReadPetNutrientResponseDto response = new ReadPetNutrientResponseDto();
 
         Nutrient nutrient = dailyMeal.getNutrient();
-        StandardNutrient mostSufficientNutrient = StandardNutrient.findMostSufficientNutrient(nutrient, pet.getWeight());
+        StandardNutrient mostSufficientNutrient = StandardNutrient.findMostSufficientNutrient(nutrient, pet.getWeight(), pet.getActivity());
 
 
         return ReadPetNutrientResponseDto.from(mostSufficientNutrient.getName(), mostSufficientNutrient.getUnit(), mostSufficientNutrient.getDescription(), nutrient.getNutrientWeightByName(mostSufficientNutrient.getName()));
@@ -315,14 +336,13 @@ public class PetService {
         Pet pet = findPet(userId, petId);
         LocalDate today = LocalDate.now();
 
-        // 오늘 먹은 식사 내역이 없는 경우 예외 발생 => 이 부분은 그냥 예외가 발생하는 대신 DailyMeal을 생성해도 될듯?
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, today)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
         ReadPetNutrientResponseDto response = new ReadPetNutrientResponseDto();
 
         Nutrient nutrient = dailyMeal.getNutrient();
-        StandardNutrient mostDefficientNutrient = StandardNutrient.findMostDeficientNutrient(nutrient, pet.getWeight());
+        StandardNutrient mostDefficientNutrient = StandardNutrient.findMostDeficientNutrient(nutrient, pet.getWeight(), pet.getActivity());
 
         return ReadPetNutrientResponseDto.from(mostDefficientNutrient.getName(), mostDefficientNutrient.getUnit(), mostDefficientNutrient.getDescription(), nutrient.getNutrientWeightByName(mostDefficientNutrient.getName()));
     }
@@ -338,28 +358,15 @@ public class PetService {
     public ReadPetNutrientResponseDto getMostDeficientNutrient(Long userId, Long petId, LocalDate date) {
         Pet pet = findPet(userId, petId);
 
-        // 오늘 먹은 식사 내역이 없는 경우 예외 발생 => 이 부분은 그냥 예외가 발생하는 대신 DailyMeal을 생성해도 될듯?
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, date)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
         ReadPetNutrientResponseDto response = new ReadPetNutrientResponseDto();
 
         Nutrient nutrient = dailyMeal.getNutrient();
-        StandardNutrient mostDefficientNutrient = StandardNutrient.findMostDeficientNutrient(nutrient, pet.getWeight());
+        StandardNutrient mostDefficientNutrient = StandardNutrient.findMostDeficientNutrient(nutrient, pet.getWeight(), pet.getActivity());
 
         return ReadPetNutrientResponseDto.from(mostDefficientNutrient.getName(), mostDefficientNutrient.getUnit(), mostDefficientNutrient.getDescription(), nutrient.getNutrientWeightByName(mostDefficientNutrient.getName()));
-    }
-
-    private Pet findPet(Long userId, Long petId) {
-        Pet pet = petRepository.findById(petId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
-
-        // 조회하려는 반려견이 본인의 반려견이 아닌 경우 예외 발생
-        if (!pet.getOwner().getId().equals(userId)) {
-            throw new BadRequestException(ErrorCode.BAD_REQUEST);
-        }
-
-        return pet;
     }
 
     /**
@@ -445,5 +452,17 @@ public class PetService {
         double properKcalRatio = pet.getActivity().getProperKcalRatio(pet.getWeight(), dailyMeal.getKcal());
 
         return ReadPetKcalRatioResponseDto.of(properKcalRatio);
+    }
+
+    private Pet findPet(Long userId, Long petId) {
+        Pet pet = petRepository.findById(petId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
+
+        // 조회하려는 반려견이 본인의 반려견이 아닌 경우 예외 발생
+        if (!pet.getOwner().getId().equals(userId)) {
+            throw new BadRequestException(ErrorCode.BAD_REQUEST);
+        }
+
+        return pet;
     }
 }
