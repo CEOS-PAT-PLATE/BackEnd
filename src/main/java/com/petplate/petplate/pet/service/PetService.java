@@ -140,7 +140,7 @@ public class PetService {
      *
      * @param userId
      * @param petId
-     * @return
+     * @return 각 영양소의 영양소명, 단위, 설명, 섭취량, 하루 최소 섭취량, 하루 최대 섭취량
      */
     public List<ReadPetNutrientResponseDto> getPetNutrientToday(Long userId, Long petId) {
         Pet pet = findPet(userId, petId);
@@ -152,27 +152,91 @@ public class PetService {
 
         Nutrient nutrient = dailyMeal.getNutrient();
 
-        // 섭취양
-        double carbonHydrate = nutrient.getCarbonHydrate();
-        double protein = nutrient.getProtein();
-        double fat = nutrient.getFat();
-        double calcium = nutrient.getCalcium();
-        double phosphorus = nutrient.getPhosphorus();
-        double vitaminA = nutrient.getVitamin().getVitaminA();
-        double vitaminB = nutrient.getVitamin().getVitaminB();
-        double vitaminD = nutrient.getVitamin().getVitaminD();
-        double vitaminE = nutrient.getVitamin().getVitaminE();
+        double weight = pet.getWeight();
+        Activity activity = pet.getActivity();
 
         List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.CARBON_HYDRATE.getName(), StandardNutrient.CARBON_HYDRATE.getUnit(), StandardNutrient.CARBON_HYDRATE.getDescription(), carbonHydrate));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.PROTEIN.getName(), StandardNutrient.PROTEIN.getUnit(), StandardNutrient.PROTEIN.getDescription(), protein));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.FAT.getName(), StandardNutrient.FAT.getUnit(), StandardNutrient.FAT.getDescription(), fat));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.CALCIUM.getName(), StandardNutrient.CALCIUM.getUnit(), StandardNutrient.CALCIUM.getDescription(), calcium));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.PHOSPHORUS.getName(), StandardNutrient.PHOSPHORUS.getUnit(), StandardNutrient.PHOSPHORUS.getDescription(), phosphorus));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.VITAMIN_A.getName(), StandardNutrient.VITAMIN_A.getUnit(), StandardNutrient.VITAMIN_A.getDescription(), vitaminA));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.VITAMIN_B.getName(), StandardNutrient.VITAMIN_B.getUnit(), StandardNutrient.VITAMIN_B.getDescription(), vitaminB));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.VITAMIN_D.getName(), StandardNutrient.VITAMIN_D.getUnit(), StandardNutrient.VITAMIN_D.getDescription(), vitaminD));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.VITAMIN_E.getName(), StandardNutrient.VITAMIN_E.getUnit(), StandardNutrient.VITAMIN_E.getDescription(), vitaminE));
+
+        // 탄수화물 정보
+        String carbonName = StandardNutrient.CARBON_HYDRATE.getName();
+        String carbonUnit = StandardNutrient.CARBON_HYDRATE.getUnit();
+        String carbonDescription = StandardNutrient.CARBON_HYDRATE.getDescription();
+        double carbonAmount = nutrient.getCarbonHydrate();
+        double carbonMinimumIntake = StandardNutrient.calculateProperCarbonHydrateAmount(weight, activity);
+        double carbonMaximumIntake = StandardNutrient.calculateProperMaximumCarbonHydrateAmount(weight, activity);
+        responses.add(ReadPetNutrientResponseDto.of(carbonName, carbonUnit, carbonDescription, carbonAmount, carbonMinimumIntake, carbonMaximumIntake));
+
+        // 단백질 정보
+        String proteinName = StandardNutrient.PROTEIN.getName();
+        String proteinUnit = StandardNutrient.PROTEIN.getUnit();
+        String proteinDescription = StandardNutrient.PROTEIN.getDescription();
+        double proteinAmount = nutrient.getProtein();
+        double proteinMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.PROTEIN, weight);
+        double proteinMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.PROTEIN, weight);
+        responses.add(ReadPetNutrientResponseDto.of(proteinName, proteinUnit, proteinDescription, proteinAmount, proteinMinimumIntake, proteinMaximumIntake));
+
+        // 지방 정보
+        String fatName = StandardNutrient.FAT.getName();
+        String fatUnit = StandardNutrient.FAT.getUnit();
+        String fatDescription = StandardNutrient.FAT.getDescription();
+        double fatAmount = nutrient.getFat();
+        double fatMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.FAT, weight);
+        double fatMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.FAT, weight);
+        responses.add(ReadPetNutrientResponseDto.of(fatName, fatUnit, fatDescription, fatAmount, fatMinimumIntake, fatMaximumIntake));
+
+        // 칼슘 정보
+        String calciumName = StandardNutrient.CALCIUM.getName();
+        String calciumUnit = StandardNutrient.CALCIUM.getUnit();
+        String calciumDescription = StandardNutrient.CALCIUM.getDescription();
+        double calciumAmount = nutrient.getCalcium();
+        double calciumMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.CALCIUM, weight);
+        double calciumMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.CALCIUM, weight);
+        responses.add(ReadPetNutrientResponseDto.of(calciumName, calciumUnit, calciumDescription, calciumAmount, calciumMinimumIntake, calciumMaximumIntake));
+
+        // 인 정보
+        String phosphorusName = StandardNutrient.PHOSPHORUS.getName();
+        String phosphorusUnit = StandardNutrient.PHOSPHORUS.getUnit();
+        String phosphorusDescription = StandardNutrient.PHOSPHORUS.getDescription();
+        double phosphorusAmount = nutrient.getPhosphorus();
+        double phosphorusMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.PHOSPHORUS, weight);
+        double phosphorusMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.PHOSPHORUS, weight);
+        responses.add(ReadPetNutrientResponseDto.of(phosphorusName, phosphorusUnit, phosphorusDescription, phosphorusAmount, phosphorusMinimumIntake, phosphorusMaximumIntake));
+
+        // 비타민A 정보
+        String vitaminAName = StandardNutrient.VITAMIN_A.getName();
+        String vitaminAUnit = StandardNutrient.VITAMIN_A.getUnit();
+        String vitaminADescription = StandardNutrient.VITAMIN_A.getDescription();
+        double vitaminAAmount = nutrient.getVitamin().getVitaminA();
+        double vitaminAMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.VITAMIN_A, weight);
+        double vitaminAMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.VITAMIN_A, weight);
+        responses.add(ReadPetNutrientResponseDto.of(vitaminAName, vitaminAUnit, vitaminADescription, vitaminAAmount, vitaminAMinimumIntake, vitaminAMaximumIntake));
+
+        // 비타민B 정보
+        String vitaminBName = StandardNutrient.VITAMIN_B.getName();
+        String vitaminBUnit = StandardNutrient.VITAMIN_B.getUnit();
+        String vitaminBDescription = StandardNutrient.VITAMIN_B.getDescription();
+        double vitaminBAmount = nutrient.getVitamin().getVitaminB();
+        double vitaminBMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.VITAMIN_B, weight);
+        double vitaminBMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.VITAMIN_B, weight);
+        responses.add(ReadPetNutrientResponseDto.of(vitaminBName, vitaminBUnit, vitaminBDescription, vitaminBAmount, vitaminBMinimumIntake, vitaminBMaximumIntake));
+
+        // 비타민D 정보
+        String vitaminDName = StandardNutrient.VITAMIN_D.getName();
+        String vitaminDUnit = StandardNutrient.VITAMIN_D.getUnit();
+        String vitaminDDescription = StandardNutrient.VITAMIN_D.getDescription();
+        double vitaminDAmount = nutrient.getVitamin().getVitaminD();
+        double vitaminDMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.VITAMIN_D, weight);
+        double vitaminDMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.VITAMIN_D, weight);
+        responses.add(ReadPetNutrientResponseDto.of(vitaminDName, vitaminDUnit, vitaminDDescription, vitaminDAmount, vitaminDMinimumIntake, vitaminDMaximumIntake));
+
+        // 비타민E 정보
+        String vitaminEName = StandardNutrient.VITAMIN_E.getName();
+        String vitaminEUnit = StandardNutrient.VITAMIN_E.getUnit();
+        String vitaminEDescription = StandardNutrient.VITAMIN_E.getDescription();
+        double vitaminEAmount = nutrient.getVitamin().getVitaminE();
+        double vitaminEMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.VITAMIN_E, weight);
+        double vitaminEMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.VITAMIN_E, weight);
+        responses.add(ReadPetNutrientResponseDto.of(vitaminEName, vitaminEUnit, vitaminEDescription, vitaminEAmount, vitaminEMinimumIntake, vitaminEMaximumIntake));
 
         return responses;
     }
@@ -183,7 +247,7 @@ public class PetService {
      * @param userId
      * @param petId
      * @param date
-     * @return
+     * @return 각 영양소의 영양소명, 단위, 설명, 섭취량, 하루 최소 섭취량, 하루 최대 섭취량
      */
     public List<ReadPetNutrientResponseDto> getPetNutrient(Long userId, Long petId, LocalDate date) {
         Pet pet = findPet(userId, petId);
@@ -194,27 +258,91 @@ public class PetService {
 
         Nutrient nutrient = dailyMeal.getNutrient();
 
-        // 섭취양
-        double carbonHydrate = nutrient.getCarbonHydrate();
-        double protein = nutrient.getProtein();
-        double fat = nutrient.getFat();
-        double calcium = nutrient.getCalcium();
-        double phosphorus = nutrient.getPhosphorus();
-        double vitaminA = nutrient.getVitamin().getVitaminA();
-        double vitaminB = nutrient.getVitamin().getVitaminB();
-        double vitaminD = nutrient.getVitamin().getVitaminD();
-        double vitaminE = nutrient.getVitamin().getVitaminE();
+        double weight = pet.getWeight();
+        Activity activity = pet.getActivity();
 
         List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.CARBON_HYDRATE.getName(), StandardNutrient.CARBON_HYDRATE.getUnit(), StandardNutrient.CARBON_HYDRATE.getDescription(), carbonHydrate));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.PROTEIN.getName(), StandardNutrient.PROTEIN.getUnit(), StandardNutrient.PROTEIN.getDescription(), protein));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.FAT.getName(), StandardNutrient.FAT.getUnit(), StandardNutrient.FAT.getDescription(), fat));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.CALCIUM.getName(), StandardNutrient.CALCIUM.getUnit(), StandardNutrient.CALCIUM.getDescription(), calcium));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.PHOSPHORUS.getName(), StandardNutrient.PHOSPHORUS.getUnit(), StandardNutrient.PHOSPHORUS.getDescription(), phosphorus));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.VITAMIN_A.getName(), StandardNutrient.VITAMIN_A.getUnit(), StandardNutrient.VITAMIN_A.getDescription(), vitaminA));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.VITAMIN_B.getName(), StandardNutrient.VITAMIN_B.getUnit(), StandardNutrient.VITAMIN_B.getDescription(), vitaminB));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.VITAMIN_D.getName(), StandardNutrient.VITAMIN_D.getUnit(), StandardNutrient.VITAMIN_D.getDescription(), vitaminD));
-        responses.add(ReadPetNutrientResponseDto.from(StandardNutrient.VITAMIN_E.getName(), StandardNutrient.VITAMIN_E.getUnit(), StandardNutrient.VITAMIN_E.getDescription(), vitaminE));
+
+        // 탄수화물 정보
+        String carbonName = StandardNutrient.CARBON_HYDRATE.getName();
+        String carbonUnit = StandardNutrient.CARBON_HYDRATE.getUnit();
+        String carbonDescription = StandardNutrient.CARBON_HYDRATE.getDescription();
+        double carbonAmount = nutrient.getCarbonHydrate();
+        double carbonMinimumIntake = StandardNutrient.calculateProperCarbonHydrateAmount(weight, activity);
+        double carbonMaximumIntake = StandardNutrient.calculateProperMaximumCarbonHydrateAmount(weight, activity);
+        responses.add(ReadPetNutrientResponseDto.of(carbonName, carbonUnit, carbonDescription, carbonAmount, carbonMinimumIntake, carbonMaximumIntake));
+
+        // 단백질 정보
+        String proteinName = StandardNutrient.PROTEIN.getName();
+        String proteinUnit = StandardNutrient.PROTEIN.getUnit();
+        String proteinDescription = StandardNutrient.PROTEIN.getDescription();
+        double proteinAmount = nutrient.getProtein();
+        double proteinMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.PROTEIN, weight);
+        double proteinMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.PROTEIN, weight);
+        responses.add(ReadPetNutrientResponseDto.of(proteinName, proteinUnit, proteinDescription, proteinAmount, proteinMinimumIntake, proteinMaximumIntake));
+
+        // 지방 정보
+        String fatName = StandardNutrient.FAT.getName();
+        String fatUnit = StandardNutrient.FAT.getUnit();
+        String fatDescription = StandardNutrient.FAT.getDescription();
+        double fatAmount = nutrient.getFat();
+        double fatMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.FAT, weight);
+        double fatMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.FAT, weight);
+        responses.add(ReadPetNutrientResponseDto.of(fatName, fatUnit, fatDescription, fatAmount, fatMinimumIntake, fatMaximumIntake));
+
+        // 칼슘 정보
+        String calciumName = StandardNutrient.CALCIUM.getName();
+        String calciumUnit = StandardNutrient.CALCIUM.getUnit();
+        String calciumDescription = StandardNutrient.CALCIUM.getDescription();
+        double calciumAmount = nutrient.getCalcium();
+        double calciumMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.CALCIUM, weight);
+        double calciumMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.CALCIUM, weight);
+        responses.add(ReadPetNutrientResponseDto.of(calciumName, calciumUnit, calciumDescription, calciumAmount, calciumMinimumIntake, calciumMaximumIntake));
+
+        // 인 정보
+        String phosphorusName = StandardNutrient.PHOSPHORUS.getName();
+        String phosphorusUnit = StandardNutrient.PHOSPHORUS.getUnit();
+        String phosphorusDescription = StandardNutrient.PHOSPHORUS.getDescription();
+        double phosphorusAmount = nutrient.getPhosphorus();
+        double phosphorusMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.PHOSPHORUS, weight);
+        double phosphorusMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.PHOSPHORUS, weight);
+        responses.add(ReadPetNutrientResponseDto.of(phosphorusName, phosphorusUnit, phosphorusDescription, phosphorusAmount, phosphorusMinimumIntake, phosphorusMaximumIntake));
+
+        // 비타민A 정보
+        String vitaminAName = StandardNutrient.VITAMIN_A.getName();
+        String vitaminAUnit = StandardNutrient.VITAMIN_A.getUnit();
+        String vitaminADescription = StandardNutrient.VITAMIN_A.getDescription();
+        double vitaminAAmount = nutrient.getVitamin().getVitaminA();
+        double vitaminAMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.VITAMIN_A, weight);
+        double vitaminAMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.VITAMIN_A, weight);
+        responses.add(ReadPetNutrientResponseDto.of(vitaminAName, vitaminAUnit, vitaminADescription, vitaminAAmount, vitaminAMinimumIntake, vitaminAMaximumIntake));
+
+        // 비타민B 정보
+        String vitaminBName = StandardNutrient.VITAMIN_B.getName();
+        String vitaminBUnit = StandardNutrient.VITAMIN_B.getUnit();
+        String vitaminBDescription = StandardNutrient.VITAMIN_B.getDescription();
+        double vitaminBAmount = nutrient.getVitamin().getVitaminB();
+        double vitaminBMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.VITAMIN_B, weight);
+        double vitaminBMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.VITAMIN_B, weight);
+        responses.add(ReadPetNutrientResponseDto.of(vitaminBName, vitaminBUnit, vitaminBDescription, vitaminBAmount, vitaminBMinimumIntake, vitaminBMaximumIntake));
+
+        // 비타민D 정보
+        String vitaminDName = StandardNutrient.VITAMIN_D.getName();
+        String vitaminDUnit = StandardNutrient.VITAMIN_D.getUnit();
+        String vitaminDDescription = StandardNutrient.VITAMIN_D.getDescription();
+        double vitaminDAmount = nutrient.getVitamin().getVitaminD();
+        double vitaminDMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.VITAMIN_D, weight);
+        double vitaminDMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.VITAMIN_D, weight);
+        responses.add(ReadPetNutrientResponseDto.of(vitaminDName, vitaminDUnit, vitaminDDescription, vitaminDAmount, vitaminDMinimumIntake, vitaminDMaximumIntake));
+
+        // 비타민E 정보
+        String vitaminEName = StandardNutrient.VITAMIN_E.getName();
+        String vitaminEUnit = StandardNutrient.VITAMIN_E.getUnit();
+        String vitaminEDescription = StandardNutrient.VITAMIN_E.getDescription();
+        double vitaminEAmount = nutrient.getVitamin().getVitaminE();
+        double vitaminEMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.VITAMIN_E, weight);
+        double vitaminEMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.VITAMIN_E, weight);
+        responses.add(ReadPetNutrientResponseDto.of(vitaminEName, vitaminEUnit, vitaminEDescription, vitaminEAmount, vitaminEMinimumIntake, vitaminEMaximumIntake));
 
         return responses;
     }
@@ -241,7 +369,7 @@ public class PetService {
         Map<StandardNutrient, Double> nutrientsMap =
                 StandardNutrient.getNutrientsMap(dailyMeal.getNutrient(), pet.getWeight(), pet.getActivity());
 
-        nutrientsMap.forEach((nutrient, ratio) ->{
+        nutrientsMap.forEach((nutrient, ratio) -> {
             responses.add(ReadPetNutrientRatioResponseDto.of(nutrient.getName(), ratio));
         });
 
@@ -260,7 +388,6 @@ public class PetService {
     public List<ReadPetNutrientRatioResponseDto> getPetNutrientRatio(Long userId, Long petId, LocalDate date) {
         Pet pet = findPet(userId, petId);
 
-        // 오늘 먹은 식사 내역이 없는 경우 예외 발생 => 이 부분은 그냥 예외가 발생하는 대신 DailyMeal을 생성해도 될듯?
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, date)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
@@ -270,7 +397,7 @@ public class PetService {
         Map<StandardNutrient, Double> nutrientsMap =
                 StandardNutrient.getNutrientsMap(dailyMeal.getNutrient(), pet.getWeight(), pet.getActivity());
 
-        nutrientsMap.forEach((nutrient, ratio) ->{
+        nutrientsMap.forEach((nutrient, ratio) -> {
             responses.add(ReadPetNutrientRatioResponseDto.of(nutrient.getName(), ratio));
         });
 
@@ -278,95 +405,71 @@ public class PetService {
     }
 
     /**
-     * '오늘' 가장 많이 섭취한 영양소 반환(단, 가장 많이 섭취했다 하여서 과잉 영양소는 아닐 수도 있다)
-     *
-     * @param userId
-     * @param petId
-     * @return
-     */
-    public ReadPetNutrientResponseDto getMostSufficientNutrientToday(Long userId, Long petId) {
-        Pet pet = findPet(userId, petId);
-        LocalDate today = LocalDate.now();
-
-        // 오늘 먹은 식사 내역이 없는 경우 예외 발생 => 이 부분은 그냥 예외가 발생하는 대신 DailyMeal을 생성해도 될듯?
-        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, today)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
-
-        ReadPetNutrientResponseDto response = new ReadPetNutrientResponseDto();
-
-        Nutrient nutrient = dailyMeal.getNutrient();
-        StandardNutrient mostSufficientNutrient = StandardNutrient.findMostSufficientNutrient(nutrient, pet.getWeight(), pet.getActivity());
-
-
-        return ReadPetNutrientResponseDto.from(mostSufficientNutrient.getName(), mostSufficientNutrient.getUnit(), mostSufficientNutrient.getDescription(), nutrient.getNutrientWeightByName(mostSufficientNutrient.getName()));
-    }
-
-    /**
-     * '특정일'에 가장 많이 섭취한 영양소 반환(단, 가장 많이 섭취했다 하여서 과잉 영양소는 아닐 수도 있다)
-     *
+     * '특정일자'에 과잉 섭취한 영양소를 반환
      * @param userId
      * @param petId
      * @param date
      * @return
      */
-    public ReadPetNutrientResponseDto getMostSufficientNutrient(Long userId, Long petId, LocalDate date) {
+    public List<ReadPetNutrientResponseDto> getSufficientNutrient(Long userId, Long petId, LocalDate date) {
         Pet pet = findPet(userId, petId);
+        double weight = pet.getWeight();
+        Activity activity = pet.getActivity();
 
-        // 오늘 먹은 식사 내역이 없는 경우 예외 발생 => 이 부분은 그냥 예외가 발생하는 대신 DailyMeal을 생성해도 될듯?
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, date)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
-        ReadPetNutrientResponseDto response = new ReadPetNutrientResponseDto();
+        List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
 
-        Nutrient nutrient = dailyMeal.getNutrient();
-        StandardNutrient mostSufficientNutrient = StandardNutrient.findMostSufficientNutrient(nutrient, pet.getWeight(), pet.getActivity());
+        StandardNutrient.findSufficientNutrients(dailyMeal.getNutrient(), weight, activity)
+                .forEach(nutrient -> {
+                    double amount = dailyMeal.getNutrient().getNutrientAmountByName(nutrient.getName());
+                    double minimumIntake = StandardNutrient.calculateProperNutrientAmount(nutrient, weight);
+                    double maximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(nutrient, weight);
 
+                    if (nutrient.equals(StandardNutrient.CARBON_HYDRATE)) {
+                        minimumIntake = StandardNutrient.calculateProperCarbonHydrateAmount(weight, activity);
+                        maximumIntake = StandardNutrient.calculateProperMaximumCarbonHydrateAmount(weight, activity);
+                    }
 
-        return ReadPetNutrientResponseDto.from(mostSufficientNutrient.getName(), mostSufficientNutrient.getUnit(), mostSufficientNutrient.getDescription(), nutrient.getNutrientWeightByName(mostSufficientNutrient.getName()));
+                    responses.add(ReadPetNutrientResponseDto.of(nutrient.getName(), nutrient.getUnit(), nutrient.getDescription(), amount, minimumIntake, maximumIntake));
+                });
+
+        return responses;
     }
 
     /**
-     * '오늘' 가장 적게 섭취한 영양소 반환(단, 가장 적게 섭취했다 하여서 부족 영양소는 아닐 수도 있다)
-     *
-     * @param userId
-     * @param petId
-     * @return
-     */
-    public ReadPetNutrientResponseDto getMostDeficientNutrientToday(Long userId, Long petId) {
-        Pet pet = findPet(userId, petId);
-        LocalDate today = LocalDate.now();
-
-        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, today)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
-
-        ReadPetNutrientResponseDto response = new ReadPetNutrientResponseDto();
-
-        Nutrient nutrient = dailyMeal.getNutrient();
-        StandardNutrient mostDefficientNutrient = StandardNutrient.findMostDeficientNutrient(nutrient, pet.getWeight(), pet.getActivity());
-
-        return ReadPetNutrientResponseDto.from(mostDefficientNutrient.getName(), mostDefficientNutrient.getUnit(), mostDefficientNutrient.getDescription(), nutrient.getNutrientWeightByName(mostDefficientNutrient.getName()));
-    }
-
-    /**
-     * '특정일'에 가장 적게 섭취한 영양소 반환(단, 가장 적게 섭취했다 하여서 부족 영양소는 아닐 수도 있다)
-     *
+     * '특정일자'에 부족 섭취한 영양소를 반환
      * @param userId
      * @param petId
      * @param date
      * @return
      */
-    public ReadPetNutrientResponseDto getMostDeficientNutrient(Long userId, Long petId, LocalDate date) {
+    public List<ReadPetNutrientResponseDto> getDeficientNutrient(Long userId, Long petId, LocalDate date) {
         Pet pet = findPet(userId, petId);
+        double weight = pet.getWeight();
+        Activity activity = pet.getActivity();
 
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, date)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
-        ReadPetNutrientResponseDto response = new ReadPetNutrientResponseDto();
+        List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
 
-        Nutrient nutrient = dailyMeal.getNutrient();
-        StandardNutrient mostDefficientNutrient = StandardNutrient.findMostDeficientNutrient(nutrient, pet.getWeight(), pet.getActivity());
+        StandardNutrient.findDeficientNutrients(dailyMeal.getNutrient(), weight, activity)
+                .forEach(nutrient -> {
+                    double amount = dailyMeal.getNutrient().getNutrientAmountByName(nutrient.getName());
+                    double minimumIntake = StandardNutrient.calculateProperNutrientAmount(nutrient, weight);
+                    double maximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(nutrient, weight);
 
-        return ReadPetNutrientResponseDto.from(mostDefficientNutrient.getName(), mostDefficientNutrient.getUnit(), mostDefficientNutrient.getDescription(), nutrient.getNutrientWeightByName(mostDefficientNutrient.getName()));
+                    if (nutrient.equals(StandardNutrient.CARBON_HYDRATE)) {
+                        minimumIntake = StandardNutrient.calculateProperCarbonHydrateAmount(weight, activity);
+                        maximumIntake = StandardNutrient.calculateProperMaximumCarbonHydrateAmount(weight, activity);
+                    }
+
+                    responses.add(ReadPetNutrientResponseDto.of(nutrient.getName(), nutrient.getUnit(), nutrient.getDescription(), amount, minimumIntake, maximumIntake));
+                });
+
+        return responses;
     }
 
     /**
@@ -453,6 +556,7 @@ public class PetService {
 
         return ReadPetKcalRatioResponseDto.of(properKcalRatio);
     }
+
 
     private Pet findPet(Long userId, Long petId) {
         Pet pet = petRepository.findById(petId)

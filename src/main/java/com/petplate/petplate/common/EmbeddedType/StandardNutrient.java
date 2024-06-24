@@ -40,24 +40,93 @@ public enum StandardNutrient {
 
     private String name;
     private double properAmountUnit;
-    private double upperRange;  // 정상 허용 범위 (+)
+    private double maxIntakeRange;  // 정상 허용 범위 (+)
     private String unit;
     private String description;
     private List<NutrientDisease> deficientCauseDisease;
     private List<NutrientDisease> sufficientCauseDisease;
 
-    StandardNutrient(String name, double properAmountUnit, double upperRange, String unit, String description, List<NutrientDisease> deficientCauseDisease, List<NutrientDisease> sufficientCauseDisease) {
+    StandardNutrient(String name, double properAmountUnit, double maxIntakeRange, String unit, String description, List<NutrientDisease> deficientCauseDisease, List<NutrientDisease> sufficientCauseDisease) {
         this.name = name;
         this.properAmountUnit = properAmountUnit;
-        this.upperRange = upperRange;
+        this.maxIntakeRange = maxIntakeRange;
         this.unit = unit;
         this.description = description;
         this.deficientCauseDisease = deficientCauseDisease;
         this.sufficientCauseDisease = sufficientCauseDisease;
     }
 
+    // 과잉인 영양소들 반환
+    public static List<StandardNutrient> findSufficientNutrients(Nutrient nutrient, double weight, Activity activity) {
+        List<StandardNutrient> sufficientNutrients = new ArrayList<>();
 
-    //가장 부족한 영양소 비율로 판단하기
+        if (CARBON_HYDRATE.getMaxIntakeRange() < nutrient.getCarbonHydrate() / calculateProperCarbonHydrateAmount(weight, activity)) {
+            sufficientNutrients.add(CARBON_HYDRATE);
+        }
+        if (FAT.getMaxIntakeRange() < nutrient.getFat() / calculateProperNutrientAmount(FAT, weight)) {
+            sufficientNutrients.add(FAT);
+        }
+        if (PROTEIN.getMaxIntakeRange() < nutrient.getProtein() / calculateProperNutrientAmount(PROTEIN, weight)) {
+            sufficientNutrients.add(PROTEIN);
+        }
+        if (CALCIUM.getMaxIntakeRange() < nutrient.getCalcium() / calculateProperNutrientAmount(CALCIUM, weight)) {
+            sufficientNutrients.add(CALCIUM);
+        }
+        if (PHOSPHORUS.getMaxIntakeRange() < nutrient.getPhosphorus() / calculateProperNutrientAmount(PHOSPHORUS, weight)) {
+            sufficientNutrients.add(PHOSPHORUS);
+        }
+        if (VITAMIN_A.getMaxIntakeRange() < nutrient.getVitamin().getVitaminA() / calculateProperNutrientAmount(VITAMIN_A, weight)) {
+            sufficientNutrients.add(VITAMIN_A);
+        }
+        if (VITAMIN_B.getMaxIntakeRange() < nutrient.getVitamin().getVitaminB() / calculateProperNutrientAmount(VITAMIN_B, weight)) {
+            sufficientNutrients.add(VITAMIN_B);
+        }
+        if (VITAMIN_D.getMaxIntakeRange() < nutrient.getVitamin().getVitaminD() / calculateProperNutrientAmount(VITAMIN_D, weight)) {
+            sufficientNutrients.add(VITAMIN_D);
+        }
+        if (VITAMIN_E.getMaxIntakeRange() < nutrient.getVitamin().getVitaminE() / calculateProperNutrientAmount(VITAMIN_E, weight)) {
+            sufficientNutrients.add(VITAMIN_E);
+        }
+
+        return sufficientNutrients;
+    }
+
+    // 부족한 영양소들 반환
+    public static List<StandardNutrient> findDeficientNutrients(Nutrient nutrient, double weight, Activity activity) {
+        List<StandardNutrient> deficientNutrients = new ArrayList<>();
+
+        if (1 > nutrient.getCarbonHydrate() / calculateProperCarbonHydrateAmount(weight, activity)) {
+            deficientNutrients.add(CARBON_HYDRATE);
+        }
+        if (1 > nutrient.getFat() / calculateProperNutrientAmount(FAT, weight)) {
+            deficientNutrients.add(FAT);
+        }
+        if (1 > nutrient.getProtein() / calculateProperNutrientAmount(PROTEIN, weight)) {
+            deficientNutrients.add(PROTEIN);
+        }
+        if (1 > nutrient.getCalcium() / calculateProperNutrientAmount(CALCIUM, weight)) {
+            deficientNutrients.add(CALCIUM);
+        }
+        if (1 > nutrient.getPhosphorus() / calculateProperNutrientAmount(PHOSPHORUS, weight)) {
+            deficientNutrients.add(PHOSPHORUS);
+        }
+        if (1 > nutrient.getVitamin().getVitaminA() / calculateProperNutrientAmount(VITAMIN_A, weight)) {
+            deficientNutrients.add(VITAMIN_A);
+        }
+        if (1 > nutrient.getVitamin().getVitaminB() / calculateProperNutrientAmount(VITAMIN_B, weight)) {
+            deficientNutrients.add(VITAMIN_B);
+        }
+        if (1 > nutrient.getVitamin().getVitaminD() / calculateProperNutrientAmount(VITAMIN_D, weight)) {
+            deficientNutrients.add(VITAMIN_D);
+        }
+        if (1 > nutrient.getVitamin().getVitaminE() / calculateProperNutrientAmount(VITAMIN_E, weight)) {
+            deficientNutrients.add(VITAMIN_E);
+        }
+
+        return deficientNutrients;
+    }
+
+    //가장 적은 영양소 비율로 판단하기
     public static StandardNutrient findMostDeficientNutrient(Nutrient nutrient, double weight, Activity activity) {
 
         Map<StandardNutrient, Double> standardNutrientMap = getNutrientsMap(nutrient, weight, activity);
@@ -70,7 +139,7 @@ public enum StandardNutrient {
 
     }
 
-    //가장 영양소 과잉인 영양소 비율로 판단하기
+    //가장 많은 영양소 비율로 판단하기
     public static StandardNutrient findMostSufficientNutrient(Nutrient nutrient, double weight, Activity activity) {
 
         Map<StandardNutrient, Double> standardNutrientMap = getNutrientsMap(nutrient, weight, activity);
@@ -109,15 +178,25 @@ public enum StandardNutrient {
         return standardNutrientMap;
     }
 
+    //  탄수화물 적정 최대 섭취량
+    public static double calculateProperMaximumCarbonHydrateAmount(double weight, Activity activity) {
+        return CARBON_HYDRATE.getMaxIntakeRange() * calculateProperCarbonHydrateAmount(weight, activity);
+    }
+    
+    // 탄수화물 이외의 다른 영양소들의 최대 적정 섭취량
+    public static double calculateProperMaximumNutrientAmount(StandardNutrient nutrient, double weight) {
+        return nutrient.getMaxIntakeRange() * calculateProperNutrientAmount(nutrient, weight);
+    }
+    
     // 적정 탄수화물 계산을 위한 로직
-    private static double calculateProperCarbonHydrateAmount(double weight, Activity activity) {
+    public static double calculateProperCarbonHydrateAmount(double weight, Activity activity) {
         // 적정 칼로리 계산
         double properKcal = activity.getProperKcal(weight);
         return CARBON_HYDRATE.getProperAmountUnit() * properKcal;
     }
 
     // 탄수화물 이외의 다른 영양소들의 적정 양을 계산 위한 로직
-    private static double calculateProperNutrientAmount(StandardNutrient nutrient, double weight) {
+    public static double calculateProperNutrientAmount(StandardNutrient nutrient, double weight) {
         return nutrient.getProperAmountUnit() * calculateMetabolicWeight(weight);
     }
 
