@@ -4,50 +4,52 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.petplate.petplate.medicalcondition.domain.entity.Disease;
+import com.petplate.petplate.pet.domain.Activity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 public enum StandardNutrient {
-    // 탄수화물 기초대사량 당 적정 섭취량 필요
-    CARBON_HYDRATE("탄수화물", 0, "g", "탄수화물에 대한 설명"
+    CARBON_HYDRATE("탄수화물", 0.07 / 4, 1.5, "g", "탄수화물에 대한 설명"
             , Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요"))
             , Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    PROTEIN("단백질", 4.95, "g", "단백질에 대한 설명"
+    PROTEIN("단백질", 4.95, 2.0, "g", "단백질에 대한 설명"
             , Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요"))
             , Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    FAT("지방", 1.51, "g", "지방에 대한 설명",
+    FAT("지방", 1.51, 1.75, "g", "지방에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    CALCIUM("칼슘", 0.14, "g", "칼슘에 대한 설명",
+    CALCIUM("칼슘", 0.14, 2.0, "g", "칼슘에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    PHOSPHORUS("인", 0.11, "g", "인에 대한 설명",
+    PHOSPHORUS("인", 0.11, 2.0, "g", "인에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    VITAMIN_A("비타민A", 167.0, "iu", "비타민A에 대한 설명",
+    VITAMIN_A("비타민A", 167.0, 5, "iu", "비타민A에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))), // 레티놀
-    VITAMIN_B("비타민B", 0.041, "mg", "비타민B에 대한 설명",
+    VITAMIN_B("비타민B", 0.041, 10, "mg", "비타민B에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),  // b6 + b12
-    VITAMIN_D("비타민D", 15.20, "iu", "비타민D에 대한 설명",
+    VITAMIN_D("비타민D", 15.20, 10, "iu", "비타민D에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    VITAMIN_E("비타민E", 1.00, "iu", "비타민E에 대한 설명",
+    VITAMIN_E("비타민E", 1.00, 10, "iu", "비타민E에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요")));
 
     private String name;
-    private double properAmountPerMetabolicWeight;
+    private double properAmountUnit;
+    private double upperRange;  // 정상 허용 범위 (+)
     private String unit;
     private String description;
     private List<NutrientDisease> deficientCauseDisease;
     private List<NutrientDisease> sufficientCauseDisease;
 
-    StandardNutrient(String name, double properAmountPerMetabolicWeight, String unit, String description, List<NutrientDisease> deficientCauseDisease, List<NutrientDisease> sufficientCauseDisease) {
+    StandardNutrient(String name, double properAmountUnit, double upperRange, String unit, String description, List<NutrientDisease> deficientCauseDisease, List<NutrientDisease> sufficientCauseDisease) {
         this.name = name;
-        this.properAmountPerMetabolicWeight = properAmountPerMetabolicWeight;
+        this.properAmountUnit = properAmountUnit;
+        this.upperRange = upperRange;
         this.unit = unit;
         this.description = description;
         this.deficientCauseDisease = deficientCauseDisease;
@@ -56,9 +58,9 @@ public enum StandardNutrient {
 
 
     //가장 부족한 영양소 비율로 판단하기
-    public static StandardNutrient findMostDeficientNutrient(Nutrient nutrient, double weight) {
+    public static StandardNutrient findMostDeficientNutrient(Nutrient nutrient, double weight, Activity activity) {
 
-        Map<StandardNutrient, Double> standardNutrientMap = getNutrientsMap(nutrient, weight);
+        Map<StandardNutrient, Double> standardNutrientMap = getNutrientsMap(nutrient, weight, activity);
 
         List<Map.Entry<StandardNutrient, Double>> entries = standardNutrientMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
@@ -69,9 +71,9 @@ public enum StandardNutrient {
     }
 
     //가장 영양소 과잉인 영양소 비율로 판단하기
-    public static StandardNutrient findMostSufficientNutrient(Nutrient nutrient, double weight) {
+    public static StandardNutrient findMostSufficientNutrient(Nutrient nutrient, double weight, Activity activity) {
 
-        Map<StandardNutrient, Double> standardNutrientMap = getNutrientsMap(nutrient, weight);
+        Map<StandardNutrient, Double> standardNutrientMap = getNutrientsMap(nutrient, weight, activity);
 
         List<Map.Entry<StandardNutrient, Double>> entries = standardNutrientMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
@@ -82,18 +84,19 @@ public enum StandardNutrient {
     }
 
     // 영양소들을 비율로 내림차순 하여 반환
-    public static List<Map.Entry<StandardNutrient, Double>> getNutrientMapOrderByAmount(Nutrient nutrient, double weight) {
-        Map<StandardNutrient, Double> nutrientsMap = getNutrientsMap(nutrient, weight);
+    public static List<Map.Entry<StandardNutrient, Double>> getNutrientMapOrderByAmount(Nutrient nutrient, double weight, Activity activity) {
+        Map<StandardNutrient, Double> nutrientsMap = getNutrientsMap(nutrient, weight, activity);
 
         return nutrientsMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toList());
     }
 
-    public static Map<StandardNutrient, Double> getNutrientsMap(Nutrient nutrient, double weight) {
+    public static Map<StandardNutrient, Double> getNutrientsMap(Nutrient nutrient, double weight, Activity activity) {
 
         Map<StandardNutrient, Double> standardNutrientMap = new HashMap<>();
 
+        standardNutrientMap.put(CARBON_HYDRATE, nutrient.getCarbonHydrate() / calculateProperCarbonHydrateAmount(weight, activity));
         standardNutrientMap.put(FAT, nutrient.getFat() / calculateProperNutrientAmount(FAT, weight));
         standardNutrientMap.put(PROTEIN, nutrient.getProtein() / calculateProperNutrientAmount(PROTEIN, weight));
         standardNutrientMap.put(CALCIUM, nutrient.getCalcium() / calculateProperNutrientAmount(CALCIUM, weight));
@@ -106,8 +109,16 @@ public enum StandardNutrient {
         return standardNutrientMap;
     }
 
+    // 적정 탄수화물 계산을 위한 로직
+    private static double calculateProperCarbonHydrateAmount(double weight, Activity activity) {
+        // 적정 칼로리 계산
+        double properKcal = activity.getProperKcal(weight);
+        return CARBON_HYDRATE.getProperAmountUnit() * properKcal;
+    }
+
+    // 탄수화물 이외의 다른 영양소들의 적정 양을 계산 위한 로직
     private static double calculateProperNutrientAmount(StandardNutrient nutrient, double weight) {
-        return nutrient.getProperAmountPerMetabolicWeight() * calculateMetabolicWeight(weight);
+        return nutrient.getProperAmountUnit() * calculateMetabolicWeight(weight);
     }
 
     // 기초대사량 계산
@@ -115,7 +126,6 @@ public enum StandardNutrient {
         return Math.pow(weight, 0.75);
     }
 
-    // 영양 과잉 / 부족 시 발생할 수 있는 질병
     @Getter
     public static class NutrientDisease {
         private String name;
