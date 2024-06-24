@@ -1,19 +1,11 @@
 package com.petplate.petplate.pet.domain.entity;
 
+import com.petplate.petplate.common.EmbeddedType.Nutrient;
 import com.petplate.petplate.common.Inheritance.BaseEntity;
 import com.petplate.petplate.pet.domain.Activity;
 import com.petplate.petplate.pet.domain.ProfileImg;
 import com.petplate.petplate.user.domain.entity.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,7 +39,7 @@ public class Pet extends BaseEntity {
     private ProfileImg profileImg;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User owner;
 
     @Builder
@@ -74,7 +66,7 @@ public class Pet extends BaseEntity {
         if (activity != null) {
             this.activity = activity;
         }
-        if(isNeutering != null) {
+        if (isNeutering != null) {
             this.isNeutering = isNeutering;
         }
     }
