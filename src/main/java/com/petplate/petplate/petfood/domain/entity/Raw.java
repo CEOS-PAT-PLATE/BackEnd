@@ -30,13 +30,13 @@ public class Raw extends BaseEntity {
     private String name;
 
     @Column(nullable = false)
-    private float kcal;
+    private double kcal;
 
     @Embedded
     private Nutrient nutrient;
 
     @Builder
-    public Raw(int totalAmount, String name, float kcal, Nutrient nutrient) {
+    public Raw(int totalAmount, String name, double kcal, Nutrient nutrient) {
         this.totalAmount = totalAmount;
         this.name = name;
         this.kcal = kcal;

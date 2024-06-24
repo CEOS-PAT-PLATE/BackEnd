@@ -33,7 +33,7 @@ public class DailyFeed {
     private int totalAmount;
 
     @Column(nullable = false)
-    private float kcal;
+    private double kcal;
 
     @Embedded
     private Nutrient nutrient;
@@ -44,7 +44,7 @@ public class DailyFeed {
 
 
     @Builder
-    public DailyFeed(String name, int totalAmount, float kcal, Nutrient nutrient,
+    public DailyFeed(String name, int totalAmount, double kcal, Nutrient nutrient,
             DailyMeal dailyMeal) {
         this.name = name;
         this.totalAmount = totalAmount;

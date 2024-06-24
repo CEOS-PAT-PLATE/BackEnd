@@ -35,7 +35,7 @@ public class BookMarkedRaw extends BaseEntity{
     private float serving;
 
     @Column(nullable = false)
-    private float kcal;
+    private double kcal;
 
     @Embedded
     private Nutrient nutrient;
@@ -46,7 +46,7 @@ public class BookMarkedRaw extends BaseEntity{
 
     @Builder
 
-    public BookMarkedRaw(String name, float serving, float kcal, Nutrient nutrient, User user) {
+    public BookMarkedRaw(String name, float serving, double kcal, Nutrient nutrient, User user) {
         this.name = name;
         this.serving = serving;
         this.kcal = kcal;
