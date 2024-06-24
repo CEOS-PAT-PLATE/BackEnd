@@ -8,15 +8,15 @@ import java.util.Map;
 
 @Getter
 public class ReadPetNutrientRatioResponseDto {
-    // 탄수화물의 경우 적정 영양분 계산 식이 없어서 제외함 (추후 추가 가능)
-    private double protein;  // 단위 g
-    private double fat;  // 단위 g
-    private double calcium;  // 단위 g
-    private double phosphorus;  // 단위 g
-    private double vitaminA;  // 단위 mcg RAE
-    private double vitaminB;  // 단위 mg
-    private double vitaminD;  // 단위 mcg
-    private double vitaminE;  // 단위 mcg RAE
+    private double carbonHydrate;
+    private double protein;
+    private double fat;
+    private double calcium;
+    private double phosphorus;
+    private double vitaminA;
+    private double vitaminB;
+    private double vitaminD;
+    private double vitaminE;
 
     public static ReadPetNutrientRatioResponseDto of(Nutrient nutrient, double weight) {
         // 반려견의 몸무게와 하루 먹은 식사의 영양분을 바탕으로 영양소별 적정량 대비 섭취 비율을 계산
@@ -24,6 +24,7 @@ public class ReadPetNutrientRatioResponseDto {
                 StandardNutrient.getNutrientsMap(nutrient, weight);
 
         // 영양분 별 비율
+        Double carbonHydrate = nutrientsMap.get(StandardNutrient.CARBON_HYDRATE);
         Double protein = nutrientsMap.get(StandardNutrient.PROTEIN);
         Double fat = nutrientsMap.get(StandardNutrient.FAT);
         Double calcium = nutrientsMap.get(StandardNutrient.CALCIUM);
@@ -36,6 +37,7 @@ public class ReadPetNutrientRatioResponseDto {
         ReadPetNutrientRatioResponseDto response =
                 new ReadPetNutrientRatioResponseDto();
 
+        response.carbonHydrate = carbonHydrate;
         response.protein = protein;
         response.fat = fat;
         response.calcium = calcium;
