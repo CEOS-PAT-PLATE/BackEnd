@@ -34,10 +34,10 @@ public class RawDailyMeal {
     private Raw raw;
 
     @Column(nullable = false)
-    private float weight;
+    private double weight;
 
     @Builder
-    public RawDailyMeal(DailyMeal dailyMeal, Raw raw, float weight) {
+    public RawDailyMeal(DailyMeal dailyMeal, Raw raw, double weight) {
         this.dailyMeal = dailyMeal;
         this.raw = raw;
         this.weight = weight;
