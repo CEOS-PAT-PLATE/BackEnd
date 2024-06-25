@@ -42,7 +42,7 @@ public class Nutrient {
         this.vitamin = vitamin;
     }
 
-    public double getNutrientWeightByName(String name) {
+    public double getNutrientAmountByName(String name) {
         return switch (name) {
             case "carbonHydrate" -> carbonHydrate;
             case "탄수화물" -> carbonHydrate;

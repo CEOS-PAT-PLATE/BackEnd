@@ -50,5 +50,6 @@ public class DailyMeal {
         this.kcal = 0;
         this.nutrient = nutrient;
         this.pet = pet;
+        createdAt = LocalDate.now();
     }
 }
