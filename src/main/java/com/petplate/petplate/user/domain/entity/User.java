@@ -52,6 +52,7 @@ public class User extends BaseEntity {
     private int level;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
     @Builder
