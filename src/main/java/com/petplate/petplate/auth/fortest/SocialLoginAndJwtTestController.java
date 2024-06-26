@@ -1,6 +1,6 @@
 package com.petplate.petplate.auth.fortest;
 
-import com.petplate.petplate.auth.interfaces.CurrentMemberLoginId;
+import com.petplate.petplate.auth.interfaces.CurrentUserUsername;
 import com.petplate.petplate.common.response.BaseResponse;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
@@ -19,7 +19,7 @@ public class SocialLoginAndJwtTestController {
 
     @GetMapping("/test/login")
     //@Operation(summary = "로그인 테스트 확인", description = "로그인 되어 있는지 판단합니다")
-    public ResponseEntity<BaseResponse<String>> checkLogin(@CurrentMemberLoginId String username) {
+    public ResponseEntity<BaseResponse<String>> checkLogin(@CurrentUserUsername String username) {
 
         User findUser = getUserByUserId(username);
 
