@@ -7,11 +7,11 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class AddPetRequestDto {
     @NotBlank(message = "잘못된 이름 입력입니다. (이름은 최소 한글자 이상 입력되어야 합니다.)")
