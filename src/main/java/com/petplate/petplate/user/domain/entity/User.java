@@ -2,6 +2,7 @@ package com.petplate.petplate.user.domain.entity;
 
 import com.petplate.petplate.common.Inheritance.BaseEntity;
 import com.petplate.petplate.user.domain.Role;
+import com.petplate.petplate.user.domain.SocialType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -38,7 +39,7 @@ public class User extends BaseEntity {
     @Column(length = 100,nullable = false)
     private String password;
 
-    @Column(length = 11,nullable = false)
+    @Column(length = 13,nullable = false)
     private String phoneNumber;
 
     @Column(nullable = false)
@@ -50,10 +51,14 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private int level;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
+
     @Builder
     public User(Role role, String name, String username, String password,
             String phoneNumber,
-            boolean isReceiveAd, boolean activated) {
+            boolean isReceiveAd, boolean activated,SocialType socialType) {
         this.role = role;
         this.name = name;
         this.username = username;
@@ -62,5 +67,6 @@ public class User extends BaseEntity {
         this.isReceiveAd = isReceiveAd;
         this.activated = activated;
         this.level = 1;
+        this.socialType = socialType;
     }
 }
