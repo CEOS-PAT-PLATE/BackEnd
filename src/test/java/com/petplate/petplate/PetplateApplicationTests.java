@@ -3,6 +3,7 @@ package com.petplate.petplate;
 import com.petplate.petplate.common.EmbeddedType.Nutrient;
 import com.petplate.petplate.common.EmbeddedType.StandardNutrient;
 import com.petplate.petplate.common.EmbeddedType.Vitamin;
+import com.petplate.petplate.pet.domain.Activity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,17 +26,17 @@ class PetplateApplicationTests {
                 .protein(50)
                 .build();
 
-        List<Map.Entry<StandardNutrient, Double>> standardNutrientOrderByAmount = StandardNutrient.getNutrientMapOrderByAmount(nutrient, 1);
+        List<Map.Entry<StandardNutrient, Double>> standardNutrientOrderByAmount = StandardNutrient.getNutrientMapOrderByAmount(nutrient, 1, Activity.CALM);
         for (Map.Entry<StandardNutrient, Double> standardNutrientDoubleEntry : standardNutrientOrderByAmount) {
-            System.out.println("standardNutrientDoubleEntry = " + standardNutrientDoubleEntry.getKey().getName()+", 적정량 대비 섭취 비율: " + standardNutrientDoubleEntry.getValue());
+            System.out.println("standardNutrientDoubleEntry = " + standardNutrientDoubleEntry.getKey().getName() + ", 적정량 대비 섭취 비율: " + standardNutrientDoubleEntry.getValue());
         }
 
         //가장 부족한 영양소 이름
-        StandardNutrient deficientNutrient = StandardNutrient.findMostDeficientNutrient(nutrient, 5);
+        StandardNutrient deficientNutrient = StandardNutrient.findMostDeficientNutrient(nutrient, 5, Activity.ACTIVE);
         System.out.println(deficientNutrient.getName());
 
         //가장 많은 영양소 이름
-        StandardNutrient sufficientNutrient = StandardNutrient.findMostSufficientNutrient(nutrient, 5);
+        StandardNutrient sufficientNutrient = StandardNutrient.findMostSufficientNutrient(nutrient, 5, Activity.ACTIVE);
         System.out.println(sufficientNutrient.getName());
     }
 

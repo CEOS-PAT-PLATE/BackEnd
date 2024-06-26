@@ -155,8 +155,6 @@ public class PetService {
         double weight = pet.getWeight();
         Activity activity = pet.getActivity();
 
-
-        // 탄수화물 정보
         List<ReadPetNutrientResponseDto> responses = createNutrientResponsesDto(nutrient, weight, activity);
         return responses;
     }
