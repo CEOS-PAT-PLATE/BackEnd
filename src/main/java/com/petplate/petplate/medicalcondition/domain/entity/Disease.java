@@ -20,7 +20,7 @@ public class Disease {
     @Column(name = "disease_id")
     private Long id;
 
-    @Column(length = 50,nullable = false)
+    @Column(length = 50,nullable = false, unique = true)
     private String name;
 
     @Column(length = 500,nullable = false)
