@@ -23,6 +23,7 @@ public class DrugNutrient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "drug_nutrient_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
