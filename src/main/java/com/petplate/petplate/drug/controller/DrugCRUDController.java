@@ -33,9 +33,9 @@ public class DrugCRUDController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DrugResponseDto> showDrug(@PathVariable("id") Long drugId){
+    public ResponseEntity<BaseResponse<DrugResponseDto>> showDrug(@PathVariable("id") Long drugId){
 
-        return ResponseEntity.ok(drugCRUDService.showDrug(drugId));
+        return ResponseEntity.ok(BaseResponse.createSuccess(drugCRUDService.showDrug(drugId)));
     }
 
 
