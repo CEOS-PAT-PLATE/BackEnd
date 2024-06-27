@@ -57,19 +57,20 @@ class PetServiceTest {
                 AddPetRequestDto.builder()
                         .name("pet1")
                         .age(3).weight(5).activity(Activity.ACTIVE)
-                        .neutering(Neutering.INTACT).build();
+                        .neutering(Neutering.INTACT)
+                        .build();
 
         AddPetRequestDto pet2Dto =
                 AddPetRequestDto.builder()
                         .name("pet2")
-                        .age(3).weight(5).activity(Activity.SOMEWHAT_ACTIVE)
+                        .age(3).weight(5).activity(Activity.ACTIVE)
                         .neutering(Neutering.INTACT)
                         .build();
 
         AddPetRequestDto pet3Dto =
                 AddPetRequestDto.builder()
                         .name("pet3")
-                        .age(3).weight(5).activity(Activity.SOMEWHAT_ACTIVE)
+                        .age(3).weight(5).activity(Activity.ACTIVE)
                         .neutering(Neutering.INTACT)
                         .build();
 
@@ -99,14 +100,14 @@ class PetServiceTest {
         AddPetRequestDto pet5Dto =
                 AddPetRequestDto.builder()
                         .name("pet5")
-                        .age(5).weight(15).activity(Activity.VERY_ACTIVE)
+                        .age(5).weight(15).activity(Activity.ACTIVE)
                         .neutering(Neutering.INTACT)
                         .build();
 
         AddPetRequestDto pet6Dto =
                 AddPetRequestDto.builder()
                         .name("pet6")
-                        .age(5).weight(15).activity(Activity.SOMEWHAT_ACTIVE)
+                        .age(5).weight(15).activity(Activity.ACTIVE)
                         .neutering(Neutering.INTACT)
                         .build();
 
@@ -152,7 +153,6 @@ class PetServiceTest {
                         .name("newPet")
                         .age(8).weight(13).activity(Activity.ACTIVE)
                         .neutering(Neutering.INTACT)
-                        .build();
 
         User user1 = userRepository.findById(user1Id).get(); // pet 3, membership 보유
         petService.addPet(user1Id, newPetDto);  // 등록 가능
