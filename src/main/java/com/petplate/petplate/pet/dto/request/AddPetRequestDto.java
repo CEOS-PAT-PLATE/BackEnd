@@ -1,18 +1,20 @@
 package com.petplate.petplate.pet.dto.request;
 
 import com.petplate.petplate.pet.domain.Activity;
-import com.petplate.petplate.user.domain.entity.User;
-import jakarta.persistence.*;
+import com.petplate.petplate.pet.domain.Neutering;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class AddPetRequestDto {
     @NotBlank(message = "잘못된 이름 입력입니다. (이름은 최소 한글자 이상 입력되어야 합니다.)")
     private String name;
@@ -27,5 +29,5 @@ public class AddPetRequestDto {
     @NotNull(message = "활동량이 입력되지 않았습니다.")
     private Activity activity;
     @NotNull(message = "중성화 여부가 입력되지 않았습니다.")
-    private boolean isNeutering;
+    private Neutering neutering;
 }

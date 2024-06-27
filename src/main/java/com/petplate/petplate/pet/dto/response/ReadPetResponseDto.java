@@ -1,6 +1,7 @@
 package com.petplate.petplate.pet.dto.response;
 
 import com.petplate.petplate.pet.domain.Activity;
+import com.petplate.petplate.pet.domain.Neutering;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import lombok.Getter;
 
@@ -11,7 +12,7 @@ public class ReadPetResponseDto {
     private int age;
     private double weight;
     private Activity activity;
-    private boolean isNeutering;
+    private Neutering neutering;
     private String profileImgPath;
 
     public static ReadPetResponseDto from(Pet pet) {
@@ -22,7 +23,7 @@ public class ReadPetResponseDto {
         response.age = pet.getAge();
         response.weight = pet.getWeight();
         response.activity = pet.getActivity();
-        response.isNeutering = pet.isNeutering();
+        response.neutering = pet.getNeutering();
         response.profileImgPath = pet.getProfileImg().name();
 
         return response;

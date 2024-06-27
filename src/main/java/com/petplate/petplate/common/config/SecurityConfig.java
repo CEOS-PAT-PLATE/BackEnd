@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((requests) ->
                         requests
                                 .requestMatchers("/test/login").hasAuthority(Role.GENERAL.toString())
+                                .anyRequest().permitAll()
                 )
                 .oauth2Login(configure ->
                         configure

@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import com.petplate.petplate.medicalcondition.domain.entity.Disease;
 import com.petplate.petplate.pet.domain.Activity;
+import com.petplate.petplate.pet.domain.Neutering;
+import com.petplate.petplate.pet.domain.entity.Pet;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -57,10 +59,10 @@ public enum StandardNutrient {
     }
 
     // 과잉인 영양소들 반환
-    public static List<StandardNutrient> findSufficientNutrients(Nutrient nutrient, double weight, Activity activity) {
+    public static List<StandardNutrient> findSufficientNutrients(Nutrient nutrient, double weight, Activity activity, Neutering neutering) {
         List<StandardNutrient> sufficientNutrients = new ArrayList<>();
 
-        if (CARBON_HYDRATE.getMaxIntakeRange() < nutrient.getCarbonHydrate() / calculateProperCarbonHydrateAmount(weight, activity)) {
+        if (CARBON_HYDRATE.getMaxIntakeRange() < nutrient.getCarbonHydrate() / calculateProperCarbonHydrateAmount(weight, activity, neutering)) {
             sufficientNutrients.add(CARBON_HYDRATE);
         }
         if (FAT.getMaxIntakeRange() < nutrient.getFat() / calculateProperNutrientAmount(FAT, weight)) {
@@ -92,10 +94,10 @@ public enum StandardNutrient {
     }
 
     // 부족한 영양소들 반환
-    public static List<StandardNutrient> findDeficientNutrients(Nutrient nutrient, double weight, Activity activity) {
+    public static List<StandardNutrient> findDeficientNutrients(Nutrient nutrient, double weight, Activity activity, Neutering neutering) {
         List<StandardNutrient> deficientNutrients = new ArrayList<>();
 
-        if (1 > nutrient.getCarbonHydrate() / calculateProperCarbonHydrateAmount(weight, activity)) {
+        if (1 > nutrient.getCarbonHydrate() / calculateProperCarbonHydrateAmount(weight, activity, neutering)) {
             deficientNutrients.add(CARBON_HYDRATE);
         }
         if (1 > nutrient.getFat() / calculateProperNutrientAmount(FAT, weight)) {
@@ -127,9 +129,9 @@ public enum StandardNutrient {
     }
 
     //가장 적은 영양소 비율로 판단하기
-    public static StandardNutrient findMostDeficientNutrient(Nutrient nutrient, double weight, Activity activity) {
+    public static StandardNutrient findMostDeficientNutrient(Nutrient nutrient, double weight, Activity activity, Neutering neutering) {
 
-        Map<StandardNutrient, Double> standardNutrientMap = getNutrientsMap(nutrient, weight, activity);
+        Map<StandardNutrient, Double> standardNutrientMap = getNutrientsMap(nutrient, weight, activity, neutering);
 
         List<Map.Entry<StandardNutrient, Double>> entries = standardNutrientMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
@@ -140,9 +142,9 @@ public enum StandardNutrient {
     }
 
     //가장 많은 영양소 비율로 판단하기
-    public static StandardNutrient findMostSufficientNutrient(Nutrient nutrient, double weight, Activity activity) {
+    public static StandardNutrient findMostSufficientNutrient(Nutrient nutrient, double weight, Activity activity, Neutering neutering) {
 
-        Map<StandardNutrient, Double> standardNutrientMap = getNutrientsMap(nutrient, weight, activity);
+        Map<StandardNutrient, Double> standardNutrientMap = getNutrientsMap(nutrient, weight, activity, neutering);
 
         List<Map.Entry<StandardNutrient, Double>> entries = standardNutrientMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
@@ -153,19 +155,19 @@ public enum StandardNutrient {
     }
 
     // 영양소들을 비율로 내림차순 하여 반환
-    public static List<Map.Entry<StandardNutrient, Double>> getNutrientMapOrderByAmount(Nutrient nutrient, double weight, Activity activity) {
-        Map<StandardNutrient, Double> nutrientsMap = getNutrientsMap(nutrient, weight, activity);
+    public static List<Map.Entry<StandardNutrient, Double>> getNutrientMapOrderByAmount(Nutrient nutrient, double weight, Activity activity, Neutering neutering) {
+        Map<StandardNutrient, Double> nutrientsMap = getNutrientsMap(nutrient, weight, activity, neutering);
 
         return nutrientsMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toList());
     }
 
-    public static Map<StandardNutrient, Double> getNutrientsMap(Nutrient nutrient, double weight, Activity activity) {
+    public static Map<StandardNutrient, Double> getNutrientsMap(Nutrient nutrient, double weight, Activity activity, Neutering neutering) {
 
         Map<StandardNutrient, Double> standardNutrientMap = new HashMap<>();
 
-        standardNutrientMap.put(CARBON_HYDRATE, nutrient.getCarbonHydrate() / calculateProperCarbonHydrateAmount(weight, activity));
+        standardNutrientMap.put(CARBON_HYDRATE, nutrient.getCarbonHydrate() / calculateProperCarbonHydrateAmount(weight, activity, neutering));
         standardNutrientMap.put(FAT, nutrient.getFat() / calculateProperNutrientAmount(FAT, weight));
         standardNutrientMap.put(PROTEIN, nutrient.getProtein() / calculateProperNutrientAmount(PROTEIN, weight));
         standardNutrientMap.put(CALCIUM, nutrient.getCalcium() / calculateProperNutrientAmount(CALCIUM, weight));
@@ -179,19 +181,19 @@ public enum StandardNutrient {
     }
 
     //  탄수화물 적정 최대 섭취량
-    public static double calculateProperMaximumCarbonHydrateAmount(double weight, Activity activity) {
-        return CARBON_HYDRATE.getMaxIntakeRange() * calculateProperCarbonHydrateAmount(weight, activity);
+    public static double calculateProperMaximumCarbonHydrateAmount(double weight, Activity activity, Neutering neutering) {
+        return CARBON_HYDRATE.getMaxIntakeRange() * calculateProperCarbonHydrateAmount(weight, activity, neutering);
     }
-    
+
     // 탄수화물 이외의 다른 영양소들의 최대 적정 섭취량
     public static double calculateProperMaximumNutrientAmount(StandardNutrient nutrient, double weight) {
         return nutrient.getMaxIntakeRange() * calculateProperNutrientAmount(nutrient, weight);
     }
-    
+
     // 적정 탄수화물 계산을 위한 로직
-    public static double calculateProperCarbonHydrateAmount(double weight, Activity activity) {
+    public static double calculateProperCarbonHydrateAmount(double weight, Activity activity, Neutering neutering) {
         // 적정 칼로리 계산
-        double properKcal = activity.getProperKcal(weight);
+        double properKcal = Pet.getProperKcal(weight, activity, neutering);
         return CARBON_HYDRATE.getProperAmountUnit() * properKcal;
     }
 

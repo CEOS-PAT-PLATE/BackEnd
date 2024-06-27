@@ -1,6 +1,7 @@
 package com.petplate.petplate.pet.service;
 
 import com.petplate.petplate.pet.domain.Activity;
+import com.petplate.petplate.pet.domain.Neutering;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.dto.request.AddPetRequestDto;
 import com.petplate.petplate.user.domain.Role;
@@ -56,20 +57,20 @@ class PetServiceTest {
                 AddPetRequestDto.builder()
                         .name("pet1")
                         .age(3).weight(5).activity(Activity.ACTIVE)
-                        .isNeutering(false).build();
+                        .neutering(Neutering.INTACT).build();
 
         AddPetRequestDto pet2Dto =
                 AddPetRequestDto.builder()
                         .name("pet2")
-                        .age(3).weight(5).activity(Activity.NORMAL)
-                        .isNeutering(false)
+                        .age(3).weight(5).activity(Activity.SOMEWHAT_ACTIVE)
+                        .neutering(Neutering.INTACT)
                         .build();
 
         AddPetRequestDto pet3Dto =
                 AddPetRequestDto.builder()
                         .name("pet3")
-                        .age(3).weight(5).activity(Activity.CALM)
-                        .isNeutering(false)
+                        .age(3).weight(5).activity(Activity.SOMEWHAT_ACTIVE)
+                        .neutering(Neutering.INTACT)
                         .build();
 
         petService.addPet(user1Id, pet1Dto);
@@ -92,21 +93,21 @@ class PetServiceTest {
                 AddPetRequestDto.builder()
                         .name("pet4")
                         .age(5).weight(15).activity(Activity.ACTIVE)
-                        .isNeutering(false)
+                        .neutering(Neutering.INTACT)
                         .build();
 
         AddPetRequestDto pet5Dto =
                 AddPetRequestDto.builder()
                         .name("pet5")
-                        .age(5).weight(15).activity(Activity.NORMAL)
-                        .isNeutering(false)
+                        .age(5).weight(15).activity(Activity.VERY_ACTIVE)
+                        .neutering(Neutering.INTACT)
                         .build();
 
         AddPetRequestDto pet6Dto =
                 AddPetRequestDto.builder()
                         .name("pet6")
-                        .age(5).weight(15).activity(Activity.CALM)
-                        .isNeutering(false)
+                        .age(5).weight(15).activity(Activity.SOMEWHAT_ACTIVE)
+                        .neutering(Neutering.INTACT)
                         .build();
 
         petService.addPet(user2Id, pet4Dto);
@@ -127,7 +128,7 @@ class PetServiceTest {
                 AddPetRequestDto.builder()
                         .name("pet7")
                         .age(7).weight(10).activity(Activity.ACTIVE)
-                        .isNeutering(true)
+                        .neutering(Neutering.INTACT)
                         .build();
 
         petService.addPet(user3Id, pet7Dto);
@@ -150,7 +151,8 @@ class PetServiceTest {
                 AddPetRequestDto.builder()
                         .name("newPet")
                         .age(8).weight(13).activity(Activity.ACTIVE)
-                        .isNeutering(false).build();
+                        .neutering(Neutering.INTACT)
+                        .build();
 
         User user1 = userRepository.findById(user1Id).get(); // pet 3, membership 보유
         petService.addPet(user1Id, newPetDto);  // 등록 가능

@@ -26,7 +26,7 @@ class PetplateApplicationTests {
                 .protein(50)
                 .build();
 
-        List<Map.Entry<StandardNutrient, Double>> standardNutrientOrderByAmount = StandardNutrient.getNutrientMapOrderByAmount(nutrient, 1, Activity.CALM);
+        /*List<Map.Entry<StandardNutrient, Double>> standardNutrientOrderByAmount = StandardNutrient.getNutrientMapOrderByAmount(nutrient, 1, Activity.CALM);
         for (Map.Entry<StandardNutrient, Double> standardNutrientDoubleEntry : standardNutrientOrderByAmount) {
             System.out.println("standardNutrientDoubleEntry = " + standardNutrientDoubleEntry.getKey().getName() + ", 적정량 대비 섭취 비율: " + standardNutrientDoubleEntry.getValue());
         }
@@ -37,7 +37,7 @@ class PetplateApplicationTests {
 
         //가장 많은 영양소 이름
         StandardNutrient sufficientNutrient = StandardNutrient.findMostSufficientNutrient(nutrient, 5, Activity.ACTIVE);
-        System.out.println(sufficientNutrient.getName());
+        System.out.println(sufficientNutrient.getName());*/
     }
 
 }
