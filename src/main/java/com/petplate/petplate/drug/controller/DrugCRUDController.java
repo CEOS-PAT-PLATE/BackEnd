@@ -39,13 +39,6 @@ public class DrugCRUDController {
     }
 
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDrug(@PathVariable("id")Long drugId){
-        drugCRUDService.deleteDrug(drugId);
-
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
     @GetMapping("/standard-nutrients")
     public ResponseEntity<BaseResponse<ShowNutrientListResponseDto>> showAllNutrients(){
 
