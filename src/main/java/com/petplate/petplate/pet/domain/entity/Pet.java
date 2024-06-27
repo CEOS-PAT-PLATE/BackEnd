@@ -78,7 +78,25 @@ public class Pet extends BaseEntity {
     }
 
     // 기초대사량 반환
-    public double getRestingEnergyRequirement() {
+    private double getRestingEnergyRequirement() {
         return 79*Math.pow(weight, 0.75);
+    }
+
+    public double getProperKcal() {
+        double rer = this.getRestingEnergyRequirement();
+        double activityValue = getActivity().getValue();
+        double neuterValue = getNeutering().getValue();
+
+        double properKcal = rer * activityValue * neuterValue;
+        return properKcal;
+    }
+
+    public static double getProperKcal(double weight, Activity activity, Neutering neutering) {
+        double rer = 79 * Math.pow(weight, 0.75);
+        double activityValue = activity.getValue();
+        double neuterValue = neutering.getValue();
+
+        double properKcal = rer * activityValue * neuterValue;
+        return properKcal;
     }
 }

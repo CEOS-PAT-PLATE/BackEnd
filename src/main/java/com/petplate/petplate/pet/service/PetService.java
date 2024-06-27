@@ -6,6 +6,7 @@ import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.pet.domain.Activity;
+import com.petplate.petplate.pet.domain.Neutering;
 import com.petplate.petplate.pet.dto.request.AddPetRequestDto;
 import com.petplate.petplate.pet.dto.request.ModifyPetInfoRequestDto;
 import com.petplate.petplate.pet.dto.request.ModifyPetProfileImgRequestDto;
@@ -42,6 +43,7 @@ public class PetService {
 
     /**
      * 반려견 등록
+     *
      * @param userId
      * @param requestDto
      * @return Pet 엔티티
@@ -160,10 +162,10 @@ public class PetService {
 
         double weight = pet.getWeight();
         Activity activity = pet.getActivity();
-
+        Neutering neutering = pet.getNeutering();
 
         // 탄수화물 정보
-        List<ReadPetNutrientResponseDto> responses = createNutrientResponsesDto(nutrient, weight, activity);
+        List<ReadPetNutrientResponseDto> responses = createNutrientResponsesDto(nutrient, weight, activity, neutering);
         return responses;
     }
 
@@ -186,14 +188,15 @@ public class PetService {
 
         double weight = pet.getWeight();
         Activity activity = pet.getActivity();
+        Neutering neutering = pet.getNeutering();
 
 
-        List<ReadPetNutrientResponseDto> responses = createNutrientResponsesDto(nutrient, weight, activity);
+        List<ReadPetNutrientResponseDto> responses = createNutrientResponsesDto(nutrient, weight, activity, neutering);
 
         return responses;
     }
 
-    private static List<ReadPetNutrientResponseDto> createNutrientResponsesDto(Nutrient nutrient, double weight, Activity activity) {
+    private static List<ReadPetNutrientResponseDto> createNutrientResponsesDto(Nutrient nutrient, double weight, Activity activity, Neutering neutering) {
         List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
 
         // 탄수화물 정보
@@ -201,8 +204,8 @@ public class PetService {
         String carbonUnit = StandardNutrient.CARBON_HYDRATE.getUnit();
         String carbonDescription = StandardNutrient.CARBON_HYDRATE.getDescription();
         double carbonAmount = nutrient.getCarbonHydrate();
-        double carbonMinimumIntake = StandardNutrient.calculateProperCarbonHydrateAmount(weight, activity);
-        double carbonMaximumIntake = StandardNutrient.calculateProperMaximumCarbonHydrateAmount(weight, activity);
+        double carbonMinimumIntake = StandardNutrient.calculateProperCarbonHydrateAmount(weight, activity, neutering);
+        double carbonMaximumIntake = StandardNutrient.calculateProperMaximumCarbonHydrateAmount(weight, activity, neutering);
         responses.add(ReadPetNutrientResponseDto.of(carbonName, carbonUnit, carbonDescription, carbonAmount, carbonMinimumIntake, carbonMaximumIntake));
 
         // 단백질 정보
@@ -300,7 +303,7 @@ public class PetService {
 
         // 비율 계산
         Map<StandardNutrient, Double> nutrientsMap =
-                StandardNutrient.getNutrientsMap(dailyMeal.getNutrient(), pet.getWeight(), pet.getActivity());
+                StandardNutrient.getNutrientsMap(dailyMeal.getNutrient(), pet.getWeight(), pet.getActivity(), pet.getNeutering());
 
         nutrientsMap.forEach((nutrient, ratio) -> {
             responses.add(ReadPetNutrientRatioResponseDto.of(nutrient.getName(), ratio));
@@ -328,7 +331,7 @@ public class PetService {
 
         // 비율 계산
         Map<StandardNutrient, Double> nutrientsMap =
-                StandardNutrient.getNutrientsMap(dailyMeal.getNutrient(), pet.getWeight(), pet.getActivity());
+                StandardNutrient.getNutrientsMap(dailyMeal.getNutrient(), pet.getWeight(), pet.getActivity(), pet.getNeutering());
 
         nutrientsMap.forEach((nutrient, ratio) -> {
             responses.add(ReadPetNutrientRatioResponseDto.of(nutrient.getName(), ratio));
@@ -339,6 +342,7 @@ public class PetService {
 
     /**
      * '특정일자'에 과잉 섭취한 영양소를 반환
+     *
      * @param userId
      * @param petId
      * @param date
@@ -348,21 +352,22 @@ public class PetService {
         Pet pet = findPet(userId, petId);
         double weight = pet.getWeight();
         Activity activity = pet.getActivity();
+        Neutering neutering = pet.getNeutering();
 
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, date)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
         List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
 
-        StandardNutrient.findSufficientNutrients(dailyMeal.getNutrient(), weight, activity)
+        StandardNutrient.findSufficientNutrients(dailyMeal.getNutrient(), weight, activity, neutering)
                 .forEach(nutrient -> {
                     double amount = dailyMeal.getNutrient().getNutrientAmountByName(nutrient.getName());
                     double minimumIntake = StandardNutrient.calculateProperNutrientAmount(nutrient, weight);
                     double maximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(nutrient, weight);
 
                     if (nutrient.equals(StandardNutrient.CARBON_HYDRATE)) {
-                        minimumIntake = StandardNutrient.calculateProperCarbonHydrateAmount(weight, activity);
-                        maximumIntake = StandardNutrient.calculateProperMaximumCarbonHydrateAmount(weight, activity);
+                        minimumIntake = StandardNutrient.calculateProperCarbonHydrateAmount(weight, activity, neutering);
+                        maximumIntake = StandardNutrient.calculateProperMaximumCarbonHydrateAmount(weight, activity, neutering);
                     }
 
                     responses.add(ReadPetNutrientResponseDto.of(nutrient.getName(), nutrient.getUnit(), nutrient.getDescription(), amount, minimumIntake, maximumIntake));
@@ -373,6 +378,7 @@ public class PetService {
 
     /**
      * '특정일자'에 부족 섭취한 영양소를 반환
+     *
      * @param userId
      * @param petId
      * @param date
@@ -382,21 +388,22 @@ public class PetService {
         Pet pet = findPet(userId, petId);
         double weight = pet.getWeight();
         Activity activity = pet.getActivity();
+        Neutering neutering = pet.getNeutering();
 
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, date)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
         List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
 
-        StandardNutrient.findDeficientNutrients(dailyMeal.getNutrient(), weight, activity)
+        StandardNutrient.findDeficientNutrients(dailyMeal.getNutrient(), weight, activity, neutering)
                 .forEach(nutrient -> {
                     double amount = dailyMeal.getNutrient().getNutrientAmountByName(nutrient.getName());
                     double minimumIntake = StandardNutrient.calculateProperNutrientAmount(nutrient, weight);
                     double maximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(nutrient, weight);
 
                     if (nutrient.equals(StandardNutrient.CARBON_HYDRATE)) {
-                        minimumIntake = StandardNutrient.calculateProperCarbonHydrateAmount(weight, activity);
-                        maximumIntake = StandardNutrient.calculateProperMaximumCarbonHydrateAmount(weight, activity);
+                        minimumIntake = StandardNutrient.calculateProperCarbonHydrateAmount(weight, activity, neutering);
+                        maximumIntake = StandardNutrient.calculateProperMaximumCarbonHydrateAmount(weight, activity, neutering);
                     }
 
                     responses.add(ReadPetNutrientResponseDto.of(nutrient.getName(), nutrient.getUnit(), nutrient.getDescription(), amount, minimumIntake, maximumIntake));
@@ -449,7 +456,7 @@ public class PetService {
     public ReadPetKcalResponseDto getPetProperKcal(Long userId, Long petId) {
         Pet pet = findPet(userId, petId);
 
-        double properKcal = calculateProperKcal(pet);
+        double properKcal = pet.getProperKcal();
 
         return ReadPetKcalResponseDto.of(properKcal);
     }
@@ -468,7 +475,7 @@ public class PetService {
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, today)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
-        double properKcal = calculateProperKcal(pet);
+        double properKcal = pet.getProperKcal();
 
         double properKcalRatio = dailyMeal.getKcal() / properKcal;
 
@@ -488,20 +495,11 @@ public class PetService {
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, date)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
-        double properKcal = calculateProperKcal(pet);
+        double properKcal = pet.getProperKcal();
 
         double properKcalRatio = dailyMeal.getKcal() / properKcal;
 
         return ReadPetKcalRatioResponseDto.of(properKcalRatio);
-    }
-
-    private static double calculateProperKcal(Pet pet) {
-        double rer = pet.getRestingEnergyRequirement();
-        double activityValue = pet.getActivity().getValue();
-        double neuterValue = pet.getNeutering().getValue();
-
-        double properKcal = rer * activityValue * neuterValue;
-        return properKcal;
     }
 
 
