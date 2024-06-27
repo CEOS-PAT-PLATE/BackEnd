@@ -27,7 +27,11 @@ public enum ErrorCode {
     /**
      * 404 Not Found
      */
-    NOT_FOUND("존재하지 않는 값입니다");
+    NOT_FOUND("존재하지 않는 값입니다"),
+
+    NUTRIENT_NOT_FOUND("존재하지 않는 영양소입니다"),
+
+    DRUG_NOT_FOUND("존재하지 않는 약입니다");
 
 
     /**
