@@ -1,10 +1,7 @@
 package com.petplate.petplate.pet.dto.request;
 
 import com.petplate.petplate.pet.domain.Activity;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import com.petplate.petplate.pet.domain.Neutering;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,5 +12,5 @@ public class ModifyPetInfoRequestDto {
     private Integer age;
     private Double weight;
     private Activity activity;
-    private Boolean isNeutering;
+    private Neutering neutering;
 }
