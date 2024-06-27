@@ -10,7 +10,5 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface DrugRepository extends JpaRepository<Drug,Long> {
-    @Query("select d from Drug d join d.efficientNutrient en where en =:nutrient")
-    List<Drug> findDrugByEfficientNutrient(@Param("nutrient")final StandardNutrient standardNutrient);
 
 }

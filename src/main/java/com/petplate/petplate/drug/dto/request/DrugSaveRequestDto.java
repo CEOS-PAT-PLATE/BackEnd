@@ -30,7 +30,7 @@ public class DrugSaveRequestDto {
     @NotBlank(message = "구입 경로를 입력해주세요")
     private String url;
 
-    private Set<String> efficientNutrients = new HashSet<>();
+    private List<String> efficientNutrients = new ArrayList<>();
 
 
 }

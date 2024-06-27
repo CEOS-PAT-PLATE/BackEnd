@@ -6,9 +6,11 @@ import com.petplate.petplate.common.EmbeddedType.StandardNutrient;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.drug.domain.entity.Drug;
+import com.petplate.petplate.drug.domain.entity.DrugNutrient;
 import com.petplate.petplate.drug.dto.request.DrugSaveRequestDto;
 import com.petplate.petplate.drug.dto.response.DrugResponseDto;
 import com.petplate.petplate.drug.dto.response.ShowNutrientListResponseDto;
+import com.petplate.petplate.drug.repository.DrugNutrientRepository;
 import com.petplate.petplate.drug.repository.DrugRepository;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DrugCRUDService {
 
     private final DrugRepository drugRepository;
+    private final DrugNutrientRepository drugNutrientRepository;
 
 
 
@@ -30,32 +33,41 @@ public class DrugCRUDService {
     @Transactional
     public void saveDrug(final DrugSaveRequestDto drugSaveRequestDto){
 
-
         Drug drug = Drug.builder()
                 .name(drugSaveRequestDto.getName())
                 .englishName(drugSaveRequestDto.getEnglishName())
                 .vendor(drugSaveRequestDto.getVendor())
                 .drugImgPath(drugSaveRequestDto.getDrugImgPath())
                 .url(drugSaveRequestDto.getUrl())
-                .efficientNutrient(drugSaveRequestDto.getEfficientNutrients().stream().map(this::toStandardNutrient).collect(
-                        Collectors.toSet()))
                 .build();
 
         drugRepository.save(drug);
+
+        drugSaveRequestDto.getEfficientNutrients().forEach(nutrient->{
+
+            DrugNutrient drugNutrient = DrugNutrient.builder()
+                            .standardNutrient(toStandardNutrient(nutrient))
+                                    .drug(drug)
+                                            .build();
+
+            drugNutrientRepository.save(drugNutrient);
+        });
+
     }
 
 
-    //drug 삭제
-    @Transactional
-    public void deleteDrug(final Long drugId){
-
-        drugRepository.deleteById(drugId);
-    }
 
     //단일 약 보여주기
     public DrugResponseDto showDrug(final Long drugId){
 
-        return DrugResponseDto.of(findDrugById(drugId));
+
+        List<String> nutrientsName = drugNutrientRepository.findByDrugIdWithFetchDrug(drugId).stream()
+                .map(drugNutrient ->drugNutrient.getStandardNutrient().getName()
+        ).collect(Collectors.toList());
+
+        Drug findDrug = findDrugById(drugId);
+
+        return DrugResponseDto.of(findDrug,nutrientsName);
     }
 
 
@@ -77,7 +89,7 @@ public class DrugCRUDService {
 
 
     //id 로 drug 가져오기
-    private Drug findDrugById(Long drugId){
+    private Drug findDrugById(final Long drugId){
         return drugRepository.findById(drugId).orElseThrow(()->new NotFoundException(
                 ErrorCode.DRUG_NOT_FOUND
         ));

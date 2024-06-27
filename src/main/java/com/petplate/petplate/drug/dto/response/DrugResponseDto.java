@@ -23,10 +23,9 @@ public class DrugResponseDto {
     private List<String> nutrientsName = new ArrayList<>();
 
 
-    public static DrugResponseDto of(final Drug drug){
+    public static DrugResponseDto of(final Drug drug,final List<String> nutrientsName){
         return new DrugResponseDto(drug.getName(),drug.getEnglishName(), drug.getVendor(),
-                drug.getDrugImgPath(), drug.getUrl(), drug.getEfficientNutrient().stream().map(
-                StandardNutrient::getName).collect(Collectors.toList()));
+                drug.getDrugImgPath(), drug.getUrl(),nutrientsName);
     }
 
 }
