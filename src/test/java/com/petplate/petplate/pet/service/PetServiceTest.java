@@ -263,7 +263,7 @@ class PetServiceTest {
     @DisplayName("펫 정보 수정하기")
     void updatePetInfo() {
         List<Pet> pets = petRepository.findByOwnerId(user1Id);
-        Long petId = pets.getFirst().getId();
+        Long petId = pets.get(0).getId();
 
         // 1) 펫의 모든 정보 업데이트 한 경우
         ModifyPetInfoRequestDto updateData = ModifyPetInfoRequestDto.builder()
