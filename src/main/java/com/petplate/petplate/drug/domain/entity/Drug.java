@@ -46,19 +46,12 @@ public class Drug {
     private String url;
 
 
-    @ElementCollection(targetClass = StandardNutrient.class)
-    @JoinTable(name = "StandardNutrient",joinColumns = @JoinColumn(name = "drug_id"))
-    @Column(name ="StandardNutrientName", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Set<StandardNutrient> efficientNutrient = new HashSet<>();
-
     @Builder
-    public Drug(String name, String englishName, String vendor,String drugImgPath, String url,Set<StandardNutrient> efficientNutrient) {
+    public Drug(String name, String englishName, String vendor,String drugImgPath, String url) {
         this.name = name;
         this.englishName = englishName;
         this.vendor = vendor;
         this.drugImgPath = drugImgPath;
         this.url = url;
-        this.efficientNutrient = efficientNutrient;
     }
 }
