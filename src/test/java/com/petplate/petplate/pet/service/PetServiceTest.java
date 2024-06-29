@@ -14,10 +14,7 @@ import com.petplate.petplate.pet.domain.Neutering;
 import com.petplate.petplate.pet.domain.ProfileImg;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.dto.request.*;
-import com.petplate.petplate.pet.dto.response.ReadPetDiseaseResponseDto;
-import com.petplate.petplate.pet.dto.response.ReadPetNutrientRatioResponseDto;
-import com.petplate.petplate.pet.dto.response.ReadPetNutrientResponseDto;
-import com.petplate.petplate.pet.dto.response.ReadPetResponseDto;
+import com.petplate.petplate.pet.dto.response.*;
 import com.petplate.petplate.pet.repository.PetAllergyRepository;
 import com.petplate.petplate.pet.repository.PetDiseaseRepository;
 import com.petplate.petplate.pet.repository.PetRepository;
@@ -39,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -129,7 +127,7 @@ class PetServiceTest {
                 .build();
 
         Pet pet = petRepository.findById(pet1Id).get();
-        DailyMeal dailyMeal = new DailyMeal(nutrient, pet);
+        DailyMeal dailyMeal = new DailyMeal(nutrient, pet,500);
         dailyMealRepository.save(dailyMeal);
 
         // User2(3 Pet, Membership)
@@ -347,7 +345,7 @@ class PetServiceTest {
 
     @Test
     @DisplayName("펫에 알러지 등록")
-    public void addPetAllergy() throws Exception{
+    public void addPetAllergy() throws Exception {
         //given
         Allergy allergy1 = allergyRepository.findByName("당근").get();
         Allergy allergy2 = allergyRepository.findByName("소고기").get();
@@ -368,7 +366,7 @@ class PetServiceTest {
 
     @Test
     @DisplayName("펫에 질병 등록 및 조회")
-    public void getPetDiseases() throws Exception{
+    public void getPetDiseases() throws Exception {
         //given
         Disease disease1 = diseaseRepository.findByName("눈물자국").get();
         Disease disease2 = diseaseRepository.findByName("피부질환").get();
@@ -379,9 +377,9 @@ class PetServiceTest {
         AddPetDiseaseRequestDto request3 = AddPetDiseaseRequestDto.builder().diseaseId(disease3.getId()).petId(pet1Id).build();
 
         //when
-        petService.addPetDisease(user1Id,request1);
-        petService.addPetDisease(user1Id,request2);
-        petService.addPetDisease(user1Id,request3);
+        petService.addPetDisease(user1Id, request1);
+        petService.addPetDisease(user1Id, request2);
+        petService.addPetDisease(user1Id, request3);
 
         //then
         List<ReadPetDiseaseResponseDto> allDiseases = petService.getAllDiseases(user1Id, pet1Id);
@@ -393,7 +391,7 @@ class PetServiceTest {
 
     @Test
     @DisplayName("오늘 먹은 영양소 조회")
-    public void getPetNutrientToday() throws Exception{
+    public void getPetNutrientToday() throws Exception {
         //given
 
         //when
@@ -402,13 +400,13 @@ class PetServiceTest {
 
         //then
         for (ReadPetNutrientResponseDto readPetNutrientResponseDto : petNutrientToday) {
-            System.out.println("readPetNutrientResponseDto = " + readPetNutrientResponseDto);
+            System.out.println(readPetNutrientResponseDto);
         }
     }
 
     @Test
     @DisplayName("오늘 먹은 영양소 비율 계산")
-    public void getPetNutrientRatioToday() throws Exception{
+    public void getPetNutrientRatioToday() throws Exception {
         //given
 
         //when
@@ -423,13 +421,74 @@ class PetServiceTest {
 
     @Test
     @DisplayName("특정일자에 과잉 섭취한 영양소 반환")
-    public void getSufficientNutrient() throws Exception{
+    public void getSufficientNutrient() throws Exception {
         //given
 
         //when
+        List<ReadPetNutrientResponseDto> sufficientNutrient
+                = petService.getSufficientNutrient(user1Id, pet1Id, LocalDate.now());
 
         //then
+        for (ReadPetNutrientResponseDto readPetNutrientResponseDto : sufficientNutrient) {
+            System.out.println("- 영양소명 = " + readPetNutrientResponseDto.getName());
+            System.out.println("-- 최대섭취량 = " + readPetNutrientResponseDto.getMaximumAmount() + readPetNutrientResponseDto.getUnit());
+            System.out.println("-- 일 실제 섭취량 = " + readPetNutrientResponseDto.getAmount() + readPetNutrientResponseDto.getUnit());
+            System.out.println("-- 최대 섭취 허용량 대비 실제 섭취량 비율 = " + readPetNutrientResponseDto.getAmountRatioPerMaximumAmount() + "\n");
+        }
 
+        Assertions.assertEquals(4, sufficientNutrient.size());
     }
 
+    @Test
+    @DisplayName("특정일자에 부족 섭취한 영양소 반환")
+    public void getDeficientNutrient() throws Exception{
+        //given
+
+        //when
+        List<ReadPetNutrientResponseDto> deficientNutrient =
+                petService.getDeficientNutrient(user1Id, pet1Id, LocalDate.now());
+
+        //then
+        for (ReadPetNutrientResponseDto readPetNutrientResponseDto : deficientNutrient) {
+            System.out.println(readPetNutrientResponseDto);
+        }
+
+        Assertions.assertEquals(3, deficientNutrient.size());
+    }
+
+    @Test
+    @DisplayName("오늘 먹은 칼로리")
+    public void getPetKcalToday() throws Exception{
+        //given
+
+        //when
+        ReadPetKcalResponseDto petKcalToday = petService.getPetKcalToday(user1Id, pet1Id);
+        //then
+        Assertions.assertEquals(500, petKcalToday.getKcal());
+    }
+
+    @Test
+    @DisplayName("반려견의 적정 섭취 칼로리")
+    public void getPetProperKcal() throws Exception{
+        //given
+
+        //when
+        ReadPetKcalResponseDto petProperKcal = petService.getPetProperKcal(user1Id,pet1Id);
+
+        //then
+        System.out.println("ProperKcal = " + petProperKcal.getKcal());
+    }
+
+    @Test
+    @DisplayName("적정 섭취 칼로리 대비 섭취 칼로리 비율 계산")
+    public void getPetKcalRatio() throws Exception{
+        //given
+
+        //when
+        ReadPetKcalRatioResponseDto petKcalRatioToday
+                = petService.getPetKcalRatioToday(user1Id, pet1Id);
+
+        //then
+        System.out.println("ratio = " + petKcalRatioToday.getRatio());
+    }
 }
