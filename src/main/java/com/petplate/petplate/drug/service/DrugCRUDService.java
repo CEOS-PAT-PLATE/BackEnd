@@ -41,7 +41,7 @@ public class DrugCRUDService {
                 .url(drugSaveRequestDto.getUrl())
                 .build();
 
-        drugRepository.save(drug);
+        Drug savedDrug = drugRepository.save(drug);
 
         drugSaveRequestDto.getEfficientNutrients().forEach(nutrient->{
 
@@ -53,7 +53,7 @@ public class DrugCRUDService {
             drugNutrientRepository.save(drugNutrient);
         });
 
-        return drug.getId();
+        return savedDrug.getId();
 
     }
 
