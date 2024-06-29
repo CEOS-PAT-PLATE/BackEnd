@@ -14,21 +14,17 @@ import lombok.NoArgsConstructor;
 public class Vitamin {
 
     @Column(nullable = false)
-    private double vitaminA;  // 단위 mcg RAE
+    private double vitaminA;
 
     @Column(nullable = false)
-    private double vitaminB;  // 단위 mg
+    private double vitaminD;
 
     @Column(nullable = false)
-    private double vitaminD;  // 단위 mcg
-
-    @Column(nullable = false)
-    private double vitaminE;  // 단위 mcg RAE
+    private double vitaminE;
 
     @Builder
-    public Vitamin(double vitaminA, double vitaminB, double vitaminD, double vitaminE) {
+    public Vitamin(double vitaminA, double vitaminD, double vitaminE) {
         this.vitaminA = vitaminA;
-        this.vitaminB = vitaminB;
         this.vitaminD = vitaminD;
         this.vitaminE = vitaminE;
     }

@@ -20,7 +20,7 @@ class PetplateApplicationTests {
         Nutrient nutrient = Nutrient.builder()
                 .carbonHydrate(110)
                 .fat(1.51)
-                .vitamin(Vitamin.builder().vitaminD(3.6).vitaminA(3.5).vitaminB(3.2).vitaminE(2.1).build())
+                .vitamin(Vitamin.builder().vitaminD(3.6).vitaminA(3.5).vitaminE(2.1).build())
                 .phosphorus(1.4)
                 .calcium(9.8)
                 .protein(50)

@@ -211,7 +211,6 @@ public class PetService {
         Activity activity = pet.getActivity();
         Neutering neutering = pet.getNeutering();
 
-        // 탄수화물 정보
         List<ReadPetNutrientResponseDto> responses = createNutrientResponsesDto(nutrient, weight, activity, neutering);
         return responses;
     }
@@ -299,15 +298,6 @@ public class PetService {
         double vitaminAMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.VITAMIN_A, weight);
         double vitaminAMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.VITAMIN_A, weight);
         responses.add(ReadPetNutrientResponseDto.of(vitaminAName, vitaminAUnit, vitaminADescription, vitaminAAmount, vitaminAMinimumIntake, vitaminAMaximumIntake));
-
-        // 비타민B 정보
-        String vitaminBName = StandardNutrient.VITAMIN_B.getName();
-        String vitaminBUnit = StandardNutrient.VITAMIN_B.getUnit();
-        String vitaminBDescription = StandardNutrient.VITAMIN_B.getDescription();
-        double vitaminBAmount = nutrient.getVitamin().getVitaminB();
-        double vitaminBMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.VITAMIN_B, weight);
-        double vitaminBMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.VITAMIN_B, weight);
-        responses.add(ReadPetNutrientResponseDto.of(vitaminBName, vitaminBUnit, vitaminBDescription, vitaminBAmount, vitaminBMinimumIntake, vitaminBMaximumIntake));
 
         // 비타민D 정보
         String vitaminDName = StandardNutrient.VITAMIN_D.getName();
