@@ -45,8 +45,8 @@ public class DailyMeal {
 
     // 이미 펫이 해당 날짜에 DailyMeal이 존재하는 경우 생성되면 안됨.(서비스에서 해결)
     @Builder
-    public DailyMeal(Nutrient dailyNutrient, Pet pet) {
-        this.kcal = 0;
+    public DailyMeal(Nutrient dailyNutrient, Pet pet, double kcal) {
+        this.kcal = kcal;
         this.dailyNutrient = dailyNutrient;
         this.pet = pet;
         createdAt = LocalDate.now();
