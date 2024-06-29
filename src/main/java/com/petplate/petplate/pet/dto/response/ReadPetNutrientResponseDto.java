@@ -1,8 +1,10 @@
 package com.petplate.petplate.pet.dto.response;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class ReadPetNutrientResponseDto {
     private String name;  // 이름
     private String unit;  // 영양소 단위

@@ -1,5 +1,7 @@
 package com.petplate.petplate.pet.service;
 
+import com.petplate.petplate.common.EmbeddedType.Nutrient;
+import com.petplate.petplate.common.EmbeddedType.Vitamin;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.medicalcondition.domain.entity.Allergy;
@@ -13,10 +15,14 @@ import com.petplate.petplate.pet.domain.ProfileImg;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.dto.request.*;
 import com.petplate.petplate.pet.dto.response.ReadPetDiseaseResponseDto;
+import com.petplate.petplate.pet.dto.response.ReadPetNutrientRatioResponseDto;
+import com.petplate.petplate.pet.dto.response.ReadPetNutrientResponseDto;
 import com.petplate.petplate.pet.dto.response.ReadPetResponseDto;
 import com.petplate.petplate.pet.repository.PetAllergyRepository;
 import com.petplate.petplate.pet.repository.PetDiseaseRepository;
 import com.petplate.petplate.pet.repository.PetRepository;
+import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
+import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import com.petplate.petplate.user.domain.Role;
 import com.petplate.petplate.user.domain.SocialType;
 import com.petplate.petplate.user.domain.entity.MemberShip;
@@ -25,7 +31,6 @@ import com.petplate.petplate.user.domain.entity.UserMemberShip;
 import com.petplate.petplate.user.repository.MemberShipRepository;
 import com.petplate.petplate.user.repository.UserMemberShipRepository;
 import com.petplate.petplate.user.repository.UserRepository;
-import io.jsonwebtoken.lang.Assert;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,6 +60,8 @@ class PetServiceTest {
     private AllergyRepository allergyRepository;
     @Autowired
     private DiseaseRepository diseaseRepository;
+    @Autowired
+    private DailyMealRepository dailyMealRepository;
 
     private Long user1Id = null;
     private Long user2Id = null;
@@ -111,6 +118,19 @@ class PetServiceTest {
         pet1Id = petService.addPet(user1Id, pet1Dto).getId();
         petService.addPet(user1Id, pet2Dto);
         petService.addPet(user1Id, pet3Dto);
+
+        Nutrient nutrient = Nutrient.builder()
+                .carbonHydrate(110)
+                .fat(1.51)
+                .vitamin(Vitamin.builder().vitaminA(560).vitaminD(40).vitaminE(2.1).build())
+                .phosphorus(1.4)
+                .calcium(9.8)
+                .protein(50)
+                .build();
+
+        Pet pet = petRepository.findById(pet1Id).get();
+        DailyMeal dailyMeal = new DailyMeal(nutrient, pet);
+        dailyMealRepository.save(dailyMeal);
 
         // User2(3 Pet, Membership)
         User user2 =
@@ -348,7 +368,7 @@ class PetServiceTest {
 
     @Test
     @DisplayName("펫에 질병 등록 및 조회")
-    public void getPetAllergies() throws Exception{
+    public void getPetDiseases() throws Exception{
         //given
         Disease disease1 = diseaseRepository.findByName("눈물자국").get();
         Disease disease2 = diseaseRepository.findByName("피부질환").get();
@@ -369,6 +389,47 @@ class PetServiceTest {
             System.out.println("allDisease = " + allDisease);
         }
         Assertions.assertEquals(3, allDiseases.size());
+    }
+
+    @Test
+    @DisplayName("오늘 먹은 영양소 조회")
+    public void getPetNutrientToday() throws Exception{
+        //given
+
+        //when
+        List<ReadPetNutrientResponseDto> petNutrientToday =
+                petService.getPetNutrientToday(user1Id, pet1Id);
+
+        //then
+        for (ReadPetNutrientResponseDto readPetNutrientResponseDto : petNutrientToday) {
+            System.out.println("readPetNutrientResponseDto = " + readPetNutrientResponseDto);
+        }
+    }
+
+    @Test
+    @DisplayName("오늘 먹은 영양소 비율 계산")
+    public void getPetNutrientRatioToday() throws Exception{
+        //given
+
+        //when
+        List<ReadPetNutrientRatioResponseDto> petNutrientRatioToday =
+                petService.getPetNutrientRatioToday(user1Id, pet1Id);
+
+        //then
+        for (ReadPetNutrientRatioResponseDto readPetNutrientRatioResponseDto : petNutrientRatioToday) {
+            System.out.println("readPetNutrientRatioResponseDto = " + readPetNutrientRatioResponseDto);
+        }
+    }
+
+    @Test
+    @DisplayName("특정일자에 과잉 섭취한 영양소 반환")
+    public void getSufficientNutrient() throws Exception{
+        //given
+
+        //when
+
+        //then
+
     }
 
 }

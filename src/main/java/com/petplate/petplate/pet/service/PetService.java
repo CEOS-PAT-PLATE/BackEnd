@@ -205,7 +205,7 @@ public class PetService {
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, today)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
-        Nutrient nutrient = dailyMeal.getNutrient();
+        Nutrient nutrient = dailyMeal.getDailyNutrient();
 
         double weight = pet.getWeight();
         Activity activity = pet.getActivity();
@@ -230,7 +230,7 @@ public class PetService {
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, date)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
-        Nutrient nutrient = dailyMeal.getNutrient();
+        Nutrient nutrient = dailyMeal.getDailyNutrient();
 
         double weight = pet.getWeight();
         Activity activity = pet.getActivity();
@@ -340,7 +340,7 @@ public class PetService {
 
         // 비율 계산
         Map<StandardNutrient, Double> nutrientsMap =
-                StandardNutrient.getNutrientsMap(dailyMeal.getNutrient(), pet.getWeight(), pet.getActivity(), pet.getNeutering());
+                StandardNutrient.getNutrientsMap(dailyMeal.getDailyNutrient(), pet.getWeight(), pet.getActivity(), pet.getNeutering());
 
         nutrientsMap.forEach((nutrient, ratio) -> {
             responses.add(ReadPetNutrientRatioResponseDto.of(nutrient.getName(), ratio));
@@ -368,7 +368,7 @@ public class PetService {
 
         // 비율 계산
         Map<StandardNutrient, Double> nutrientsMap =
-                StandardNutrient.getNutrientsMap(dailyMeal.getNutrient(), pet.getWeight(), pet.getActivity(), pet.getNeutering());
+                StandardNutrient.getNutrientsMap(dailyMeal.getDailyNutrient(), pet.getWeight(), pet.getActivity(), pet.getNeutering());
 
         nutrientsMap.forEach((nutrient, ratio) -> {
             responses.add(ReadPetNutrientRatioResponseDto.of(nutrient.getName(), ratio));
@@ -396,9 +396,9 @@ public class PetService {
 
         List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
 
-        StandardNutrient.findSufficientNutrients(dailyMeal.getNutrient(), weight, activity, neutering)
+        StandardNutrient.findSufficientNutrients(dailyMeal.getDailyNutrient(), weight, activity, neutering)
                 .forEach(nutrient -> {
-                    double amount = dailyMeal.getNutrient().getNutrientAmountByName(nutrient.getName());
+                    double amount = dailyMeal.getDailyNutrient().getNutrientAmountByName(nutrient.getName());
                     double minimumIntake = StandardNutrient.calculateProperNutrientAmount(nutrient, weight);
                     double maximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(nutrient, weight);
 
@@ -432,9 +432,9 @@ public class PetService {
 
         List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
 
-        StandardNutrient.findDeficientNutrients(dailyMeal.getNutrient(), weight, activity, neutering)
+        StandardNutrient.findDeficientNutrients(dailyMeal.getDailyNutrient(), weight, activity, neutering)
                 .forEach(nutrient -> {
-                    double amount = dailyMeal.getNutrient().getNutrientAmountByName(nutrient.getName());
+                    double amount = dailyMeal.getDailyNutrient().getNutrientAmountByName(nutrient.getName());
                     double minimumIntake = StandardNutrient.calculateProperNutrientAmount(nutrient, weight);
                     double maximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(nutrient, weight);
 
