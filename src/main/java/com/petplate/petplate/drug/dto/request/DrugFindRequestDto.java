@@ -1,5 +1,6 @@
 package com.petplate.petplate.drug.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class DrugFindRequestDto {
 
     @Size(min=1,message = "최소 1개 이상 입력")
+    @Schema(description = "영양제를 여러 개 입력해주세요")
     List<String> nutrients = new ArrayList<>();
 
 }
