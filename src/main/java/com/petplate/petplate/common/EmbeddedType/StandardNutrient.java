@@ -30,9 +30,6 @@ public enum StandardNutrient {
     VITAMIN_A("비타민A", 167.0, 5, "iu", "비타민A에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))), // 레티놀
-    VITAMIN_B("비타민B", 0.041, 10, "mg", "비타민B에 대한 설명",
-            Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
-            Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),  // b6 + b12
     VITAMIN_D("비타민D", 15.20, 10, "iu", "비타민D에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
@@ -80,9 +77,6 @@ public enum StandardNutrient {
         if (VITAMIN_A.getMaxIntakeRange() < nutrient.getVitamin().getVitaminA() / calculateProperNutrientAmount(VITAMIN_A, weight)) {
             sufficientNutrients.add(VITAMIN_A);
         }
-        if (VITAMIN_B.getMaxIntakeRange() < nutrient.getVitamin().getVitaminB() / calculateProperNutrientAmount(VITAMIN_B, weight)) {
-            sufficientNutrients.add(VITAMIN_B);
-        }
         if (VITAMIN_D.getMaxIntakeRange() < nutrient.getVitamin().getVitaminD() / calculateProperNutrientAmount(VITAMIN_D, weight)) {
             sufficientNutrients.add(VITAMIN_D);
         }
@@ -114,9 +108,6 @@ public enum StandardNutrient {
         }
         if (1 > nutrient.getVitamin().getVitaminA() / calculateProperNutrientAmount(VITAMIN_A, weight)) {
             deficientNutrients.add(VITAMIN_A);
-        }
-        if (1 > nutrient.getVitamin().getVitaminB() / calculateProperNutrientAmount(VITAMIN_B, weight)) {
-            deficientNutrients.add(VITAMIN_B);
         }
         if (1 > nutrient.getVitamin().getVitaminD() / calculateProperNutrientAmount(VITAMIN_D, weight)) {
             deficientNutrients.add(VITAMIN_D);
@@ -173,7 +164,6 @@ public enum StandardNutrient {
         standardNutrientMap.put(CALCIUM, nutrient.getCalcium() / calculateProperNutrientAmount(CALCIUM, weight));
         standardNutrientMap.put(PHOSPHORUS, nutrient.getPhosphorus() / calculateProperNutrientAmount(PHOSPHORUS, weight));
         standardNutrientMap.put(VITAMIN_A, nutrient.getVitamin().getVitaminA() / calculateProperNutrientAmount(VITAMIN_A, weight));
-        standardNutrientMap.put(VITAMIN_B, nutrient.getVitamin().getVitaminB() / calculateProperNutrientAmount(VITAMIN_B, weight));
         standardNutrientMap.put(VITAMIN_D, nutrient.getVitamin().getVitaminD() / calculateProperNutrientAmount(VITAMIN_D, weight));
         standardNutrientMap.put(VITAMIN_E, nutrient.getVitamin().getVitaminE() / calculateProperNutrientAmount(VITAMIN_E, weight));
 

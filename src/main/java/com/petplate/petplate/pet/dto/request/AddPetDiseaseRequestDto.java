@@ -1,6 +1,6 @@
 package com.petplate.petplate.pet.dto.request;
 
-import com.petplate.petplate.pet.domain.ProfileImg;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ModifyPetProfileImgRequestDto {
+public class AddPetDiseaseRequestDto {
     @NotNull(message = "반려견이 선택되지 않았습니다")
     private Long petId;
-    @NotNull(message = "이미지 정보가 입력되지 않았습니다.")
-    private ProfileImg profileImg;
+
+    @NotBlank(message = "값이 입력되지 않았습니다.")
+    private Long diseaseId;
 }

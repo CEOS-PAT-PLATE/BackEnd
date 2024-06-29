@@ -40,7 +40,6 @@ public class DailyMealService {
                                         .calcium(0)
                                         .vitamin(Vitamin.builder()
                                                 .vitaminA(0)
-                                                .vitaminB(0)
                                                 .vitaminD(0)
                                                 .vitaminE(0)
                                                 .build())

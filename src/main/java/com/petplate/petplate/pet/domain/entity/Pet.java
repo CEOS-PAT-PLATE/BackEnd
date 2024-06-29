@@ -6,14 +6,12 @@ import com.petplate.petplate.pet.domain.Neutering;
 import com.petplate.petplate.pet.domain.ProfileImg;
 import com.petplate.petplate.user.domain.entity.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@ToString(exclude = {"owner"})
 public class Pet extends BaseEntity {
 
     @Id

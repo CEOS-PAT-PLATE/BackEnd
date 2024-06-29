@@ -20,7 +20,7 @@ public class Allergy {
     @Column(name = "allergy_id")
     private Long id;
 
-    @Column(length = 50,nullable = false)
+    @Column(length = 50,nullable = false, unique = true)
     private String name;
 
     @Column(length = 500,nullable = false)

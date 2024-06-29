@@ -5,11 +5,15 @@ import com.petplate.petplate.common.EmbeddedType.StandardNutrient;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
+import com.petplate.petplate.medicalcondition.domain.entity.Allergy;
+import com.petplate.petplate.medicalcondition.domain.entity.Disease;
+import com.petplate.petplate.medicalcondition.repository.AllergyRepository;
+import com.petplate.petplate.medicalcondition.repository.DiseaseRepository;
 import com.petplate.petplate.pet.domain.Activity;
 import com.petplate.petplate.pet.domain.Neutering;
-import com.petplate.petplate.pet.dto.request.AddPetRequestDto;
-import com.petplate.petplate.pet.dto.request.ModifyPetInfoRequestDto;
-import com.petplate.petplate.pet.dto.request.ModifyPetProfileImgRequestDto;
+import com.petplate.petplate.pet.domain.entity.PetAllergy;
+import com.petplate.petplate.pet.domain.entity.PetDisease;
+import com.petplate.petplate.pet.dto.request.*;
 import com.petplate.petplate.pet.dto.response.*;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.repository.PetAllergyRepository;
@@ -37,7 +41,9 @@ public class PetService {
     private final UserRepository userRepository;
     private final PetRepository petRepository;
     private final UserMemberShipRepository userMemberShipRepository;
+    private final AllergyRepository allergyRepository;
     private final PetAllergyRepository petAllergyRepository;
+    private final DiseaseRepository diseaseRepository;
     private final PetDiseaseRepository petDiseaseRepository;
     private final DailyMealRepository dailyMealRepository;
 
@@ -61,7 +67,7 @@ public class PetService {
         Pet pet = Pet.builder()
                 .name(requestDto.getName())
                 .age(requestDto.getAge())
-                .weight(requestDto.getAge())
+                .weight(requestDto.getWeight())
                 .activity(requestDto.getActivity())
                 .neutering(requestDto.getNeutering())
                 .owner(owner)
@@ -95,16 +101,57 @@ public class PetService {
     }
 
     @Transactional
-    public void updatePetInfo(Long userId, Long petId, ModifyPetInfoRequestDto requestDto) {
-        Pet pet = findPet(userId, petId);
+    public void updatePetInfo(Long userId, @Valid ModifyPetInfoRequestDto requestDto) {
+        Pet pet = findPet(userId, requestDto.getPetId());
 
         pet.updateInfo(requestDto.getName(), requestDto.getAge(), requestDto.getWeight(), requestDto.getActivity(), requestDto.getNeutering());
     }
 
     @Transactional
-    public void updateProfileImg(Long userId, Long petId, @Valid ModifyPetProfileImgRequestDto requestDto) {
-        Pet pet = findPet(userId, petId);
+    public void updateProfileImg(Long userId,  @Valid ModifyPetProfileImgRequestDto requestDto) {
+        Pet pet = findPet(userId, requestDto.getPetId());
         pet.updateProfileImg(requestDto.getProfileImg());
+    }
+
+    @Transactional
+    public void addPetAllergy(Long userId, @Valid AddPetAllergyRequestDto request) {
+        Pet pet = findPet(userId, request.getPetId());
+        Allergy allergy = allergyRepository.findById(request.getAllergyId())
+                .orElseThrow(() -> new BadRequestException(ErrorCode.BAD_REQUEST));
+
+        PetAllergy petAllergy = PetAllergy.builder()
+                .pet(pet).allergy(allergy)
+                .build();
+
+        // 이미 동일한 알러지가 등록된 경우
+        petAllergyRepository.findByPetId(pet.getId()).forEach(pa-> {
+            if(pa.getAllergy().getId().equals(request.getAllergyId())) {
+                throw new BadRequestException(ErrorCode.BAD_REQUEST);
+            }
+        });
+
+        petAllergyRepository.save(petAllergy);
+    }
+
+    @Transactional
+    public void addPetDisease(Long userId, @Valid AddPetDiseaseRequestDto request) {
+        Pet pet = findPet(userId, request.getPetId());
+        Disease disease = diseaseRepository.findById(request.getDiseaseId())
+                .orElseThrow(() -> new BadRequestException(ErrorCode.BAD_REQUEST));
+
+        PetDisease petDisease = PetDisease.builder()
+                .pet(pet)
+                .disease(disease)
+                .build();
+
+        // 이미 동일한 질병이 등록된 경우
+        petDiseaseRepository.findByPetId(pet.getId()).forEach(pd-> {
+            if(pd.getDisease().getId().equals(request.getDiseaseId())) {
+                throw new BadRequestException(ErrorCode.BAD_REQUEST);
+            }
+        });
+
+        petDiseaseRepository.save(petDisease);
     }
 
     /**
@@ -164,7 +211,6 @@ public class PetService {
         Activity activity = pet.getActivity();
         Neutering neutering = pet.getNeutering();
 
-        // 탄수화물 정보
         List<ReadPetNutrientResponseDto> responses = createNutrientResponsesDto(nutrient, weight, activity, neutering);
         return responses;
     }
@@ -252,15 +298,6 @@ public class PetService {
         double vitaminAMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.VITAMIN_A, weight);
         double vitaminAMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.VITAMIN_A, weight);
         responses.add(ReadPetNutrientResponseDto.of(vitaminAName, vitaminAUnit, vitaminADescription, vitaminAAmount, vitaminAMinimumIntake, vitaminAMaximumIntake));
-
-        // 비타민B 정보
-        String vitaminBName = StandardNutrient.VITAMIN_B.getName();
-        String vitaminBUnit = StandardNutrient.VITAMIN_B.getUnit();
-        String vitaminBDescription = StandardNutrient.VITAMIN_B.getDescription();
-        double vitaminBAmount = nutrient.getVitamin().getVitaminB();
-        double vitaminBMinimumIntake = StandardNutrient.calculateProperNutrientAmount(StandardNutrient.VITAMIN_B, weight);
-        double vitaminBMaximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(StandardNutrient.VITAMIN_B, weight);
-        responses.add(ReadPetNutrientResponseDto.of(vitaminBName, vitaminBUnit, vitaminBDescription, vitaminBAmount, vitaminBMinimumIntake, vitaminBMaximumIntake));
 
         // 비타민D 정보
         String vitaminDName = StandardNutrient.VITAMIN_D.getName();

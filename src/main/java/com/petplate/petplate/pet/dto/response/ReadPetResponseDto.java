@@ -24,7 +24,7 @@ public class ReadPetResponseDto {
         response.weight = pet.getWeight();
         response.activity = pet.getActivity();
         response.neutering = pet.getNeutering();
-        response.profileImgPath = pet.getProfileImg().name();
+        response.profileImgPath = pet.getProfileImg() != null ? pet.getProfileImg().getImgPath() : null;
 
         return response;
     }

@@ -56,8 +56,6 @@ public class Nutrient {
             case "인" -> phosphorus;
             case "vitaminA" -> vitamin.getVitaminA();
             case "비타민A" -> vitamin.getVitaminA();
-            case "vitaminB" -> vitamin.getVitaminB();
-            case "비타민B" -> vitamin.getVitaminB();
             case "vitaminD" -> vitamin.getVitaminD();
             case "비타민D" -> vitamin.getVitaminD();
             case "vitaminE" -> vitamin.getVitaminE();
