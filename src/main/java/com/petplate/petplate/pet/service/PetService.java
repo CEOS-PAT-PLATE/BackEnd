@@ -383,7 +383,7 @@ public class PetService {
      * @param userId
      * @param petId
      * @param date
-     * @return 영양소의 이름, 단위, 설명, 섭취량, 최소 적정 섭취량, 최대 적정 섭취량, 최소 섭취량 대비 섭취량 비율, 최소 섭취량 대비 최대 섭취량 비율
+     * @return 영양소의 이름, 단위, 설명, 섭취량, 적정 섭취량, 최대 섭취 허용량, 적정 섭취량 대비 최대 섭취 허용량 비율, 최소 섭취량 대비 섭취량 비율, 최대 섭취량 대비 섭취량 비율
      */
     public List<ReadPetNutrientResponseDto> getSufficientNutrient(Long userId, Long petId, LocalDate date) {
         Pet pet = findPet(userId, petId);
@@ -399,15 +399,15 @@ public class PetService {
         StandardNutrient.findSufficientNutrients(dailyMeal.getDailyNutrient(), weight, activity, neutering)
                 .forEach(nutrient -> {
                     double amount = dailyMeal.getDailyNutrient().getNutrientAmountByName(nutrient.getName());
-                    double minimumIntake = StandardNutrient.calculateProperNutrientAmount(nutrient, weight);
-                    double maximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(nutrient, weight);
+                    double minimumAmount = StandardNutrient.calculateProperNutrientAmount(nutrient, weight);
+                    double maximumAmount = StandardNutrient.calculateProperMaximumNutrientAmount(nutrient, weight);
 
                     if (nutrient.equals(StandardNutrient.CARBON_HYDRATE)) {
-                        minimumIntake = StandardNutrient.calculateProperCarbonHydrateAmount(weight, activity, neutering);
-                        maximumIntake = StandardNutrient.calculateProperMaximumCarbonHydrateAmount(weight, activity, neutering);
+                        minimumAmount = StandardNutrient.calculateProperCarbonHydrateAmount(weight, activity, neutering);
+                        maximumAmount = StandardNutrient.calculateProperMaximumCarbonHydrateAmount(weight, activity, neutering);
                     }
 
-                    responses.add(ReadPetNutrientResponseDto.of(nutrient.getName(), nutrient.getUnit(), nutrient.getDescription(), amount, minimumIntake, maximumIntake));
+                    responses.add(ReadPetNutrientResponseDto.of(nutrient.getName(), nutrient.getUnit(), nutrient.getDescription(), amount, minimumAmount, maximumAmount));
                 });
 
         return responses;
@@ -419,7 +419,7 @@ public class PetService {
      * @param userId
      * @param petId
      * @param date
-     * @return 영양소의 이름, 단위, 설명, 섭취량, 최소 적정 섭취량, 최대 적정 섭취량, 최소 섭취량 대비 섭취량 비율, 최소 섭취량 대비 최대 섭취량 비율
+     * @return 영양소의 이름, 단위, 설명, 섭취량, 적정 섭취량, 최대 섭취 허용량, 적정 섭취량 대비 최대 섭취 허용량 비율, 최소 섭취량 대비 섭취량 비율, 최대 섭취량 대비 섭취량 비율
      */
     public List<ReadPetNutrientResponseDto> getDeficientNutrient(Long userId, Long petId, LocalDate date) {
         Pet pet = findPet(userId, petId);
@@ -435,15 +435,15 @@ public class PetService {
         StandardNutrient.findDeficientNutrients(dailyMeal.getDailyNutrient(), weight, activity, neutering)
                 .forEach(nutrient -> {
                     double amount = dailyMeal.getDailyNutrient().getNutrientAmountByName(nutrient.getName());
-                    double minimumIntake = StandardNutrient.calculateProperNutrientAmount(nutrient, weight);
-                    double maximumIntake = StandardNutrient.calculateProperMaximumNutrientAmount(nutrient, weight);
+                    double minimumAmount = StandardNutrient.calculateProperNutrientAmount(nutrient, weight);
+                    double maximumAmount = StandardNutrient.calculateProperMaximumNutrientAmount(nutrient, weight);
 
                     if (nutrient.equals(StandardNutrient.CARBON_HYDRATE)) {
-                        minimumIntake = StandardNutrient.calculateProperCarbonHydrateAmount(weight, activity, neutering);
-                        maximumIntake = StandardNutrient.calculateProperMaximumCarbonHydrateAmount(weight, activity, neutering);
+                        minimumAmount = StandardNutrient.calculateProperCarbonHydrateAmount(weight, activity, neutering);
+                        maximumAmount = StandardNutrient.calculateProperMaximumCarbonHydrateAmount(weight, activity, neutering);
                     }
 
-                    responses.add(ReadPetNutrientResponseDto.of(nutrient.getName(), nutrient.getUnit(), nutrient.getDescription(), amount, minimumIntake, maximumIntake));
+                    responses.add(ReadPetNutrientResponseDto.of(nutrient.getName(), nutrient.getUnit(), nutrient.getDescription(), amount, minimumAmount, maximumAmount));
                 });
 
         return responses;
