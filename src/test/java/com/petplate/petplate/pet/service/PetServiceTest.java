@@ -8,6 +8,7 @@ import com.petplate.petplate.medicalcondition.repository.AllergyRepository;
 import com.petplate.petplate.medicalcondition.repository.DiseaseRepository;
 import com.petplate.petplate.pet.domain.Activity;
 import com.petplate.petplate.pet.domain.Neutering;
+
 import com.petplate.petplate.pet.domain.ProfileImg;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.dto.request.*;
@@ -89,14 +90,14 @@ class PetServiceTest {
                 AddPetRequestDto.builder()
                         .name("pet1")
                         .age(3).weight(5).activity(Activity.ACTIVE)
-                        .neutering(Neutering.INTACT)
-                        .build();
+                        .neutering(Neutering.INTACT).build();
 
         AddPetRequestDto pet2Dto =
                 AddPetRequestDto.builder()
                         .name("pet2")
                         .age(3).weight(5).activity(Activity.SOMEWHAT_ACTIVE)
                         .neutering(Neutering.INTACT)
+
                         .build();
 
         AddPetRequestDto pet3Dto =
@@ -104,6 +105,7 @@ class PetServiceTest {
                         .name("pet3")
                         .age(3).weight(5).activity(Activity.INACTIVE)
                         .neutering(Neutering.INTACT)
+
                         .build();
 
         pet1Id = petService.addPet(user1Id, pet1Dto).getId();
@@ -208,6 +210,7 @@ class PetServiceTest {
                         .age(8).weight(13).activity(Activity.ACTIVE)
                         .neutering(Neutering.INTACT).build();
 
+
         // when
         User user1 = userRepository.findById(user1Id).get(); // pet 3, membership 보유
         User user3 = userRepository.findById(user3Id).get(); // pet 1, membership 없음
@@ -251,6 +254,7 @@ class PetServiceTest {
             Assertions.assertEquals(pet.getAge(), 3);
             Assertions.assertEquals(pet.getWeight(), 5);
             Assertions.assertEquals(pet.getNeutering(), Neutering.INTACT);
+
         });
 
         //then
@@ -265,10 +269,12 @@ class PetServiceTest {
         List<Pet> pets = petRepository.findByOwnerId(user1Id);
         Long petId = pets.get(0).getId();
 
+
         // 1) 펫의 모든 정보 업데이트 한 경우
         ModifyPetInfoRequestDto updateData = ModifyPetInfoRequestDto.builder()
                 .petId(petId)
                 .name("new name").weight(100D).activity(Activity.VERY_ACTIVE).age(100).neutering(Neutering.NEUTERED)
+
                 .build();
         petService.updatePetInfo(user1Id, updateData);
 
@@ -279,6 +285,7 @@ class PetServiceTest {
         Assertions.assertEquals(updatedPet.getActivity(), Activity.VERY_ACTIVE);
         Assertions.assertEquals(updatedPet.getAge(), 100);
         Assertions.assertEquals(updatedPet.getNeutering(), Neutering.NEUTERED);
+
 
         // 2) 일부분(이름, 나이)만 수정한 경우 (수정한 부분만 업데이트되고 건들지 않은 부분은 기존 정보가 유진된다)
         // 이름: new name -> new name2
