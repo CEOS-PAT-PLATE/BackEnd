@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -40,4 +41,14 @@ public class DrugSaveRequestDto {
     private List<String> efficientNutrients = new ArrayList<>();
 
 
+    @Builder
+    public DrugSaveRequestDto(String name, String englishName, String vendor, String drugImgPath,
+            String url, List<String> efficientNutrients) {
+        this.name = name;
+        this.englishName = englishName;
+        this.vendor = vendor;
+        this.drugImgPath = drugImgPath;
+        this.url = url;
+        this.efficientNutrients = efficientNutrients;
+    }
 }

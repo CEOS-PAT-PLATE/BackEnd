@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,4 +17,8 @@ public class DrugFindRequestDto {
     @Schema(description = "영양제를 여러 개 입력해주세요")
     List<String> nutrients = new ArrayList<>();
 
+    @Builder
+    public DrugFindRequestDto(List<String> nutrients) {
+        this.nutrients = nutrients;
+    }
 }
