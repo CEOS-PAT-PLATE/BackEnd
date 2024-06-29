@@ -44,7 +44,8 @@ public class DailyMealService {
                                                 .vitaminE(0)
                                                 .build())
                                         .build(),
-                                pet)
+                                pet,
+                                0)
                 ));
     }
 

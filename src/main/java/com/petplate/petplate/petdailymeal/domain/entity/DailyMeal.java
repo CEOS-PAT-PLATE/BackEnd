@@ -1,7 +1,6 @@
 package com.petplate.petplate.petdailymeal.domain.entity;
 
 import com.petplate.petplate.common.EmbeddedType.Nutrient;
-import com.petplate.petplate.common.Inheritance.BaseEntity;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -38,7 +37,7 @@ public class DailyMeal {
     private LocalDate createdAt;
 
     @Embedded
-    private Nutrient nutrient;
+    private Nutrient dailyNutrient;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_id", nullable = false)
@@ -46,9 +45,9 @@ public class DailyMeal {
 
     // 이미 펫이 해당 날짜에 DailyMeal이 존재하는 경우 생성되면 안됨.(서비스에서 해결)
     @Builder
-    public DailyMeal(Nutrient nutrient, Pet pet) {
-        this.kcal = 0;
-        this.nutrient = nutrient;
+    public DailyMeal(Nutrient dailyNutrient, Pet pet, double kcal) {
+        this.kcal = kcal;
+        this.dailyNutrient = dailyNutrient;
         this.pet = pet;
         createdAt = LocalDate.now();
     }

@@ -1,5 +1,7 @@
 package com.petplate.petplate.pet.service;
 
+import com.petplate.petplate.common.EmbeddedType.Nutrient;
+import com.petplate.petplate.common.EmbeddedType.Vitamin;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.medicalcondition.domain.entity.Allergy;
@@ -8,14 +10,16 @@ import com.petplate.petplate.medicalcondition.repository.AllergyRepository;
 import com.petplate.petplate.medicalcondition.repository.DiseaseRepository;
 import com.petplate.petplate.pet.domain.Activity;
 import com.petplate.petplate.pet.domain.Neutering;
+
 import com.petplate.petplate.pet.domain.ProfileImg;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.dto.request.*;
-import com.petplate.petplate.pet.dto.response.ReadPetDiseaseResponseDto;
-import com.petplate.petplate.pet.dto.response.ReadPetResponseDto;
+import com.petplate.petplate.pet.dto.response.*;
 import com.petplate.petplate.pet.repository.PetAllergyRepository;
 import com.petplate.petplate.pet.repository.PetDiseaseRepository;
 import com.petplate.petplate.pet.repository.PetRepository;
+import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
+import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import com.petplate.petplate.user.domain.Role;
 import com.petplate.petplate.user.domain.SocialType;
 import com.petplate.petplate.user.domain.entity.MemberShip;
@@ -24,7 +28,6 @@ import com.petplate.petplate.user.domain.entity.UserMemberShip;
 import com.petplate.petplate.user.repository.MemberShipRepository;
 import com.petplate.petplate.user.repository.UserMemberShipRepository;
 import com.petplate.petplate.user.repository.UserRepository;
-import io.jsonwebtoken.lang.Assert;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -54,6 +58,8 @@ class PetServiceTest {
     private AllergyRepository allergyRepository;
     @Autowired
     private DiseaseRepository diseaseRepository;
+    @Autowired
+    private DailyMealRepository dailyMealRepository;
 
     private Long user1Id = null;
     private Long user2Id = null;
@@ -89,14 +95,14 @@ class PetServiceTest {
                 AddPetRequestDto.builder()
                         .name("pet1")
                         .age(3).weight(5).activity(Activity.ACTIVE)
-                        .neutering(Neutering.INTACT)
-                        .build();
+                        .neutering(Neutering.INTACT).build();
 
         AddPetRequestDto pet2Dto =
                 AddPetRequestDto.builder()
                         .name("pet2")
                         .age(3).weight(5).activity(Activity.SOMEWHAT_ACTIVE)
                         .neutering(Neutering.INTACT)
+
                         .build();
 
         AddPetRequestDto pet3Dto =
@@ -104,11 +110,25 @@ class PetServiceTest {
                         .name("pet3")
                         .age(3).weight(5).activity(Activity.INACTIVE)
                         .neutering(Neutering.INTACT)
+
                         .build();
 
         pet1Id = petService.addPet(user1Id, pet1Dto).getId();
         petService.addPet(user1Id, pet2Dto);
         petService.addPet(user1Id, pet3Dto);
+
+        Nutrient nutrient = Nutrient.builder()
+                .carbonHydrate(110)
+                .fat(1.51)
+                .vitamin(Vitamin.builder().vitaminA(560).vitaminD(40).vitaminE(2.1).build())
+                .phosphorus(1.4)
+                .calcium(9.8)
+                .protein(50)
+                .build();
+
+        Pet pet = petRepository.findById(pet1Id).get();
+        DailyMeal dailyMeal = new DailyMeal(nutrient, pet,500);
+        dailyMealRepository.save(dailyMeal);
 
         // User2(3 Pet, Membership)
         User user2 =
@@ -208,6 +228,7 @@ class PetServiceTest {
                         .age(8).weight(13).activity(Activity.ACTIVE)
                         .neutering(Neutering.INTACT).build();
 
+
         // when
         User user1 = userRepository.findById(user1Id).get(); // pet 3, membership 보유
         User user3 = userRepository.findById(user3Id).get(); // pet 1, membership 없음
@@ -251,6 +272,7 @@ class PetServiceTest {
             Assertions.assertEquals(pet.getAge(), 3);
             Assertions.assertEquals(pet.getWeight(), 5);
             Assertions.assertEquals(pet.getNeutering(), Neutering.INTACT);
+
         });
 
         //then
@@ -265,10 +287,12 @@ class PetServiceTest {
         List<Pet> pets = petRepository.findByOwnerId(user1Id);
         Long petId = pets.get(0).getId();
 
+
         // 1) 펫의 모든 정보 업데이트 한 경우
         ModifyPetInfoRequestDto updateData = ModifyPetInfoRequestDto.builder()
                 .petId(petId)
                 .name("new name").weight(100D).activity(Activity.VERY_ACTIVE).age(100).neutering(Neutering.NEUTERED)
+
                 .build();
         petService.updatePetInfo(user1Id, updateData);
 
@@ -279,6 +303,7 @@ class PetServiceTest {
         Assertions.assertEquals(updatedPet.getActivity(), Activity.VERY_ACTIVE);
         Assertions.assertEquals(updatedPet.getAge(), 100);
         Assertions.assertEquals(updatedPet.getNeutering(), Neutering.NEUTERED);
+
 
         // 2) 일부분(이름, 나이)만 수정한 경우 (수정한 부분만 업데이트되고 건들지 않은 부분은 기존 정보가 유진된다)
         // 이름: new name -> new name2
@@ -320,7 +345,7 @@ class PetServiceTest {
 
     @Test
     @DisplayName("펫에 알러지 등록")
-    public void addPetAllergy() throws Exception{
+    public void addPetAllergy() throws Exception {
         //given
         Allergy allergy1 = allergyRepository.findByName("당근").get();
         Allergy allergy2 = allergyRepository.findByName("소고기").get();
@@ -341,7 +366,7 @@ class PetServiceTest {
 
     @Test
     @DisplayName("펫에 질병 등록 및 조회")
-    public void getPetAllergies() throws Exception{
+    public void getPetDiseases() throws Exception {
         //given
         Disease disease1 = diseaseRepository.findByName("눈물자국").get();
         Disease disease2 = diseaseRepository.findByName("피부질환").get();
@@ -352,9 +377,9 @@ class PetServiceTest {
         AddPetDiseaseRequestDto request3 = AddPetDiseaseRequestDto.builder().diseaseId(disease3.getId()).petId(pet1Id).build();
 
         //when
-        petService.addPetDisease(user1Id,request1);
-        petService.addPetDisease(user1Id,request2);
-        petService.addPetDisease(user1Id,request3);
+        petService.addPetDisease(user1Id, request1);
+        petService.addPetDisease(user1Id, request2);
+        petService.addPetDisease(user1Id, request3);
 
         //then
         List<ReadPetDiseaseResponseDto> allDiseases = petService.getAllDiseases(user1Id, pet1Id);
@@ -364,4 +389,106 @@ class PetServiceTest {
         Assertions.assertEquals(3, allDiseases.size());
     }
 
+    @Test
+    @DisplayName("오늘 먹은 영양소 조회")
+    public void getPetNutrientToday() throws Exception {
+        //given
+
+        //when
+        List<ReadPetNutrientResponseDto> petNutrientToday =
+                petService.getPetNutrientToday(user1Id, pet1Id);
+
+        //then
+        for (ReadPetNutrientResponseDto readPetNutrientResponseDto : petNutrientToday) {
+            System.out.println(readPetNutrientResponseDto);
+        }
+    }
+
+    @Test
+    @DisplayName("오늘 먹은 영양소 비율 계산")
+    public void getPetNutrientRatioToday() throws Exception {
+        //given
+
+        //when
+        List<ReadPetNutrientRatioResponseDto> petNutrientRatioToday =
+                petService.getPetNutrientRatioToday(user1Id, pet1Id);
+
+        //then
+        for (ReadPetNutrientRatioResponseDto readPetNutrientRatioResponseDto : petNutrientRatioToday) {
+            System.out.println("readPetNutrientRatioResponseDto = " + readPetNutrientRatioResponseDto);
+        }
+    }
+
+    @Test
+    @DisplayName("특정일자에 과잉 섭취한 영양소 반환")
+    public void getSufficientNutrient() throws Exception {
+        //given
+
+        //when
+        List<ReadPetNutrientResponseDto> sufficientNutrient
+                = petService.getSufficientNutrient(user1Id, pet1Id, LocalDate.now());
+
+        //then
+        for (ReadPetNutrientResponseDto readPetNutrientResponseDto : sufficientNutrient) {
+            System.out.println("- 영양소명 = " + readPetNutrientResponseDto.getName());
+            System.out.println("-- 최대섭취량 = " + readPetNutrientResponseDto.getMaximumAmount() + readPetNutrientResponseDto.getUnit());
+            System.out.println("-- 일 실제 섭취량 = " + readPetNutrientResponseDto.getAmount() + readPetNutrientResponseDto.getUnit());
+            System.out.println("-- 최대 섭취 허용량 대비 실제 섭취량 비율 = " + readPetNutrientResponseDto.getAmountRatioPerMaximumAmount() + "\n");
+        }
+
+        Assertions.assertEquals(4, sufficientNutrient.size());
+    }
+
+    @Test
+    @DisplayName("특정일자에 부족 섭취한 영양소 반환")
+    public void getDeficientNutrient() throws Exception{
+        //given
+
+        //when
+        List<ReadPetNutrientResponseDto> deficientNutrient =
+                petService.getDeficientNutrient(user1Id, pet1Id, LocalDate.now());
+
+        //then
+        for (ReadPetNutrientResponseDto readPetNutrientResponseDto : deficientNutrient) {
+            System.out.println(readPetNutrientResponseDto);
+        }
+
+        Assertions.assertEquals(3, deficientNutrient.size());
+    }
+
+    @Test
+    @DisplayName("오늘 먹은 칼로리")
+    public void getPetKcalToday() throws Exception{
+        //given
+
+        //when
+        ReadPetKcalResponseDto petKcalToday = petService.getPetKcalToday(user1Id, pet1Id);
+        //then
+        Assertions.assertEquals(500, petKcalToday.getKcal());
+    }
+
+    @Test
+    @DisplayName("반려견의 적정 섭취 칼로리")
+    public void getPetProperKcal() throws Exception{
+        //given
+
+        //when
+        ReadPetKcalResponseDto petProperKcal = petService.getPetProperKcal(user1Id,pet1Id);
+
+        //then
+        System.out.println("ProperKcal = " + petProperKcal.getKcal());
+    }
+
+    @Test
+    @DisplayName("적정 섭취 칼로리 대비 섭취 칼로리 비율 계산")
+    public void getPetKcalRatio() throws Exception{
+        //given
+
+        //when
+        ReadPetKcalRatioResponseDto petKcalRatioToday
+                = petService.getPetKcalRatioToday(user1Id, pet1Id);
+
+        //then
+        System.out.println("ratio = " + petKcalRatioToday.getRatio());
+    }
 }
