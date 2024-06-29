@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
+import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +45,9 @@ public class Drug {
 
     @Column(length = 255)
     private String url;
+
+    @OneToMany(mappedBy = "drug")
+    List<DrugNutrient> drugNutrientList = new ArrayList<>();
 
 
     @Builder
