@@ -83,7 +83,7 @@ public class DrugCRUDService {
     // Enum 타입의 영양소 이름 출력
     public ShowNutrientListResponseDto showAllNutrientName(){
 
-        return ShowNutrientListResponseDto.of(stream(StandardNutrient.values()).map(StandardNutrient::getName).collect(
+        return ShowNutrientListResponseDto.from(stream(StandardNutrient.values()).map(StandardNutrient::getName).collect(
                 Collectors.toList()));
     }
 
