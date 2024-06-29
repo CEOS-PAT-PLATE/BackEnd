@@ -31,10 +31,10 @@ public class Drug {
     @Column(name = "drug_id")
     private Long id;
 
-    @Column(nullable = false)
+
     private String name;
 
-
+    @Column(nullable = false)
     private String englishName;
 
     //현재는 String 이지만 나중에 확장 가능성있음.
