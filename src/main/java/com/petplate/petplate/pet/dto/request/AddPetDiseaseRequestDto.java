@@ -12,8 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddPetDiseaseRequestDto {
-    @NotNull(message = "반려견이 선택되지 않았습니다")
-    private Long petId;
+
 
     @NotBlank(message = "값이 입력되지 않았습니다.")
     private Long diseaseId;

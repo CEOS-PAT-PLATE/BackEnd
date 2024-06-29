@@ -101,21 +101,21 @@ public class PetService {
     }
 
     @Transactional
-    public void updatePetInfo(Long userId, @Valid ModifyPetInfoRequestDto requestDto) {
-        Pet pet = findPet(userId, requestDto.getPetId());
+    public void updatePetInfo(Long userId, Long petId, @Valid ModifyPetInfoRequestDto requestDto) {
+        Pet pet = findPet(userId, petId);
 
         pet.updateInfo(requestDto.getName(), requestDto.getAge(), requestDto.getWeight(), requestDto.getActivity(), requestDto.getNeutering());
     }
 
     @Transactional
-    public void updateProfileImg(Long userId,  @Valid ModifyPetProfileImgRequestDto requestDto) {
-        Pet pet = findPet(userId, requestDto.getPetId());
+    public void updateProfileImg(Long userId,  Long petId, @Valid ModifyPetProfileImgRequestDto requestDto) {
+        Pet pet = findPet(userId, petId);
         pet.updateProfileImg(requestDto.getProfileImg());
     }
 
     @Transactional
-    public void addPetAllergy(Long userId, @Valid AddPetAllergyRequestDto request) {
-        Pet pet = findPet(userId, request.getPetId());
+    public void addPetAllergy(Long userId, Long petId, @Valid AddPetAllergyRequestDto request) {
+        Pet pet = findPet(userId, petId);
         Allergy allergy = allergyRepository.findById(request.getAllergyId())
                 .orElseThrow(() -> new BadRequestException(ErrorCode.BAD_REQUEST));
 
@@ -134,8 +134,8 @@ public class PetService {
     }
 
     @Transactional
-    public void addPetDisease(Long userId, @Valid AddPetDiseaseRequestDto request) {
-        Pet pet = findPet(userId, request.getPetId());
+    public void addPetDisease(Long userId, Long petId, @Valid AddPetDiseaseRequestDto request) {
+        Pet pet = findPet(userId, petId);
         Disease disease = diseaseRepository.findById(request.getDiseaseId())
                 .orElseThrow(() -> new BadRequestException(ErrorCode.BAD_REQUEST));
 

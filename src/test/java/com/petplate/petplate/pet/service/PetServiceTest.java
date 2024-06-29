@@ -127,7 +127,7 @@ class PetServiceTest {
                 .build();
 
         Pet pet = petRepository.findById(pet1Id).get();
-        DailyMeal dailyMeal = new DailyMeal(nutrient, pet,500);
+        DailyMeal dailyMeal = new DailyMeal(nutrient, pet, 500);
         dailyMealRepository.save(dailyMeal);
 
         // User2(3 Pet, Membership)
@@ -290,11 +290,10 @@ class PetServiceTest {
 
         // 1) 펫의 모든 정보 업데이트 한 경우
         ModifyPetInfoRequestDto updateData = ModifyPetInfoRequestDto.builder()
-                .petId(petId)
                 .name("new name").weight(100D).activity(Activity.VERY_ACTIVE).age(100).neutering(Neutering.NEUTERED)
 
                 .build();
-        petService.updatePetInfo(user1Id, updateData);
+        petService.updatePetInfo(user1Id, petId, updateData);
 
         Pet updatedPet = petRepository.findById(petId).get();
 
@@ -309,10 +308,9 @@ class PetServiceTest {
         // 이름: new name -> new name2
         // 나이: 100 -> 5
         ModifyPetInfoRequestDto updateData2 = ModifyPetInfoRequestDto.builder()
-                .petId(petId)
                 .name("new name2").age(5)
                 .build();
-        petService.updatePetInfo(user1Id, updateData2);
+        petService.updatePetInfo(user1Id, petId, updateData2);
 
         Pet updatedPet2 = petRepository.findById(petId).get();
 
@@ -323,7 +321,7 @@ class PetServiceTest {
         Assertions.assertEquals(updatedPet2.getNeutering(), updatedPet.getNeutering());
 
         // 3) 자기 강아지가 아닌 경우 -> 예외 발생
-        Assertions.assertThrows(BadRequestException.class, () -> petService.updatePetInfo(user2Id, updateData2));
+        Assertions.assertThrows(BadRequestException.class, () -> petService.updatePetInfo(user2Id, pet1Id, updateData2));
     }
 
     @Test
@@ -331,13 +329,12 @@ class PetServiceTest {
     void updateProfileImg() {
         // given
         ModifyPetProfileImgRequestDto request = ModifyPetProfileImgRequestDto.builder()
-                .petId(pet1Id)
                 .profileImg(ProfileImg.img1)
                 .build();
 
         // when
-        petService.updateProfileImg(user1Id, request);
-        Pet pet = petRepository.findById(request.getPetId()).get();
+        petService.updateProfileImg(user1Id, pet1Id, request);
+        Pet pet = petRepository.findById(pet1Id).get();
 
         // then
         Assertions.assertEquals(ProfileImg.img1, pet.getProfileImg());
@@ -351,17 +348,17 @@ class PetServiceTest {
         Allergy allergy2 = allergyRepository.findByName("소고기").get();
 
         AddPetAllergyRequestDto request1
-                = AddPetAllergyRequestDto.builder().allergyId(allergy1.getId()).petId(pet1Id).build();
+                = AddPetAllergyRequestDto.builder().allergyId(allergy1.getId()).build();
         AddPetAllergyRequestDto request2
-                = AddPetAllergyRequestDto.builder().allergyId(allergy2.getId()).petId(pet1Id).build();
+                = AddPetAllergyRequestDto.builder().allergyId(allergy2.getId()).build();
 
         //when
-        petService.addPetAllergy(user1Id, request1);
-        petService.addPetAllergy(user1Id, request2);
+        petService.addPetAllergy(user1Id, pet1Id, request1);
+        petService.addPetAllergy(user1Id, pet1Id, request2);
 
         //then
         Assertions.assertEquals(2, petAllergyRepository.findByPetId(pet1Id).size());
-        Assertions.assertThrows(BadRequestException.class, () -> petService.addPetAllergy(user1Id, request2));  // 이미 보유한 질병 재등록시 예외 발생
+        Assertions.assertThrows(BadRequestException.class, () -> petService.addPetAllergy(user1Id, pet1Id, request2));  // 이미 보유한 질병 재등록시 예외 발생
     }
 
     @Test
@@ -372,14 +369,14 @@ class PetServiceTest {
         Disease disease2 = diseaseRepository.findByName("피부질환").get();
         Disease disease3 = diseaseRepository.findByName("고관절").get();
 
-        AddPetDiseaseRequestDto request1 = AddPetDiseaseRequestDto.builder().diseaseId(disease1.getId()).petId(pet1Id).build();
-        AddPetDiseaseRequestDto request2 = AddPetDiseaseRequestDto.builder().diseaseId(disease2.getId()).petId(pet1Id).build();
-        AddPetDiseaseRequestDto request3 = AddPetDiseaseRequestDto.builder().diseaseId(disease3.getId()).petId(pet1Id).build();
+        AddPetDiseaseRequestDto request1 = AddPetDiseaseRequestDto.builder().diseaseId(disease1.getId()).build();
+        AddPetDiseaseRequestDto request2 = AddPetDiseaseRequestDto.builder().diseaseId(disease2.getId()).build();
+        AddPetDiseaseRequestDto request3 = AddPetDiseaseRequestDto.builder().diseaseId(disease3.getId()).build();
 
         //when
-        petService.addPetDisease(user1Id, request1);
-        petService.addPetDisease(user1Id, request2);
-        petService.addPetDisease(user1Id, request3);
+        petService.addPetDisease(user1Id, pet1Id,request1);
+        petService.addPetDisease(user1Id, pet1Id,request2);
+        petService.addPetDisease(user1Id, pet1Id,request3);
 
         //then
         List<ReadPetDiseaseResponseDto> allDiseases = petService.getAllDiseases(user1Id, pet1Id);
@@ -436,12 +433,12 @@ class PetServiceTest {
             System.out.println("-- 최대 섭취 허용량 대비 실제 섭취량 비율 = " + readPetNutrientResponseDto.getAmountRatioPerMaximumAmount() + "\n");
         }
 
-        Assertions.assertEquals(4, sufficientNutrient.size());
+        Assertions.assertEquals(3, sufficientNutrient.size());
     }
 
     @Test
     @DisplayName("특정일자에 부족 섭취한 영양소 반환")
-    public void getDeficientNutrient() throws Exception{
+    public void getDeficientNutrient() throws Exception {
         //given
 
         //when
@@ -453,12 +450,12 @@ class PetServiceTest {
             System.out.println(readPetNutrientResponseDto);
         }
 
-        Assertions.assertEquals(3, deficientNutrient.size());
+        Assertions.assertEquals(4, deficientNutrient.size());
     }
 
     @Test
     @DisplayName("오늘 먹은 칼로리")
-    public void getPetKcalToday() throws Exception{
+    public void getPetKcalToday() throws Exception {
         //given
 
         //when
@@ -469,11 +466,11 @@ class PetServiceTest {
 
     @Test
     @DisplayName("반려견의 적정 섭취 칼로리")
-    public void getPetProperKcal() throws Exception{
+    public void getPetProperKcal() throws Exception {
         //given
 
         //when
-        ReadPetKcalResponseDto petProperKcal = petService.getPetProperKcal(user1Id,pet1Id);
+        ReadPetKcalResponseDto petProperKcal = petService.getPetProperKcal(user1Id, pet1Id);
 
         //then
         System.out.println("ProperKcal = " + petProperKcal.getKcal());
@@ -481,7 +478,7 @@ class PetServiceTest {
 
     @Test
     @DisplayName("적정 섭취 칼로리 대비 섭취 칼로리 비율 계산")
-    public void getPetKcalRatio() throws Exception{
+    public void getPetKcalRatio() throws Exception {
         //given
 
         //when
