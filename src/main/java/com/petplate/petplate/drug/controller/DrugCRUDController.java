@@ -38,10 +38,10 @@ public class DrugCRUDController {
             @ApiResponse(responseCode = "201",description = "영양제 성공적 저장"),
             @ApiResponse(responseCode = "404",description = "영양소 이름이 제대로 입력되지 않았습니다.")
     })
-    public ResponseEntity<Long> saveDrug(@RequestBody @Valid final DrugSaveRequestDto drugSaveRequestDto){
+    public ResponseEntity<BaseResponse<Long>> saveDrug(@RequestBody @Valid final DrugSaveRequestDto drugSaveRequestDto){
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(drugCRUDService.saveDrug(drugSaveRequestDto));
+                .body(BaseResponse.createSuccess(drugCRUDService.saveDrug(drugSaveRequestDto)));
 
     }
 
