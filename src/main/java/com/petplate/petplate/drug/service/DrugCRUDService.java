@@ -31,7 +31,7 @@ public class DrugCRUDService {
 
     //drug 생성
     @Transactional
-    public void saveDrug(final DrugSaveRequestDto drugSaveRequestDto){
+    public Long saveDrug(final DrugSaveRequestDto drugSaveRequestDto){
 
         Drug drug = Drug.builder()
                 .name(drugSaveRequestDto.getName())
@@ -52,6 +52,8 @@ public class DrugCRUDService {
 
             drugNutrientRepository.save(drugNutrient);
         });
+
+        return drug.getId();
 
     }
 
