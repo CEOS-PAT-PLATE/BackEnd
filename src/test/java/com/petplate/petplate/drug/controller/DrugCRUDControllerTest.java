@@ -188,6 +188,40 @@ class DrugCRUDControllerTest {
     }
 
 
+    @Test
+    @DisplayName("전체 영양제 조회")
+    public void 전체_영양제_조회() throws Exception {
+
+        //given
+        Drug drug = Drug.builder()
+                .drugImgPath("www.img")
+                .name("제조약")
+                .englishName("englishName")
+                .vendor("naver")
+                .url("www.naver.com")
+                .build();
+
+        List<String> nutrientsName = List.of("탄수화물","단백질");
+        given(drugCRUDService.showAllDrug()).willReturn(List.of(DrugResponseDto.of(drug,nutrientsName)));
+
+
+        //when
+        final ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(DRUG)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.data[0].name").value("제조약"))
+                .andExpect(jsonPath("$.data[0].nutrientsName[0]").value("탄수화물"));
+
+
+    }
+
+
 
 
 
