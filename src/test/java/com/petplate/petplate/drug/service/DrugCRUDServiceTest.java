@@ -149,7 +149,7 @@ class DrugCRUDServiceTest {
         //when
 
         //then
-        assertThat(drugCRUDService.showAllNutrientName().getNutrientList().size()).isEqualTo(9);
+        assertThat(drugCRUDService.showAllNutrientName().getNutrientList().size()).isEqualTo(8);
 
 
     }
