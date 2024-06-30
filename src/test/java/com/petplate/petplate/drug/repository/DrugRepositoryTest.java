@@ -156,4 +156,14 @@ class DrugRepositoryTest {
     }
 
 
+    @Test
+    @DisplayName("전체 영양제 리스트 확인")
+    public void 전체_영양제_리스트_확인(){
+
+        List<Drug> drugList = drugRepository.findAll();
+
+        assertThat(drugList.size()).isEqualTo(3);
+    }
+
+
 }
