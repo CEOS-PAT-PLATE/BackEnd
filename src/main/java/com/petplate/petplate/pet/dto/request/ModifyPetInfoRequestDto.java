@@ -15,9 +15,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ModifyPetInfoRequestDto {
-    @NotNull(message = "반려견이 선택되지 않았습니다")
-    private Long petId;
-
     private String name;
     private Integer age;
     private Double weight;

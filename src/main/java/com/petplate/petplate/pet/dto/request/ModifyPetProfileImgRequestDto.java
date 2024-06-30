@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ModifyPetProfileImgRequestDto {
-    @NotNull(message = "반려견이 선택되지 않았습니다")
-    private Long petId;
     @NotNull(message = "이미지 정보가 입력되지 않았습니다.")
     private ProfileImg profileImg;
 }

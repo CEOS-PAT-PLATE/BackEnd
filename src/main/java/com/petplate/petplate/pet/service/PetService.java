@@ -50,17 +50,17 @@ public class PetService {
     /**
      * 반려견 등록
      *
-     * @param userId
+     * @param username
      * @param requestDto
      * @return Pet 엔티티
      */
     @Transactional
-    public Pet addPet(Long userId, @Valid AddPetRequestDto requestDto) {
+    public Pet addPet(String username, @Valid AddPetRequestDto requestDto) {
         // 해당 pk를 가지는 유저가 존재하지 않는 경우
-        User owner = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
+        User owner = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
         // 멤버십이 존재하지 않으면서 두마리 이상의 반려견을 추가하려는 경우 => 예외 발생
-        if (!userMemberShipRepository.existsByUserId(userId) && petRepository.existsByOwnerId(userId)) {
+        if (!userMemberShipRepository.existsByUserUsername(username) && petRepository.existsByOwnerUsername(username)) {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
         }
 
@@ -81,19 +81,19 @@ public class PetService {
     /**
      * 유저의 모든 펫 반환
      *
-     * @param userId
+     * @param username
      * @return id, name, age, weight, activity, isNeutering, profileImgPath
      */
-    public List<ReadPetResponseDto> getAllPets(Long userId) {
+    public List<ReadPetResponseDto> getAllPets(String username) {
         List<ReadPetResponseDto> responses = new ArrayList<>();
 
-        petRepository.findByOwnerId(userId)
+        petRepository.findByOwnerUsername(username)
                 .forEach(pet -> responses.add(ReadPetResponseDto.from(pet)));
         return responses;
     }
 
-    public ReadPetResponseDto getPet(Long userId, Long petId) {
-        Pet pet = findPet(userId, petId);
+    public ReadPetResponseDto getPet(String username, Long petId) {
+        Pet pet = findPet(username, petId);
 
         ReadPetResponseDto response = ReadPetResponseDto.from(pet);
 
@@ -101,21 +101,21 @@ public class PetService {
     }
 
     @Transactional
-    public void updatePetInfo(Long userId, @Valid ModifyPetInfoRequestDto requestDto) {
-        Pet pet = findPet(userId, requestDto.getPetId());
+    public void updatePetInfo(String username, Long petId, @Valid ModifyPetInfoRequestDto requestDto) {
+        Pet pet = findPet(username, petId);
 
         pet.updateInfo(requestDto.getName(), requestDto.getAge(), requestDto.getWeight(), requestDto.getActivity(), requestDto.getNeutering());
     }
 
     @Transactional
-    public void updateProfileImg(Long userId,  @Valid ModifyPetProfileImgRequestDto requestDto) {
-        Pet pet = findPet(userId, requestDto.getPetId());
+    public void updateProfileImg(String username, Long petId, @Valid ModifyPetProfileImgRequestDto requestDto) {
+        Pet pet = findPet(username, petId);
         pet.updateProfileImg(requestDto.getProfileImg());
     }
 
     @Transactional
-    public void addPetAllergy(Long userId, @Valid AddPetAllergyRequestDto request) {
-        Pet pet = findPet(userId, request.getPetId());
+    public void addPetAllergy(String username, Long petId, @Valid AddPetAllergyRequestDto request) {
+        Pet pet = findPet(username, petId);
         Allergy allergy = allergyRepository.findById(request.getAllergyId())
                 .orElseThrow(() -> new BadRequestException(ErrorCode.BAD_REQUEST));
 
@@ -124,8 +124,8 @@ public class PetService {
                 .build();
 
         // 이미 동일한 알러지가 등록된 경우
-        petAllergyRepository.findByPetId(pet.getId()).forEach(pa-> {
-            if(pa.getAllergy().getId().equals(request.getAllergyId())) {
+        petAllergyRepository.findByPetId(pet.getId()).forEach(pa -> {
+            if (pa.getAllergy().getId().equals(request.getAllergyId())) {
                 throw new BadRequestException(ErrorCode.BAD_REQUEST);
             }
         });
@@ -134,8 +134,8 @@ public class PetService {
     }
 
     @Transactional
-    public void addPetDisease(Long userId, @Valid AddPetDiseaseRequestDto request) {
-        Pet pet = findPet(userId, request.getPetId());
+    public void addPetDisease(String username, Long petId, @Valid AddPetDiseaseRequestDto request) {
+        Pet pet = findPet(username, petId);
         Disease disease = diseaseRepository.findById(request.getDiseaseId())
                 .orElseThrow(() -> new BadRequestException(ErrorCode.BAD_REQUEST));
 
@@ -145,8 +145,8 @@ public class PetService {
                 .build();
 
         // 이미 동일한 질병이 등록된 경우
-        petDiseaseRepository.findByPetId(pet.getId()).forEach(pd-> {
-            if(pd.getDisease().getId().equals(request.getDiseaseId())) {
+        petDiseaseRepository.findByPetId(pet.getId()).forEach(pd -> {
+            if (pd.getDisease().getId().equals(request.getDiseaseId())) {
                 throw new BadRequestException(ErrorCode.BAD_REQUEST);
             }
         });
@@ -157,14 +157,14 @@ public class PetService {
     /**
      * 펫이 가진 모든 알러지 반환
      *
-     * @param userId
+     * @param username
      * @param petId
      * @return 알러지 이름, 알러지 설명
      */
-    public List<ReadPetAllergyResponseDto> getAllAllergies(Long userId, Long petId) {
+    public List<ReadPetAllergyResponseDto> getAllAllergies(String username, Long petId) {
         List<ReadPetAllergyResponseDto> responses = new ArrayList<>();
 
-        Pet pet = findPet(userId, petId);
+        Pet pet = findPet(username, petId);
         petAllergyRepository.findByPetId(petId).forEach(petAllergy -> {
             responses.add(ReadPetAllergyResponseDto.from(petAllergy.getAllergy()));
         });
@@ -175,14 +175,14 @@ public class PetService {
     /**
      * 펫이 가진 모든 질병 반환
      *
-     * @param userId
+     * @param username
      * @param petId
      * @return 질병이름, 질병 설명
      */
-    public List<ReadPetDiseaseResponseDto> getAllDiseases(Long userId, Long petId) {
+    public List<ReadPetDiseaseResponseDto> getAllDiseases(String username, Long petId) {
         List<ReadPetDiseaseResponseDto> responses = new ArrayList<>();
 
-        Pet pet = findPet(userId, petId);
+        Pet pet = findPet(username, petId);
         petDiseaseRepository.findByPetId(petId).forEach(petDisease -> {
             responses.add(ReadPetDiseaseResponseDto.from(petDisease.getDisease()));
         });
@@ -193,12 +193,12 @@ public class PetService {
     /**
      * 반려견이 '오늘' 하루 섭취한 영양소 정보를 반환함
      *
-     * @param userId
+     * @param username
      * @param petId
      * @return 영양소의 이름, 단위, 설명, 섭취량, 최소 적정 섭취량, 최대 적정 섭취량, 최소 섭취량 대비 섭취량 비율, 최소 섭취량 대비 최대 섭취량 비율
      */
-    public List<ReadPetNutrientResponseDto> getPetNutrientToday(Long userId, Long petId) {
-        Pet pet = findPet(userId, petId);
+    public List<ReadPetNutrientResponseDto> getPetNutrientToday(String username, Long petId) {
+        Pet pet = findPet(username, petId);
         LocalDate today = LocalDate.now();
 
         // 오늘 먹은 식사 내역이 없는 경우 예외 발생 => 이 부분은 그냥 예외가 발생하는 대신 DailyMeal을 생성해도 될듯?
@@ -218,13 +218,13 @@ public class PetService {
     /**
      * 반려견이 '특정 일자'에 하루 섭취한 영양소 정보를 반환함
      *
-     * @param userId
+     * @param username
      * @param petId
      * @param date
      * @return 영양소의 이름, 단위, 설명, 섭취량, 최소 적정 섭취량, 최대 적정 섭취량, 최소 섭취량 대비 섭취량 비율, 최소 섭취량 대비 최대 섭취량 비율
      */
-    public List<ReadPetNutrientResponseDto> getPetNutrient(Long userId, Long petId, LocalDate date) {
-        Pet pet = findPet(userId, petId);
+    public List<ReadPetNutrientResponseDto> getPetNutrient(String username, Long petId, LocalDate date) {
+        Pet pet = findPet(username, petId);
 
         // 오늘 먹은 식사 내역이 없는 경우 예외 발생 => 이 부분은 그냥 예외가 발생하는 대신 DailyMeal을 생성해도 될듯?
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, date)
@@ -324,12 +324,12 @@ public class PetService {
      * 반려견이 '오늘' 섭취한 영양소를 적정 섭취량에 대한 비율로 반환함
      * 예) 체중에 대해서 계산한 단백질 적정량이 100g인데 총 200g을 섭취한 경우 protein = 2가 반환
      *
-     * @param userId
+     * @param username
      * @param petId
      * @return 영양소 비율
      */
-    public List<ReadPetNutrientRatioResponseDto> getPetNutrientRatioToday(Long userId, Long petId) {
-        Pet pet = findPet(userId, petId);
+    public List<ReadPetNutrientRatioResponseDto> getPetNutrientRatioToday(String username, Long petId) {
+        Pet pet = findPet(username, petId);
         LocalDate today = LocalDate.now();
 
         // 오늘 먹은 식사 내역이 없는 경우 예외 발생 => 이 부분은 그냥 예외가 발생하는 대신 DailyMeal을 생성해도 될듯?
@@ -353,13 +353,13 @@ public class PetService {
      * 반려견이 '특정 일자'에 섭취한 영양소를 적정 섭취량에 대한 비율로 반환함
      * 예) 체중에 대해서 계산한 단백질 적정량이 100g인데 총 200g을 섭취한 경우 protein = 2가 반환
      *
-     * @param userId
+     * @param username
      * @param petId
      * @param date
      * @return 영양소 비율
      */
-    public List<ReadPetNutrientRatioResponseDto> getPetNutrientRatio(Long userId, Long petId, LocalDate date) {
-        Pet pet = findPet(userId, petId);
+    public List<ReadPetNutrientRatioResponseDto> getPetNutrientRatio(String username, Long petId, LocalDate date) {
+        Pet pet = findPet(username, petId);
 
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, date)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
@@ -380,13 +380,13 @@ public class PetService {
     /**
      * '특정일자'에 과잉 섭취한 영양소를 반환
      *
-     * @param userId
+     * @param username
      * @param petId
      * @param date
      * @return 영양소의 이름, 단위, 설명, 섭취량, 적정 섭취량, 최대 섭취 허용량, 적정 섭취량 대비 최대 섭취 허용량 비율, 최소 섭취량 대비 섭취량 비율, 최대 섭취량 대비 섭취량 비율
      */
-    public List<ReadPetNutrientResponseDto> getSufficientNutrient(Long userId, Long petId, LocalDate date) {
-        Pet pet = findPet(userId, petId);
+    public List<ReadPetNutrientResponseDto> getSufficientNutrient(String username, Long petId, LocalDate date) {
+        Pet pet = findPet(username, petId);
         double weight = pet.getWeight();
         Activity activity = pet.getActivity();
         Neutering neutering = pet.getNeutering();
@@ -416,13 +416,13 @@ public class PetService {
     /**
      * '특정일자'에 부족 섭취한 영양소를 반환
      *
-     * @param userId
+     * @param username
      * @param petId
      * @param date
      * @return 영양소의 이름, 단위, 설명, 섭취량, 적정 섭취량, 최대 섭취 허용량, 적정 섭취량 대비 최대 섭취 허용량 비율, 최소 섭취량 대비 섭취량 비율, 최대 섭취량 대비 섭취량 비율
      */
-    public List<ReadPetNutrientResponseDto> getDeficientNutrient(Long userId, Long petId, LocalDate date) {
-        Pet pet = findPet(userId, petId);
+    public List<ReadPetNutrientResponseDto> getDeficientNutrient(String username, Long petId, LocalDate date) {
+        Pet pet = findPet(username, petId);
         double weight = pet.getWeight();
         Activity activity = pet.getActivity();
         Neutering neutering = pet.getNeutering();
@@ -452,12 +452,12 @@ public class PetService {
     /**
      * 반려견이 오늘 먹은 총 칼로리 반환
      *
-     * @param userId
+     * @param username
      * @param petId
      * @return 섭취 칼로리
      */
-    public ReadPetKcalResponseDto getPetKcalToday(Long userId, Long petId) {
-        Pet pet = findPet(userId, petId);
+    public ReadPetKcalResponseDto getPetKcalToday(String username, Long petId) {
+        Pet pet = findPet(username, petId);
         LocalDate today = LocalDate.now();
 
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, today)
@@ -469,13 +469,13 @@ public class PetService {
     /**
      * 반려견이 '특정 일자'에 먹은 총 칼로리 반환
      *
-     * @param userId
+     * @param username
      * @param petId
      * @param date
      * @return 섭취 칼로리
      */
-    public ReadPetKcalResponseDto getPetKcal(Long userId, Long petId, LocalDate date) {
-        Pet pet = findPet(userId, petId);
+    public ReadPetKcalResponseDto getPetKcal(String username, Long petId, LocalDate date) {
+        Pet pet = findPet(username, petId);
 
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, date)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
@@ -486,12 +486,12 @@ public class PetService {
     /**
      * 반려견이 먹어야할 적정 칼로리 반환
      *
-     * @param userId
+     * @param username
      * @param petId
      * @return 적정 칼로리
      */
-    public ReadPetKcalResponseDto getPetProperKcal(Long userId, Long petId) {
-        Pet pet = findPet(userId, petId);
+    public ReadPetKcalResponseDto getPetProperKcal(String username, Long petId) {
+        Pet pet = findPet(username, petId);
 
         double properKcal = pet.getProperKcal();
 
@@ -501,12 +501,12 @@ public class PetService {
     /**
      * 반려견의 적정 섭취 칼로리 대비 '오늘' 섭취한 칼로리에 대한 비율을 반환함
      *
-     * @param userId
+     * @param username
      * @param petId
      * @return 적정 섭취 칼로리 대비 섭취 칼로리 비율
      */
-    public ReadPetKcalRatioResponseDto getPetKcalRatioToday(Long userId, Long petId) {
-        Pet pet = findPet(userId, petId);
+    public ReadPetKcalRatioResponseDto getPetKcalRatioToday(String username, Long petId) {
+        Pet pet = findPet(username, petId);
         LocalDate today = LocalDate.now();
 
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, today)
@@ -522,13 +522,13 @@ public class PetService {
     /**
      * 반려견의 적정 섭취 칼로리 대비 '특정 일자'에 섭취한 칼로리에 대한 비율을 반환함
      *
-     * @param userId
+     * @param username
      * @param petId
      * @param date
      * @return 적정 섭취 칼로리 대비 섭취 칼로리 비율
      */
-    public ReadPetKcalRatioResponseDto getPetKcalRatio(Long userId, Long petId, LocalDate date) {
-        Pet pet = findPet(userId, petId);
+    public ReadPetKcalRatioResponseDto getPetKcalRatio(String username, Long petId, LocalDate date) {
+        Pet pet = findPet(username, petId);
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAt(petId, date)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
@@ -540,12 +540,12 @@ public class PetService {
     }
 
 
-    private Pet findPet(Long userId, Long petId) {
+    private Pet findPet(String username, Long petId) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
         // 조회하려는 반려견이 본인의 반려견이 아닌 경우 예외 발생
-        if (!pet.getOwner().getId().equals(userId)) {
+        if (!pet.getOwner().getUsername().equals(username)) {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
         }
 
