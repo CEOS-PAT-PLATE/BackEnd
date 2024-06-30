@@ -73,6 +73,16 @@ public class DrugCRUDService {
     }
 
 
+    @Transactional
+    public void deleteDrug(final Long drugId){
+
+        existsDrugId(drugId);
+
+        drugNutrientRepository.deleteByDrugId(drugId);
+        drugRepository.deleteById(drugId);
+    }
+
+
     //String -> Enum 타입 변환
     private StandardNutrient toStandardNutrient(final String nutrients) {
 
@@ -87,6 +97,14 @@ public class DrugCRUDService {
 
         return ShowNutrientListResponseDto.from(stream(StandardNutrient.values()).map(StandardNutrient::getName).collect(
                 Collectors.toList()));
+    }
+
+
+    //id 기반 Drug 존재하는지 판단.
+    private void existsDrugId(final Long drugId){
+        if(!drugRepository.existsById(drugId)){
+            throw new NotFoundException(ErrorCode.DRUG_NOT_FOUND);
+        }
     }
 
 

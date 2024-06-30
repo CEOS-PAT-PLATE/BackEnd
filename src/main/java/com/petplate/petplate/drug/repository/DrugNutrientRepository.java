@@ -19,4 +19,9 @@ public interface DrugNutrientRepository extends JpaRepository<DrugNutrient,Long>
 
     @Query("select dn from DrugNutrient dn join fetch dn.drug where dn.standardNutrient=:standardNutrient")
     List<DrugNutrient> findByStandardNutrientWithFetchDrug(@Param("standardNutrient") StandardNutrient standardNutrient);
+
+
+    void deleteByDrugId(Long drugId);
+
+
 }

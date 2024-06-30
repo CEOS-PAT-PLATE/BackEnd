@@ -70,5 +70,20 @@ public class DrugCRUDController {
         return ResponseEntity.ok(BaseResponse.createSuccess(drugCRUDService.showAllNutrientName()));
     }
 
+    @DeleteMapping("/{id}")
+    @Operation(summary = "영양제 단일 삭제",description = "영양제를 ID 기반으로 삭제합니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",description = "단일 영양제 삭제"),
+            @ApiResponse(responseCode = "404",description = "영양제 ID 가 존재하지 않을때")
+    })
+    @Parameters({
+            @Parameter(in = ParameterIn.PATH,name = "id", description = "단일 삭제시 사용되는 영양제 아이디", required = true , example = "1")
+    })
+    public ResponseEntity<Void> deleteDrug(@PathVariable("id") final Long drugId){
+
+         drugCRUDService.deleteDrug(drugId);
+
+         return ResponseEntity.ok().build();
+    }
 
 }
