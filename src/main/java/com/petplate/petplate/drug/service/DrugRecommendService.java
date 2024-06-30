@@ -4,6 +4,7 @@ import com.petplate.petplate.common.EmbeddedType.StandardNutrient;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.drug.domain.entity.Drug;
+import com.petplate.petplate.drug.dto.request.DrugFindRequestDto;
 import com.petplate.petplate.drug.dto.response.DrugResponseDto;
 import com.petplate.petplate.drug.repository.DrugNutrientRepository;
 import com.petplate.petplate.drug.repository.DrugRepository;
@@ -36,6 +37,21 @@ public class DrugRecommendService {
         return findSuitableDrugList.stream().map(drug-> DrugResponseDto.of(drug,drugNutrientRepository.findByDrug(drug).stream()
                 .map(drugNutrient -> drugNutrient.getStandardNutrient().getName()).collect(
                         Collectors.toList()))).collect(Collectors.toList());
+    }
+
+    public List<DrugResponseDto> findDrugByVariousNutrientName(final DrugFindRequestDto drugFindRequestDto){
+
+        List<StandardNutrient> standardNutrientList = drugFindRequestDto.getNutrients().stream().map(this::toStandardNutrient).collect(
+                Collectors.toList());
+
+
+        List<DrugResponseDto> suitableDrugResponseDtoList = drugRepository.findUserProperDrugList(standardNutrientList).stream()
+                .map(drug->DrugResponseDto.of(drug,drug.getDrugNutrientList().stream().map(drugNutrient ->
+                        drugNutrient.getStandardNutrient().getName()).collect(Collectors.toList())))
+                .collect(Collectors.toList());
+
+        return suitableDrugResponseDtoList;
+
     }
 
     private StandardNutrient toStandardNutrient(final String nutrients) {
