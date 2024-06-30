@@ -82,6 +82,18 @@ public class DrugCRUDService {
         drugRepository.deleteById(drugId);
     }
 
+    public List<DrugResponseDto> showAllDrug(){
+
+        List<DrugResponseDto> drugResponseDtoList = drugRepository.findAll().stream().map(drug->DrugResponseDto.of(drug,
+                drug.getDrugNutrientList().stream().map(drugNutrient -> drugNutrient.getStandardNutrient().getName()).collect(
+                        Collectors.toList()))).collect(Collectors.toList());
+
+        return drugResponseDtoList;
+    }
+
+
+
+
 
     //String -> Enum 타입 변환
     private StandardNutrient toStandardNutrient(final String nutrients) {
