@@ -325,12 +325,28 @@ class PetServiceTest {
     }
 
     @Test
+    @DisplayName("등록된 프로필 이미지들 조회")
+    public void getPetProfileImages() throws Exception{
+        //given
+
+        //when
+        List<ReadPetProfileImageResponseDto> petProfileImages = petService.getPetProfileImages(user1Username);
+        for (ReadPetProfileImageResponseDto petProfileImage : petProfileImages) {
+            System.out.println("petProfileImage = " + petProfileImage);
+        }
+
+        //then
+        Assertions.assertEquals(3, petProfileImages.size());
+    }
+    
+    @Test
     @DisplayName("프로필 이미지 업데이트")
     void updateProfileImg() {
         // given
         ModifyPetProfileImgRequestDto request = ModifyPetProfileImgRequestDto.builder()
-                .profileImg(ProfileImg.img1)
+                .name("img1")
                 .build();
+
 
         // when
         petService.updateProfileImg(user1Username, pet1Id, request);
@@ -338,6 +354,7 @@ class PetServiceTest {
 
         // then
         Assertions.assertEquals(ProfileImg.img1, pet.getProfileImg());
+        System.out.println(pet.getProfileImg());
     }
 
     @Test
