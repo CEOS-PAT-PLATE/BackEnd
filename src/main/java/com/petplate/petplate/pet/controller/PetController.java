@@ -1,6 +1,6 @@
 package com.petplate.petplate.pet.controller;
 
-import com.petplate.petplate.auth.interfaces.CurrentUserPK;
+import com.petplate.petplate.auth.interfaces.CurrentUserUsername;
 import com.petplate.petplate.common.response.BaseResponse;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.dto.request.AddPetRequestDto;
@@ -26,104 +26,104 @@ public class PetController {
     private final PetService petService;
 
     @PostMapping("/pets")
-    public ResponseEntity<BaseResponse> createPet(@CurrentUserPK Long userId, @RequestBody @Valid AddPetRequestDto requestDto) {
-        Pet pet = petService.addPet(userId, requestDto);
+    public ResponseEntity<BaseResponse> createPet(@CurrentUserUsername String username, @RequestBody @Valid AddPetRequestDto requestDto) {
+        Pet pet = petService.addPet(username, requestDto);
 
         return new ResponseEntity(BaseResponse.createSuccess(pet.getName()), HttpStatus.CREATED);
     }
 
     @GetMapping("/pets")
-    public ResponseEntity<BaseResponse> readAllPets(@CurrentUserPK Long userId) {
-        List<ReadPetResponseDto> allPets = petService.getAllPets(userId);
+    public ResponseEntity<BaseResponse> readAllPets(@CurrentUserUsername String username) {
+        List<ReadPetResponseDto> allPets = petService.getAllPets(username);
 
         return new ResponseEntity(BaseResponse.createSuccess(allPets), HttpStatus.OK);
     }
 
     @GetMapping("/pets/{petId}")
-    public ResponseEntity<BaseResponse> readAllPets(@CurrentUserPK Long userId, @PathVariable Long petId) {
-        ReadPetResponseDto pet = petService.getPet(userId, petId);
+    public ResponseEntity<BaseResponse> readAllPets(@CurrentUserUsername String username, @PathVariable Long petId) {
+        ReadPetResponseDto pet = petService.getPet(username, petId);
 
         return new ResponseEntity(BaseResponse.createSuccess(pet), HttpStatus.OK);
     }
 
     @PutMapping("/pets/{petId}")
-    public ResponseEntity<BaseResponse> modifyPet(@CurrentUserPK Long userId, @PathVariable Long petId, @RequestBody @Valid ModifyPetInfoRequestDto requestDto) {
-        petService.updatePetInfo(userId, petId, requestDto);
+    public ResponseEntity<BaseResponse> modifyPet(@CurrentUserUsername String username, @PathVariable Long petId, @RequestBody @Valid ModifyPetInfoRequestDto requestDto) {
+        petService.updatePetInfo(username, petId, requestDto);
 
         return new ResponseEntity(BaseResponse.createSuccess(null), HttpStatus.OK);
     }
 
     @PostMapping("/pets/{petId}/images")
-    public ResponseEntity<BaseResponse> modifyPetProfileImage(@CurrentUserPK Long userId, @PathVariable Long petId, @Valid ModifyPetProfileImgRequestDto requestDto) {
-        petService.updateProfileImg(userId, petId, requestDto);
+    public ResponseEntity<BaseResponse> modifyPetProfileImage(@CurrentUserUsername String username, @PathVariable Long petId, @Valid ModifyPetProfileImgRequestDto requestDto) {
+        petService.updateProfileImg(username, petId, requestDto);
 
         return new ResponseEntity(BaseResponse.createSuccess(null), HttpStatus.OK);
     }
 
     @GetMapping("/pets/{petId}/nutrients")
-    public ResponseEntity<BaseResponse> readPetNutrients(@CurrentUserPK Long userId, @PathVariable Long petId,
+    public ResponseEntity<BaseResponse> readPetNutrients(@CurrentUserUsername String username, @PathVariable Long petId,
                                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
-            List<ReadPetNutrientResponseDto> petNutrientToday = petService.getPetNutrientToday(userId, petId);
+            List<ReadPetNutrientResponseDto> petNutrientToday = petService.getPetNutrientToday(username, petId);
             return new ResponseEntity(BaseResponse.createSuccess(petNutrientToday), HttpStatus.OK);
         } else {
-            List<ReadPetNutrientResponseDto> petNutrient = petService.getPetNutrient(userId, petId, date);
+            List<ReadPetNutrientResponseDto> petNutrient = petService.getPetNutrient(username, petId, date);
             return new ResponseEntity(BaseResponse.createSuccess(petNutrient), HttpStatus.OK);
         }
     }
 
     @GetMapping("/pets/{petId}/nutrients/ratio")
-    public ResponseEntity<BaseResponse> readPetNutrientRatio(@CurrentUserPK Long userId, @PathVariable Long petId,
+    public ResponseEntity<BaseResponse> readPetNutrientRatio(@CurrentUserUsername String username, @PathVariable Long petId,
                                                              @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
-            List<ReadPetNutrientRatioResponseDto> petNutrientRatioToday = petService.getPetNutrientRatioToday(userId, petId);
+            List<ReadPetNutrientRatioResponseDto> petNutrientRatioToday = petService.getPetNutrientRatioToday(username, petId);
             return new ResponseEntity(BaseResponse.createSuccess(petNutrientRatioToday), HttpStatus.OK);
         } else {
-            List<ReadPetNutrientRatioResponseDto> petNutrientRatio = petService.getPetNutrientRatio(userId, petId, date);
+            List<ReadPetNutrientRatioResponseDto> petNutrientRatio = petService.getPetNutrientRatio(username, petId, date);
             return new ResponseEntity(BaseResponse.createSuccess(petNutrientRatio), HttpStatus.OK);
         }
     }
 
     @GetMapping("/pets/{petId}/nutrient/sufficient")
-    public ResponseEntity<BaseResponse> readPetSufficientNutrients(@CurrentUserPK Long userId, @PathVariable Long petId,
+    public ResponseEntity<BaseResponse> readPetSufficientNutrients(@CurrentUserUsername String username, @PathVariable Long petId,
                                                                    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-        List<ReadPetNutrientResponseDto> sufficientNutrient = petService.getSufficientNutrient(userId, petId, date);
+        List<ReadPetNutrientResponseDto> sufficientNutrient = petService.getSufficientNutrient(username, petId, date);
         return new ResponseEntity(BaseResponse.createSuccess(sufficientNutrient), HttpStatus.OK);
     }
 
     @GetMapping("/pets/{petId}/nutrient/deficient")
-    public ResponseEntity<BaseResponse> readPetDeficientNutrients(@CurrentUserPK Long userId, @PathVariable Long petId,
+    public ResponseEntity<BaseResponse> readPetDeficientNutrients(@CurrentUserUsername String username, @PathVariable Long petId,
                                                                   @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-        List<ReadPetNutrientResponseDto> deficientNutrient = petService.getDeficientNutrient(userId, petId, date);
+        List<ReadPetNutrientResponseDto> deficientNutrient = petService.getDeficientNutrient(username, petId, date);
         return new ResponseEntity(BaseResponse.createSuccess(deficientNutrient), HttpStatus.OK);
     }
 
     @GetMapping("/pets/{petId}/kcal")
-    public ResponseEntity<BaseResponse> readPetKcal(@CurrentUserPK Long userId, @PathVariable Long petId,
+    public ResponseEntity<BaseResponse> readPetKcal(@CurrentUserUsername String username, @PathVariable Long petId,
                                                     @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
-            ReadPetKcalResponseDto petKcalToday = petService.getPetKcalToday(userId, petId);
+            ReadPetKcalResponseDto petKcalToday = petService.getPetKcalToday(username, petId);
             return new ResponseEntity(BaseResponse.createSuccess(petKcalToday), HttpStatus.OK);
         } else {
-            ReadPetKcalResponseDto petKcal = petService.getPetKcal(userId, petId, date);
+            ReadPetKcalResponseDto petKcal = petService.getPetKcal(username, petId, date);
             return new ResponseEntity(BaseResponse.createSuccess(petKcal), HttpStatus.OK);
         }
     }
 
     @GetMapping("/pets/{petId}/kcal/proper")
-    public ResponseEntity<BaseResponse> readPetProperKcal(@CurrentUserPK Long userId, @PathVariable Long petId) {
-        ReadPetKcalResponseDto petProperKcal = petService.getPetProperKcal(userId, petId);
+    public ResponseEntity<BaseResponse> readPetProperKcal(@CurrentUserUsername String username, @PathVariable Long petId) {
+        ReadPetKcalResponseDto petProperKcal = petService.getPetProperKcal(username, petId);
         return new ResponseEntity(BaseResponse.createSuccess(petProperKcal), HttpStatus.OK);
     }
 
     @GetMapping("/pets/{petId}/kcal/ratio")
-    public ResponseEntity<BaseResponse> readPetKcalRatio(@CurrentUserPK Long userId, @PathVariable Long petId,
-                                                    @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    public ResponseEntity<BaseResponse> readPetKcalRatio(@CurrentUserUsername String username, @PathVariable Long petId,
+                                                         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
-            ReadPetKcalRatioResponseDto petKcalRatioToday = petService.getPetKcalRatioToday(userId, petId);
+            ReadPetKcalRatioResponseDto petKcalRatioToday = petService.getPetKcalRatioToday(username, petId);
             return new ResponseEntity(BaseResponse.createSuccess(petKcalRatioToday), HttpStatus.OK);
         } else {
-            ReadPetKcalRatioResponseDto petKcalRatio = petService.getPetKcalRatio(userId, petId, date);
+            ReadPetKcalRatioResponseDto petKcalRatio = petService.getPetKcalRatio(username, petId, date);
             return new ResponseEntity(BaseResponse.createSuccess(petKcalRatio), HttpStatus.OK);
         }
     }

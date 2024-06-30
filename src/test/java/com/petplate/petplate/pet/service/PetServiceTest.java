@@ -61,10 +61,10 @@ class PetServiceTest {
     @Autowired
     private DailyMealRepository dailyMealRepository;
 
-    private Long user1Id = null;
-    private Long user2Id = null;
-    private Long user3Id = null;
-    private Long user4Id = null;
+    private String user1Username = null;
+    private String user2Username = null;
+    private String user3Username = null;
+    private String user4Username = null;
 
     private Long pet1Id = null;
     @Autowired
@@ -87,7 +87,7 @@ class PetServiceTest {
                         .socialType(SocialType.NAVER)
                         .build();
 
-        user1Id = userRepository.save(user1).getId();
+        user1Username = userRepository.save(user1).getUsername();
         UserMemberShip user1MemberShip = new UserMemberShip(memberShip, user1);
         userMemberShipRepository.save(user1MemberShip);
 
@@ -113,9 +113,9 @@ class PetServiceTest {
 
                         .build();
 
-        pet1Id = petService.addPet(user1Id, pet1Dto).getId();
-        petService.addPet(user1Id, pet2Dto);
-        petService.addPet(user1Id, pet3Dto);
+        pet1Id = petService.addPet(user1Username, pet1Dto).getId();
+        petService.addPet(user1Username, pet2Dto);
+        petService.addPet(user1Username, pet3Dto);
 
         Nutrient nutrient = Nutrient.builder()
                 .carbonHydrate(110)
@@ -139,7 +139,7 @@ class PetServiceTest {
                         .socialType(SocialType.NAVER)
                         .build();
 
-        user2Id = userRepository.save(user2).getId();
+        user2Username = userRepository.save(user2).getUsername();
         UserMemberShip user2MemberShip = new UserMemberShip(memberShip, user2);
         userMemberShipRepository.save(user2MemberShip);
 
@@ -164,9 +164,9 @@ class PetServiceTest {
                         .neutering(Neutering.INTACT)
                         .build();
 
-        petService.addPet(user2Id, pet4Dto);
-        petService.addPet(user2Id, pet5Dto);
-        petService.addPet(user2Id, pet6Dto);
+        petService.addPet(user2Username, pet4Dto);
+        petService.addPet(user2Username, pet5Dto);
+        petService.addPet(user2Username, pet6Dto);
 
         // User3(1 Pet, No Membership)
         User user3 =
@@ -177,7 +177,7 @@ class PetServiceTest {
                         .socialType(SocialType.NAVER)
                         .build();
 
-        user3Id = userRepository.save(user3).getId();
+        user3Username = userRepository.save(user3).getUsername();
 
         AddPetRequestDto pet7Dto =
                 AddPetRequestDto.builder()
@@ -186,7 +186,7 @@ class PetServiceTest {
                         .neutering(Neutering.INTACT)
                         .build();
 
-        petService.addPet(user3Id, pet7Dto);
+        petService.addPet(user3Username, pet7Dto);
 
         // User4 (0 Pet, No Membership)
         User user4 =
@@ -197,7 +197,7 @@ class PetServiceTest {
                         .socialType(SocialType.NAVER)
                         .build();
 
-        user4Id = userRepository.save(user4).getId();
+        user4Username = userRepository.save(user4).getUsername();
 
         // 알러지 저장
         Allergy allergy1 = Allergy.builder().name("당근").description("당근 못먹음").build();
@@ -230,40 +230,40 @@ class PetServiceTest {
 
 
         // when
-        User user1 = userRepository.findById(user1Id).get(); // pet 3, membership 보유
-        User user3 = userRepository.findById(user3Id).get(); // pet 1, membership 없음
-        User user4 = userRepository.findById(user4Id).get(); // pet 0, membership 없음
+        User user1 = userRepository.findByUsername(user1Username).get(); // pet 3, membership 보유
+        User user3 = userRepository.findByUsername(user3Username).get(); // pet 1, membership 없음
+        User user4 = userRepository.findByUsername(user4Username).get(); // pet 0, membership 없음
 
         // then
-        petService.addPet(user1Id, newPetDto);  // // pet 4, membership 보유 => 등록 가능
-        assertThrows(BadRequestException.class, () -> petService.addPet(user3Id, newPetDto)); // pet 2, membership 없음 => 등록 불가능
-        petService.addPet(user4Id, newPetDto);  // pet 1, membership 없음 => 등록 가능
-        assertThrows(BadRequestException.class, () -> petService.addPet(user4Id, newPetDto)); // pet 2, membership 없음 => 등록 불가능
+        petService.addPet(user1Username, newPetDto);  // // pet 4, membership 보유 => 등록 가능
+        assertThrows(BadRequestException.class, () -> petService.addPet(user3Username, newPetDto)); // pet 2, membership 없음 => 등록 불가능
+        petService.addPet(user4Username, newPetDto);  // pet 1, membership 없음 => 등록 가능
+        assertThrows(BadRequestException.class, () -> petService.addPet(user4Username, newPetDto)); // pet 2, membership 없음 => 등록 불가능
     }
 
     @Test
     @DisplayName("유저의 모든 펫 조회하기")
     void getAllPets() {
         //when
-        petService.getAllPets(user1Id).forEach(System.out::println);
+        petService.getAllPets(user1Username).forEach(System.out::println);
 
         //then
-        Assertions.assertEquals(3, petService.getAllPets(user1Id).size());
-        Assertions.assertEquals(3, petService.getAllPets(user2Id).size());
-        Assertions.assertEquals(1, petService.getAllPets(user3Id).size());
-        Assertions.assertEquals(0, petService.getAllPets(user4Id).size());
+        Assertions.assertEquals(3, petService.getAllPets(user1Username).size());
+        Assertions.assertEquals(3, petService.getAllPets(user2Username).size());
+        Assertions.assertEquals(1, petService.getAllPets(user3Username).size());
+        Assertions.assertEquals(0, petService.getAllPets(user4Username).size());
     }
 
     @Test
     @DisplayName("유저의 특정 펫 조회하기")
     void getPet() {
         // given
-        List<ReadPetResponseDto> user1Pets = petService.getAllPets(user1Id);
+        List<ReadPetResponseDto> user1Pets = petService.getAllPets(user1Username);
 
         // when
         user1Pets.forEach(user1Pet -> {
             Long petId = user1Pet.getId();
-            ReadPetResponseDto pet = petService.getPet(user1Id, petId);
+            ReadPetResponseDto pet = petService.getPet(user1Username, petId);
 
             System.out.println("pet = " + pet);
 
@@ -278,13 +278,13 @@ class PetServiceTest {
         //then
         // 존재하지 않는 펫 조회시 예외 발생
         Assertions.assertThrows(NotFoundException.class,
-                () -> petService.getPet(user1Id, 123456L));
+                () -> petService.getPet(user1Username, 123456L));
     }
 
     @Test
     @DisplayName("펫 정보 수정하기")
     void updatePetInfo() {
-        List<Pet> pets = petRepository.findByOwnerId(user1Id);
+        List<Pet> pets = petRepository.findByOwnerUsername(user1Username);
         Long petId = pets.get(0).getId();
 
 
@@ -293,7 +293,7 @@ class PetServiceTest {
                 .name("new name").weight(100D).activity(Activity.VERY_ACTIVE).age(100).neutering(Neutering.NEUTERED)
 
                 .build();
-        petService.updatePetInfo(user1Id, petId, updateData);
+        petService.updatePetInfo(user1Username, petId, updateData);
 
         Pet updatedPet = petRepository.findById(petId).get();
 
@@ -310,7 +310,7 @@ class PetServiceTest {
         ModifyPetInfoRequestDto updateData2 = ModifyPetInfoRequestDto.builder()
                 .name("new name2").age(5)
                 .build();
-        petService.updatePetInfo(user1Id, petId, updateData2);
+        petService.updatePetInfo(user1Username, petId, updateData2);
 
         Pet updatedPet2 = petRepository.findById(petId).get();
 
@@ -321,7 +321,7 @@ class PetServiceTest {
         Assertions.assertEquals(updatedPet2.getNeutering(), updatedPet.getNeutering());
 
         // 3) 자기 강아지가 아닌 경우 -> 예외 발생
-        Assertions.assertThrows(BadRequestException.class, () -> petService.updatePetInfo(user2Id, pet1Id, updateData2));
+        Assertions.assertThrows(BadRequestException.class, () -> petService.updatePetInfo(user2Username, pet1Id, updateData2));
     }
 
     @Test
@@ -333,7 +333,7 @@ class PetServiceTest {
                 .build();
 
         // when
-        petService.updateProfileImg(user1Id, pet1Id, request);
+        petService.updateProfileImg(user1Username, pet1Id, request);
         Pet pet = petRepository.findById(pet1Id).get();
 
         // then
@@ -353,12 +353,12 @@ class PetServiceTest {
                 = AddPetAllergyRequestDto.builder().allergyId(allergy2.getId()).build();
 
         //when
-        petService.addPetAllergy(user1Id, pet1Id, request1);
-        petService.addPetAllergy(user1Id, pet1Id, request2);
+        petService.addPetAllergy(user1Username, pet1Id, request1);
+        petService.addPetAllergy(user1Username, pet1Id, request2);
 
         //then
         Assertions.assertEquals(2, petAllergyRepository.findByPetId(pet1Id).size());
-        Assertions.assertThrows(BadRequestException.class, () -> petService.addPetAllergy(user1Id, pet1Id, request2));  // 이미 보유한 질병 재등록시 예외 발생
+        Assertions.assertThrows(BadRequestException.class, () -> petService.addPetAllergy(user1Username, pet1Id, request2));  // 이미 보유한 질병 재등록시 예외 발생
     }
 
     @Test
@@ -374,12 +374,12 @@ class PetServiceTest {
         AddPetDiseaseRequestDto request3 = AddPetDiseaseRequestDto.builder().diseaseId(disease3.getId()).build();
 
         //when
-        petService.addPetDisease(user1Id, pet1Id,request1);
-        petService.addPetDisease(user1Id, pet1Id,request2);
-        petService.addPetDisease(user1Id, pet1Id,request3);
+        petService.addPetDisease(user1Username, pet1Id,request1);
+        petService.addPetDisease(user1Username, pet1Id,request2);
+        petService.addPetDisease(user1Username, pet1Id,request3);
 
         //then
-        List<ReadPetDiseaseResponseDto> allDiseases = petService.getAllDiseases(user1Id, pet1Id);
+        List<ReadPetDiseaseResponseDto> allDiseases = petService.getAllDiseases(user1Username, pet1Id);
         for (ReadPetDiseaseResponseDto allDisease : allDiseases) {
             System.out.println("allDisease = " + allDisease);
         }
@@ -393,7 +393,7 @@ class PetServiceTest {
 
         //when
         List<ReadPetNutrientResponseDto> petNutrientToday =
-                petService.getPetNutrientToday(user1Id, pet1Id);
+                petService.getPetNutrientToday(user1Username, pet1Id);
 
         //then
         for (ReadPetNutrientResponseDto readPetNutrientResponseDto : petNutrientToday) {
@@ -408,7 +408,7 @@ class PetServiceTest {
 
         //when
         List<ReadPetNutrientRatioResponseDto> petNutrientRatioToday =
-                petService.getPetNutrientRatioToday(user1Id, pet1Id);
+                petService.getPetNutrientRatioToday(user1Username, pet1Id);
 
         //then
         for (ReadPetNutrientRatioResponseDto readPetNutrientRatioResponseDto : petNutrientRatioToday) {
@@ -423,7 +423,7 @@ class PetServiceTest {
 
         //when
         List<ReadPetNutrientResponseDto> sufficientNutrient
-                = petService.getSufficientNutrient(user1Id, pet1Id, LocalDate.now());
+                = petService.getSufficientNutrient(user1Username, pet1Id, LocalDate.now());
 
         //then
         for (ReadPetNutrientResponseDto readPetNutrientResponseDto : sufficientNutrient) {
@@ -443,7 +443,7 @@ class PetServiceTest {
 
         //when
         List<ReadPetNutrientResponseDto> deficientNutrient =
-                petService.getDeficientNutrient(user1Id, pet1Id, LocalDate.now());
+                petService.getDeficientNutrient(user1Username, pet1Id, LocalDate.now());
 
         //then
         for (ReadPetNutrientResponseDto readPetNutrientResponseDto : deficientNutrient) {
@@ -459,7 +459,7 @@ class PetServiceTest {
         //given
 
         //when
-        ReadPetKcalResponseDto petKcalToday = petService.getPetKcalToday(user1Id, pet1Id);
+        ReadPetKcalResponseDto petKcalToday = petService.getPetKcalToday(user1Username, pet1Id);
         //then
         Assertions.assertEquals(500, petKcalToday.getKcal());
     }
@@ -470,7 +470,7 @@ class PetServiceTest {
         //given
 
         //when
-        ReadPetKcalResponseDto petProperKcal = petService.getPetProperKcal(user1Id, pet1Id);
+        ReadPetKcalResponseDto petProperKcal = petService.getPetProperKcal(user1Username, pet1Id);
 
         //then
         System.out.println("ProperKcal = " + petProperKcal.getKcal());
@@ -483,7 +483,7 @@ class PetServiceTest {
 
         //when
         ReadPetKcalRatioResponseDto petKcalRatioToday
-                = petService.getPetKcalRatioToday(user1Id, pet1Id);
+                = petService.getPetKcalRatioToday(user1Username, pet1Id);
 
         //then
         System.out.println("ratio = " + petKcalRatioToday.getRatio());
