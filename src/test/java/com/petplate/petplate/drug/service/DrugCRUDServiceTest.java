@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static reactor.core.publisher.Mono.when;
 
 import com.petplate.petplate.common.EmbeddedType.StandardNutrient;
@@ -147,6 +149,30 @@ class DrugCRUDServiceTest {
 
         //then
         assertThat(drugCRUDService.showAllNutrientName().getNutrientList().size()).isEqualTo(9);
+
+
+    }
+
+
+    @Test
+    @DisplayName("ID 기반 영양제 삭제-정상상황")
+    public void ID기반_영양제_삭제(){
+
+        //given
+        Drug drug = getTestDrug();
+        List<DrugNutrient> drugNutrientList = getTestDrugNutrientList(drug);
+
+        given(drugRepository.existsById(anyLong())).willReturn(true);
+
+
+        //when
+        drugCRUDService.deleteDrug(drug.getId());
+
+
+
+        //then
+        verify(drugRepository,times(1)).deleteById(1L);
+        verify(drugNutrientRepository,times(1)).deleteByDrugId(1L);
 
 
     }
