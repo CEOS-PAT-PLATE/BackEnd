@@ -53,6 +53,13 @@ public class PetController {
         return new ResponseEntity(BaseResponse.createSuccess(null), HttpStatus.OK);
     }
 
+    @GetMapping("/pets/images")
+    public ResponseEntity<BaseResponse> readPetProfileImage(@CurrentUserUsername String username) {
+        List<ReadPetProfileImageResponseDto> petProfileImages = petService.getPetProfileImages(username);
+
+        return new ResponseEntity(BaseResponse.createSuccess(petProfileImages), HttpStatus.OK);
+    }
+
     @PostMapping("/pets/{petId}/images")
     public ResponseEntity<BaseResponse> modifyPetProfileImage(@CurrentUserUsername String username, @PathVariable Long petId, @Valid ModifyPetProfileImgRequestDto requestDto) {
         petService.updateProfileImg(username, petId, requestDto);
