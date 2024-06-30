@@ -12,6 +12,7 @@ import static reactor.core.publisher.Mono.when;
 import com.petplate.petplate.common.EmbeddedType.StandardNutrient;
 import com.petplate.petplate.drug.domain.entity.Drug;
 import com.petplate.petplate.drug.domain.entity.DrugNutrient;
+import com.petplate.petplate.drug.dto.request.DrugFindRequestDto;
 import com.petplate.petplate.drug.dto.request.DrugSaveRequestDto;
 import com.petplate.petplate.drug.dto.response.DrugResponseDto;
 import com.petplate.petplate.drug.repository.DrugNutrientRepository;
@@ -175,6 +176,25 @@ class DrugCRUDServiceTest {
         verify(drugNutrientRepository,times(1)).deleteByDrugId(1L);
 
 
+    }
+
+
+
+    @Test
+    @DisplayName("영양제 리스트 전체 조회")
+    public void 영양제_전체_영양제_조회(){
+
+        //given
+        List<Drug> drugList=List.of(getTestDrug(),getTestDrug());
+        given(drugRepository.findAll()).willReturn(drugList);
+
+        //when
+        List<DrugResponseDto> drugResponseDtoList = drugCRUDService.showAllDrug();
+
+
+        //then
+        assertThat(drugResponseDtoList.size()).isEqualTo(2);
+        assertThat(drugResponseDtoList.get(0).getId()).isEqualTo(1L);
     }
 
 
