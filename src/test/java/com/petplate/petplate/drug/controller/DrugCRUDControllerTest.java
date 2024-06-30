@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -162,6 +163,27 @@ class DrugCRUDControllerTest {
                 .andDo(print())
                 .andExpect(jsonPath("$.data.nutrientList[0]").value("탄수화물"));
 
+
+    }
+
+
+    @Test
+    @DisplayName("단일 영양제 삭제 ID 기반-정상")
+    public void 단일_영양제_삭제_ID_기반() throws Exception {
+
+        //given
+        doNothing().when(drugCRUDService).deleteDrug(anyLong());
+
+
+        //when
+        final ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.delete(DRUG+"/{id}",1)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+
+        //then
+        resultActions.andExpect(status().isOk());
 
     }
 
