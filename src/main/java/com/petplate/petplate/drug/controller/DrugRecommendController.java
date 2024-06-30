@@ -3,6 +3,7 @@ package com.petplate.petplate.drug.controller;
 import com.petplate.petplate.common.response.BaseResponse;
 import com.petplate.petplate.drug.dto.request.DrugFindRequestDto;
 import com.petplate.petplate.drug.dto.response.DrugResponseDto;
+import com.petplate.petplate.drug.dto.response.RecommendDrugResponseDto;
 import com.petplate.petplate.drug.service.DrugRecommendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -41,7 +42,7 @@ public class DrugRecommendController {
     @Parameters({
             @Parameter(in = ParameterIn.QUERY, name = "nutrient", description = "단일 영양소 이름", required = true)
     })
-    public ResponseEntity<BaseResponse<List<DrugResponseDto>>> showProperNutrients(@RequestParam("nutrient") final String nutrient){
+    public ResponseEntity<BaseResponse<List<RecommendDrugResponseDto>>> showProperNutrients(@RequestParam("nutrient") final String nutrient){
 
         return ResponseEntity.ok(BaseResponse.createSuccess(drugRecommendService.findDrugByNutrientName(nutrient)));
     }
@@ -52,7 +53,7 @@ public class DrugRecommendController {
             @ApiResponse(responseCode = "200",description = "다중 영양소 기반 추천 영양제 성공"),
             @ApiResponse(responseCode = "404",description = "영양소 이름을 잘못 입력했을 때")
     })
-    public ResponseEntity<BaseResponse<List<DrugResponseDto>>> showProperNutrients2(@RequestBody @Valid
+    public ResponseEntity<BaseResponse<List<RecommendDrugResponseDto>>> showProperNutrients2(@RequestBody @Valid
             final DrugFindRequestDto drugFindRequestDto){
 
         return ResponseEntity.ok(BaseResponse.createSuccess(drugRecommendService.findDrugByVariousNutrientName(drugFindRequestDto)));

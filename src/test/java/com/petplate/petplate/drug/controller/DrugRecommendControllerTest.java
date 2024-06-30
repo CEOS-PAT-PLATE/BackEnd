@@ -15,6 +15,7 @@ import com.petplate.petplate.drug.domain.entity.Drug;
 import com.petplate.petplate.drug.dto.request.DrugFindRequestDto;
 import com.petplate.petplate.drug.dto.request.DrugSaveRequestDto;
 import com.petplate.petplate.drug.dto.response.DrugResponseDto;
+import com.petplate.petplate.drug.dto.response.RecommendDrugResponseDto;
 import com.petplate.petplate.drug.service.DrugCRUDService;
 import com.petplate.petplate.drug.service.DrugRecommendService;
 import java.util.List;
@@ -71,13 +72,13 @@ class DrugRecommendControllerTest {
         //given
 
         given(drugRecommendService.findDrugByNutrientName(any(String.class))).willReturn(List.of(
-                DrugResponseDto.of(Drug.builder()
+                RecommendDrugResponseDto.from(Drug.builder()
                         .drugImgPath("img")
                         .url("www.naver")
                         .vendor("vendor")
                         .englishName("english")
                         .name("한글").build()
-                ,List.of("탄수화물"))));
+                )));
 
         //when
         final ResultActions resultActions = mockMvc.perform(
@@ -102,13 +103,13 @@ class DrugRecommendControllerTest {
         //given
 
         given(drugRecommendService.findDrugByVariousNutrientName(any(DrugFindRequestDto.class))).willReturn(List.of(
-                DrugResponseDto.of(Drug.builder()
+                RecommendDrugResponseDto.from(Drug.builder()
                                 .drugImgPath("img")
                                 .url("www.naver")
                                 .vendor("vendor")
                                 .englishName("english")
                                 .name("한글").build()
-                        ,List.of("탄수화물"))));
+                        )));
 
         //when
         final ResultActions resultActions = mockMvc.perform(
