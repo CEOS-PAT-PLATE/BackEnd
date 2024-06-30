@@ -206,11 +206,34 @@ class DrugNutrientRepositoryTest {
         assertThat(proteinList.size()).isEqualTo(3);
         assertThat(vitaminEList.size()).isEqualTo(0);
 
+    }
+
+    @Test
+    @DisplayName("단일 영양제 iD 기반 DrugNutrient 삭제")
+    public void DN_단일_영양제_ID_기반_DRUG_NUTRIENT_삭제(){
+
+        //given
+        Drug drug = maketmpDrug();
+
+        DrugNutrient drugNutrient = DrugNutrient.builder()
+                .standardNutrient(StandardNutrient.VITAMIN_E)
+                .drug(drug)
+                .build();
+
+        drugNutrientRepository.save(drugNutrient);
 
 
+        //when
+        drugNutrientRepository.deleteByDrugId(drug.getId());
+
+
+
+        //then
+        assertThat(drugNutrientRepository.findByDrug(drug)).isEmpty();
 
 
     }
+
 
     private Drug maketmpDrug(){
 
