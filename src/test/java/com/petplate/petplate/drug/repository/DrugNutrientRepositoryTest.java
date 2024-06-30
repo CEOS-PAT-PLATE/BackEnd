@@ -133,11 +133,14 @@ class DrugNutrientRepositoryTest {
     @DisplayName("DrugNutrient 저장 시도 - 저장")
     public void DN_저장(){
 
+        //given
         Drug tmp = maketmpDrug();
 
+        //when
         DrugNutrient dn = drugNutrientRepository.save(DrugNutrient.builder().drug(tmp).standardNutrient(StandardNutrient.CARBON_HYDRATE).build());
 
 
+        //then
         assertThat(dn).isNotNull();
         assertThat(dn.getDrug().getName()).isEqualTo("영양제");
         assertThat(dn.getStandardNutrient()).isEqualTo(StandardNutrient.CARBON_HYDRATE);
@@ -147,6 +150,7 @@ class DrugNutrientRepositoryTest {
     @DisplayName("Drug 로 DrugNutrient 리스트 조회")
     public void DN_영양제로_리스트_조회(){
 
+        //given
         Drug tmp = maketmpDrug();
 
         DrugNutrient dn1 = drugNutrientRepository.save(DrugNutrient.builder().drug(tmp).standardNutrient(StandardNutrient.CARBON_HYDRATE).build());
@@ -159,8 +163,10 @@ class DrugNutrientRepositoryTest {
         drugNutrientRepository.save(dn2);
         drugNutrientRepository.save(dn3);
 
+        //when
         List<DrugNutrient> byDrug = drugNutrientRepository.findByDrug(tmp);
 
+        //then
         assertThat(byDrug.size()).isEqualTo(3);
         assertThat(byDrug.get(0).getStandardNutrient()).isEqualTo(StandardNutrient.CARBON_HYDRATE);
 
@@ -171,21 +177,21 @@ class DrugNutrientRepositoryTest {
     @DisplayName("Drug ID 로 DrugNutrient 리스트 조회 - 페치조인")
     public void DN_영양제아이디_DN_리스트(){
 
+        //given
         Drug tmp = maketmpDrug();
 
-
         DrugNutrient dn1 = drugNutrientRepository.save(DrugNutrient.builder().drug(tmp).standardNutrient(StandardNutrient.CARBON_HYDRATE).build());
-
         DrugNutrient dn2 = drugNutrientRepository.save(DrugNutrient.builder().drug(tmp).standardNutrient(StandardNutrient.VITAMIN_A).build());
-
         DrugNutrient dn3 = drugNutrientRepository.save(DrugNutrient.builder().drug(tmp).standardNutrient(StandardNutrient.VITAMIN_D).build());
 
         drugNutrientRepository.save(dn1);
         drugNutrientRepository.save(dn2);
         drugNutrientRepository.save(dn3);
 
+        //when
         List<DrugNutrient> byDrug = drugNutrientRepository.findByDrugIdWithFetchDrug(tmp.getId());
 
+        //then
         assertThat(byDrug.size()).isEqualTo(3);
         assertThat(byDrug.get(0).getStandardNutrient()).isEqualTo(StandardNutrient.CARBON_HYDRATE);
 
@@ -196,12 +202,16 @@ class DrugNutrientRepositoryTest {
     @DisplayName("단일 영양소를 포함하고 있는 영양제")
     public void DN_단일영양소로_찾는_영양제(){
 
+        //given
 
+
+        //when
         List<DrugNutrient> fatList = drugNutrientRepository.findByStandardNutrientWithFetchDrug(StandardNutrient.FAT);
         List<DrugNutrient> proteinList = drugNutrientRepository.findByStandardNutrientWithFetchDrug(StandardNutrient.PROTEIN);
         List<DrugNutrient> vitaminEList = drugNutrientRepository.findByStandardNutrientWithFetchDrug(StandardNutrient.VITAMIN_E);
 
 
+        //then
         assertThat(fatList.size()).isEqualTo(2);
         assertThat(proteinList.size()).isEqualTo(3);
         assertThat(vitaminEList.size()).isEqualTo(0);
