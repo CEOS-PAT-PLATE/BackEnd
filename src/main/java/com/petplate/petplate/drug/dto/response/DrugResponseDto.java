@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DrugResponseDto {
 
+    private Long id;
     private String name;
     private String englishName;
     private String vendor;
@@ -24,7 +25,7 @@ public class DrugResponseDto {
 
 
     public static DrugResponseDto of(final Drug drug,final List<String> nutrientsName){
-        return new DrugResponseDto(drug.getName(),drug.getEnglishName(), drug.getVendor(),
+        return new DrugResponseDto(drug.getId(),drug.getName(),drug.getEnglishName(), drug.getVendor(),
                 drug.getDrugImgPath(), drug.getUrl(),nutrientsName);
     }
 
