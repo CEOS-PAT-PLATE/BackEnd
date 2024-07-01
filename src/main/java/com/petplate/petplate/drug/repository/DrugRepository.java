@@ -11,4 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface DrugRepository extends JpaRepository<Drug,Long> {
 
+    @Query("select d from Drug d join d.drugNutrientList dn where dn.standardNutrient in :standardNutrients group by d order by count(dn) desc ")
+    List<Drug> findUserProperDrugList(@Param("standardNutrients") List<StandardNutrient> standardNutrients);
+
 }

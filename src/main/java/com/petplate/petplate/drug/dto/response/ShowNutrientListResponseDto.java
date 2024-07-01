@@ -14,7 +14,7 @@ public class ShowNutrientListResponseDto {
 
     private List<String> nutrientList;
 
-    public static ShowNutrientListResponseDto of(final List<String> nutrientList){
+    public static ShowNutrientListResponseDto from(final List<String> nutrientList){
         return new ShowNutrientListResponseDto(nutrientList);
     }
 

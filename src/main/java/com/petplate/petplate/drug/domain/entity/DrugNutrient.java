@@ -39,6 +39,7 @@ public class DrugNutrient {
     @Builder
     public DrugNutrient(Drug drug, StandardNutrient standardNutrient){
         this.drug = drug;
+        drug.drugNutrientList.add(this);
         this.standardNutrient = standardNutrient;
     }
 

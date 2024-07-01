@@ -31,7 +31,7 @@ public class DrugCRUDService {
 
     //drug 생성
     @Transactional
-    public void saveDrug(final DrugSaveRequestDto drugSaveRequestDto){
+    public Long saveDrug(final DrugSaveRequestDto drugSaveRequestDto){
 
         Drug drug = Drug.builder()
                 .name(drugSaveRequestDto.getName())
@@ -41,7 +41,7 @@ public class DrugCRUDService {
                 .url(drugSaveRequestDto.getUrl())
                 .build();
 
-        drugRepository.save(drug);
+        Drug savedDrug = drugRepository.save(drug);
 
         drugSaveRequestDto.getEfficientNutrients().forEach(nutrient->{
 
@@ -52,6 +52,8 @@ public class DrugCRUDService {
 
             drugNutrientRepository.save(drugNutrient);
         });
+
+        return savedDrug.getId();
 
     }
 
@@ -83,7 +85,7 @@ public class DrugCRUDService {
     // Enum 타입의 영양소 이름 출력
     public ShowNutrientListResponseDto showAllNutrientName(){
 
-        return ShowNutrientListResponseDto.of(stream(StandardNutrient.values()).map(StandardNutrient::getName).collect(
+        return ShowNutrientListResponseDto.from(stream(StandardNutrient.values()).map(StandardNutrient::getName).collect(
                 Collectors.toList()));
     }
 
