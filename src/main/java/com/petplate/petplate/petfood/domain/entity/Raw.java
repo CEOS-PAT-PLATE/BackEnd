@@ -26,7 +26,7 @@ public class Raw extends BaseEntity {
     @Column(nullable = false)
     private int totalAmount;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false)
