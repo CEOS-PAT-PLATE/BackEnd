@@ -44,7 +44,7 @@ public class OAuthAttributes {
         User user = User.builder()
                 .name(oauth2UserInfo.getName())
                 .role(Role.GENERAL)
-                .phoneNumber(oauth2UserInfo.getPhoneNumber())
+               // .phoneNumber(oauth2UserInfo.getPhoneNumber())
                 .password(UUID.randomUUID()+"password")
                 .socialType(socialType)
                 .username(oauth2UserInfo.getEmail())

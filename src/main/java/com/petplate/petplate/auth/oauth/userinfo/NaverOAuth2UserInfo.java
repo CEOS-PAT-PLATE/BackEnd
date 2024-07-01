@@ -50,7 +50,7 @@ public class NaverOAuth2UserInfo extends OAuth2UserInfo{
         return (String) response.get(EMAIL);
     }
 
-    @Override
+  /*  @Override
     public String getPhoneNumber(){
 
         Map<String,Object> response = (Map<String, Object>) attributes.get(userInfoName);
@@ -61,6 +61,6 @@ public class NaverOAuth2UserInfo extends OAuth2UserInfo{
         }
 
         return (String) response.get(MOBILE);
-    }
+    }*/
 }
 
