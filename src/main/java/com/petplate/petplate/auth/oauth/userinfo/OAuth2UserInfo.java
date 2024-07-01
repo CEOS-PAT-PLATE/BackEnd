@@ -10,7 +10,7 @@ public abstract class OAuth2UserInfo {
     }
 
     public abstract String getId();
-    public abstract String getPhoneNumber();
+    //public abstract String getPhoneNumber();
     public abstract String getEmail();
 
     public abstract String getName();
