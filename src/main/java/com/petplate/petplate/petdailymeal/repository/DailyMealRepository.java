@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface DailyMealRepository extends JpaRepository<DailyMeal, Long> {
-    Optional<DailyMeal> findById(Long mealId);
-    Optional<DailyMeal> findByPetIdAndCreatedAt(Long petId, LocalDate createdAt);
-    boolean existsByPetIdAndCreatedAt(Long petId, LocalDate createdAt);
+    Optional<DailyMeal> findByPetIdAndCreatedAtBetween(Long petId, LocalDateTime start, LocalDateTime end);
+    boolean existsByPetIdAndCreatedAtBetween(Long petId, LocalDateTime start, LocalDateTime end);
 }

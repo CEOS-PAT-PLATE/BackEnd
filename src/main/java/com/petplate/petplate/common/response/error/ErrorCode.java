@@ -12,6 +12,7 @@ public enum ErrorCode {
      * 400 Bad Request
      */
     BAD_REQUEST("잘못된 요청입니다."),
+    RAW_ALREADY_EXISTS("이미 존재하는 자연식입니다"),
 
 
     /**
@@ -30,6 +31,11 @@ public enum ErrorCode {
     NOT_FOUND("존재하지 않는 값입니다"),
 
     NUTRIENT_NOT_FOUND("존재하지 않는 영양소입니다"),
+
+    RAW_NOT_FOUND("존재하지 않는 자연식입니다"),
+
+    DAILY_MEAL_NOT_FOUND("존재하지 않는 식사 내역입니다."),
+    RAW_DAILY_MEAL_NOT_FOUND("존재하지 않는 자연식 식사 내역입니다."),
 
     DRUG_NOT_FOUND("존재하지 않는 약입니다");
 
