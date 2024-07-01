@@ -113,9 +113,9 @@ class PetServiceTest {
 
                         .build();
 
-        pet1Id = petService.addPet(user1Username, pet1Dto).getId();
-        petService.addPet(user1Username, pet2Dto);
-        petService.addPet(user1Username, pet3Dto);
+        pet1Id = petService.createPet(user1Username, pet1Dto).getId();
+        petService.createPet(user1Username, pet2Dto);
+        petService.createPet(user1Username, pet3Dto);
 
         Nutrient nutrient = Nutrient.builder()
                 .carbonHydrate(110)
@@ -164,9 +164,9 @@ class PetServiceTest {
                         .neutering(Neutering.INTACT)
                         .build();
 
-        petService.addPet(user2Username, pet4Dto);
-        petService.addPet(user2Username, pet5Dto);
-        petService.addPet(user2Username, pet6Dto);
+        petService.createPet(user2Username, pet4Dto);
+        petService.createPet(user2Username, pet5Dto);
+        petService.createPet(user2Username, pet6Dto);
 
         // User3(1 Pet, No Membership)
         User user3 =
@@ -186,7 +186,7 @@ class PetServiceTest {
                         .neutering(Neutering.INTACT)
                         .build();
 
-        petService.addPet(user3Username, pet7Dto);
+        petService.createPet(user3Username, pet7Dto);
 
         // User4 (0 Pet, No Membership)
         User user4 =
@@ -235,10 +235,10 @@ class PetServiceTest {
         User user4 = userRepository.findByUsername(user4Username).get(); // pet 0, membership 없음
 
         // then
-        petService.addPet(user1Username, newPetDto);  // // pet 4, membership 보유 => 등록 가능
-        assertThrows(BadRequestException.class, () -> petService.addPet(user3Username, newPetDto)); // pet 2, membership 없음 => 등록 불가능
-        petService.addPet(user4Username, newPetDto);  // pet 1, membership 없음 => 등록 가능
-        assertThrows(BadRequestException.class, () -> petService.addPet(user4Username, newPetDto)); // pet 2, membership 없음 => 등록 불가능
+        petService.createPet(user1Username, newPetDto);  // // pet 4, membership 보유 => 등록 가능
+        assertThrows(BadRequestException.class, () -> petService.createPet(user3Username, newPetDto)); // pet 2, membership 없음 => 등록 불가능
+        petService.createPet(user4Username, newPetDto);  // pet 1, membership 없음 => 등록 가능
+        assertThrows(BadRequestException.class, () -> petService.createPet(user4Username, newPetDto)); // pet 2, membership 없음 => 등록 불가능
     }
 
     @Test

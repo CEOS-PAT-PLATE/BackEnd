@@ -27,7 +27,7 @@ public class PetController {
 
     @PostMapping("/pets")
     public ResponseEntity<BaseResponse> createPet(@CurrentUserUsername String username, @RequestBody @Valid AddPetRequestDto requestDto) {
-        Pet pet = petService.addPet(username, requestDto);
+        Pet pet = petService.createPet(username, requestDto);
 
         return new ResponseEntity(BaseResponse.createSuccess(pet.getName()), HttpStatus.CREATED);
     }

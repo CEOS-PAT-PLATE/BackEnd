@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,12 +26,13 @@ public class DailyMealService {
     private final PetRepository petRepository;
     private final UserRepository userRepository;
 
-    public DailyMeal addDailyMeal(Long userId, Long petId) {
+    public DailyMeal createDailyMeal(Long userId, Long petId) {
         Pet pet = findPet(userId, petId);
-        LocalDate today = LocalDate.now();
+        LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
 
         // 이미 그날의 하루식사가 생성되어 있는 경우 -> 이미 존재하는 엔티티를 반환
-        return dailyMealRepository.findByPetIdAndCreatedAt(petId, today)
+        return dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime)
                 .orElseGet(() -> dailyMealRepository.save(  // 없다면 새로운 엔티티를 생성한 후 반환
                         new DailyMeal(
                                 Nutrient.builder()
