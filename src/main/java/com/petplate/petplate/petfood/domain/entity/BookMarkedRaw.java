@@ -42,35 +42,15 @@ public class BookMarkedRaw extends BaseEntity{
     private Nutrient nutrient;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "raw_id",nullable = false)
-    private Raw raw;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Builder
-
-    public BookMarkedRaw(double serving, Raw raw, User user) {
-        this.name = raw.getName();
+    public BookMarkedRaw(String name, float serving, double kcal, Nutrient nutrient, User user) {
+        this.name = name;
         this.serving = serving;
-
-        double ratio = (serving / raw.getTotalAmount());
-
-        this.kcal = raw.getKcal() * ratio;
-
-        Nutrient rawNutrient = raw.getNutrient();
-        Vitamin vitamin = new Vitamin(rawNutrient.getVitamin().getVitaminA() * ratio,
-                rawNutrient.getVitamin().getVitaminD() * ratio,
-                rawNutrient.getVitamin().getVitaminE() * ratio);
-        this.nutrient = new Nutrient(rawNutrient.getCarbonHydrate()*ratio,
-                rawNutrient.getProtein()*ratio,
-                rawNutrient.getFat()*ratio,
-                rawNutrient.getCalcium()*ratio,
-                rawNutrient.getPhosphorus()*ratio,
-                vitamin);
-
-        this.raw = raw;
+        this.kcal = kcal;
+        this.nutrient = nutrient;
         this.user = user;
     }
 }
