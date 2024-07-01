@@ -11,6 +11,7 @@ import com.petplate.petplate.medicalcondition.repository.AllergyRepository;
 import com.petplate.petplate.medicalcondition.repository.DiseaseRepository;
 import com.petplate.petplate.pet.domain.Activity;
 import com.petplate.petplate.pet.domain.Neutering;
+import com.petplate.petplate.pet.domain.ProfileImg;
 import com.petplate.petplate.pet.domain.entity.PetAllergy;
 import com.petplate.petplate.pet.domain.entity.PetDisease;
 import com.petplate.petplate.pet.dto.request.*;
@@ -56,7 +57,7 @@ public class PetService {
      */
     @Transactional
     public Pet addPet(String username, @Valid AddPetRequestDto requestDto) {
-        // 해당 pk를 가지는 유저가 존재하지 않는 경우
+        // 해당 username을 가지는 유저가 존재하지 않는 경우
         User owner = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
         // 멤버십이 존재하지 않으면서 두마리 이상의 반려견을 추가하려는 경우 => 예외 발생
@@ -92,12 +93,36 @@ public class PetService {
         return responses;
     }
 
+    /**
+     * 유저의 펫 정보 반환
+     * @param username
+     * @param petId
+     * @return id, name, age, weight, activity, isNeutering, profileImgPath
+     */
     public ReadPetResponseDto getPet(String username, Long petId) {
         Pet pet = findPet(username, petId);
 
         ReadPetResponseDto response = ReadPetResponseDto.from(pet);
 
         return response;
+    }
+
+    /**
+     * 선택할 수 있는 프로필 이미지들 반환
+     * @param username
+     * @return 이미지 이름, 이미지 경로
+     */
+    public List<ReadPetProfileImageResponseDto> getPetProfileImages(String username) {
+        userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
+        List<ReadPetProfileImageResponseDto> responses = new ArrayList<>();
+
+        ProfileImg[] profileImgs = ProfileImg.values();
+        for (ProfileImg profileImg : profileImgs) {
+            ReadPetProfileImageResponseDto response = ReadPetProfileImageResponseDto.from(profileImg);
+            responses.add(response);
+        }
+
+        return responses;
     }
 
     @Transactional
@@ -107,10 +132,22 @@ public class PetService {
         pet.updateInfo(requestDto.getName(), requestDto.getAge(), requestDto.getWeight(), requestDto.getActivity(), requestDto.getNeutering());
     }
 
+    /**
+     * 등록되어 있는 프로필 이미지 이름으로 프로필을 선택
+     * @param username
+     * @param petId
+     * @param requestDto
+     */
     @Transactional
     public void updateProfileImg(String username, Long petId, @Valid ModifyPetProfileImgRequestDto requestDto) {
         Pet pet = findPet(username, petId);
-        pet.updateProfileImg(requestDto.getProfileImg());
+        ProfileImg profileImg = ProfileImg.getProfileImg(requestDto.getName());
+
+        if(profileImg == null) {
+            throw new BadRequestException(ErrorCode.BAD_REQUEST);
+        }
+
+        pet.updateProfileImg(profileImg);
     }
 
     @Transactional
