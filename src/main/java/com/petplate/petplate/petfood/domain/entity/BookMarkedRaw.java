@@ -1,6 +1,7 @@
 package com.petplate.petplate.petfood.domain.entity;
 
 import com.petplate.petplate.common.EmbeddedType.Nutrient;
+import com.petplate.petplate.common.EmbeddedType.Vitamin;
 import com.petplate.petplate.common.Inheritance.BaseEntity;
 import com.petplate.petplate.user.domain.entity.User;
 import jakarta.persistence.Column;
@@ -32,7 +33,7 @@ public class BookMarkedRaw extends BaseEntity{
     private String name;
 
     @Column(nullable = false)
-    private float serving;
+    private double serving;
 
     @Column(nullable = false)
     private double kcal;
@@ -41,16 +42,35 @@ public class BookMarkedRaw extends BaseEntity{
     private Nutrient nutrient;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",nullable = false)
+    @JoinColumn(name = "raw_id",nullable = false)
+    private Raw raw;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Builder
 
-    public BookMarkedRaw(String name, float serving, double kcal, Nutrient nutrient, User user) {
-        this.name = name;
+    public BookMarkedRaw(double serving, Raw raw, User user) {
+        this.name = raw.getName();
         this.serving = serving;
-        this.kcal = kcal;
-        this.nutrient = nutrient;
+
+        double ratio = (serving / raw.getTotalAmount());
+
+        this.kcal = raw.getKcal() * ratio;
+
+        Nutrient rawNutrient = raw.getNutrient();
+        Vitamin vitamin = new Vitamin(rawNutrient.getVitamin().getVitaminA() * ratio,
+                rawNutrient.getVitamin().getVitaminD() * ratio,
+                rawNutrient.getVitamin().getVitaminE() * ratio);
+        this.nutrient = new Nutrient(rawNutrient.getCarbonHydrate()*ratio,
+                rawNutrient.getProtein()*ratio,
+                rawNutrient.getFat()*ratio,
+                rawNutrient.getCalcium()*ratio,
+                rawNutrient.getPhosphorus()*ratio,
+                vitamin);
+
+        this.raw = raw;
         this.user = user;
     }
 }
