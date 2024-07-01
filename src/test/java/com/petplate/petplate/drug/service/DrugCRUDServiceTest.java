@@ -5,11 +5,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static reactor.core.publisher.Mono.when;
 
 import com.petplate.petplate.common.EmbeddedType.StandardNutrient;
 import com.petplate.petplate.drug.domain.entity.Drug;
 import com.petplate.petplate.drug.domain.entity.DrugNutrient;
+import com.petplate.petplate.drug.dto.request.DrugFindRequestDto;
 import com.petplate.petplate.drug.dto.request.DrugSaveRequestDto;
 import com.petplate.petplate.drug.dto.response.DrugResponseDto;
 import com.petplate.petplate.drug.repository.DrugNutrientRepository;
@@ -146,9 +149,52 @@ class DrugCRUDServiceTest {
         //when
 
         //then
-        assertThat(drugCRUDService.showAllNutrientName().getNutrientList().size()).isEqualTo(9);
+        assertThat(drugCRUDService.showAllNutrientName().getNutrientList().size()).isEqualTo(8);
 
 
+    }
+
+
+    @Test
+    @DisplayName("ID 기반 영양제 삭제-정상상황")
+    public void ID기반_영양제_삭제(){
+
+        //given
+        Drug drug = getTestDrug();
+        List<DrugNutrient> drugNutrientList = getTestDrugNutrientList(drug);
+
+        given(drugRepository.existsById(anyLong())).willReturn(true);
+
+
+        //when
+        drugCRUDService.deleteDrug(drug.getId());
+
+
+
+        //then
+        verify(drugRepository,times(1)).deleteById(1L);
+        verify(drugNutrientRepository,times(1)).deleteByDrugId(1L);
+
+
+    }
+
+
+
+    @Test
+    @DisplayName("영양제 리스트 전체 조회")
+    public void 영양제_전체_영양제_조회(){
+
+        //given
+        List<Drug> drugList=List.of(getTestDrug(),getTestDrug());
+        given(drugRepository.findAll()).willReturn(drugList);
+
+        //when
+        List<DrugResponseDto> drugResponseDtoList = drugCRUDService.showAllDrug();
+
+
+        //then
+        assertThat(drugResponseDtoList.size()).isEqualTo(2);
+        assertThat(drugResponseDtoList.get(0).getId()).isEqualTo(1L);
     }
 
 

@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,6 +69,33 @@ public class DrugCRUDController {
     public ResponseEntity<BaseResponse<ShowNutrientListResponseDto>> showAllNutrients(){
 
         return ResponseEntity.ok(BaseResponse.createSuccess(drugCRUDService.showAllNutrientName()));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "영양제 단일 삭제",description = "영양제를 ID 기반으로 삭제합니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",description = "단일 영양제 삭제"),
+            @ApiResponse(responseCode = "404",description = "영양제 ID 가 존재하지 않을때")
+    })
+    @Parameters({
+            @Parameter(in = ParameterIn.PATH,name = "id", description = "단일 삭제시 사용되는 영양제 아이디", required = true , example = "1")
+    })
+    public ResponseEntity<Void> deleteDrug(@PathVariable("id") final Long drugId){
+
+         drugCRUDService.deleteDrug(drugId);
+
+         return ResponseEntity.ok().build();
+    }
+
+
+    @GetMapping
+    @Operation(summary = "영양제 리스트",description = "현재 DB에 저장된 모든 영양제 리스트를 확인할 수 있습니다. ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",description = "모든 영양제 조회"),
+    })
+    public ResponseEntity<BaseResponse<List<DrugResponseDto>>> showAllDrugs(){
+
+        return ResponseEntity.ok(BaseResponse.createSuccess(drugCRUDService.showAllDrug()));
     }
 
 

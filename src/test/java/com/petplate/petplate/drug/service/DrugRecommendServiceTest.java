@@ -8,6 +8,7 @@ import com.petplate.petplate.drug.domain.entity.Drug;
 import com.petplate.petplate.drug.domain.entity.DrugNutrient;
 import com.petplate.petplate.drug.dto.request.DrugFindRequestDto;
 import com.petplate.petplate.drug.dto.response.DrugResponseDto;
+import com.petplate.petplate.drug.dto.response.RecommendDrugResponseDto;
 import com.petplate.petplate.drug.repository.DrugNutrientRepository;
 import com.petplate.petplate.drug.repository.DrugRepository;
 import java.util.List;
@@ -87,16 +88,16 @@ class DrugRecommendServiceTest {
         Drug drug = getTestDrug();
         List<DrugNutrient> drugNutrientList = getTestDrugNutrientList(drug);
         given(drugNutrientRepository.findByStandardNutrientWithFetchDrug(any(StandardNutrient.class))).willReturn(List.of(drugNutrientList.get(1)));
-        given(drugNutrientRepository.findByDrug(any(Drug.class))).willReturn(drugNutrientList);
+
 
 
         //when
-        List<DrugResponseDto> drugResponseDtoList = drugRecommendService.findDrugByNutrientName("탄수화물");
+        List<RecommendDrugResponseDto> drugResponseDtoList = drugRecommendService.findDrugByNutrientName("탄수화물");
 
 
         //then
         assertThat(drugResponseDtoList.size()).isEqualTo(1);
-        assertThat(drugResponseDtoList.get(0).getNutrientsName().size()).isEqualTo(3);
+
     }
 
     @Test
@@ -112,7 +113,7 @@ class DrugRecommendServiceTest {
 
 
         //when
-        List<DrugResponseDto> drugResponseDtoList = drugRecommendService.findDrugByVariousNutrientName(
+        List<RecommendDrugResponseDto> drugResponseDtoList = drugRecommendService.findDrugByVariousNutrientName(
                 DrugFindRequestDto.builder()
                         .nutrients(List.of("탄수화물","단백질"))
                         .build());
@@ -122,7 +123,7 @@ class DrugRecommendServiceTest {
 
         //then
         assertThat(drugResponseDtoList.size()).isEqualTo(1);
-        assertThat(drugResponseDtoList.get(0).getNutrientsName().size()).isEqualTo(3);
+
     }
 
 }

@@ -43,7 +43,7 @@ public class Drug {
     @Column(length = 500)
     private String drugImgPath;
 
-    @Column(length = 255)
+    @Column(length = 700)
     private String url;
 
     @OneToMany(mappedBy = "drug")

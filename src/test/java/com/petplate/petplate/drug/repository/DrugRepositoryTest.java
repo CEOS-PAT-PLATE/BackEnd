@@ -131,6 +131,10 @@ class DrugRepositoryTest {
     @DisplayName("영양소 리스트 중 가장 많이 부합하는 영양제를 순서대로 찾기")
     public void 영양소_리스트_부합_영양제(){
 
+        //given
+
+
+        //when
         List<Drug> userProperDrugList1 = drugRepository.findUserProperDrugList(
                 List.of(StandardNutrient.VITAMIN_A, StandardNutrient.PROTEIN));
 
@@ -140,6 +144,8 @@ class DrugRepositoryTest {
         List<Drug> userProperDrugList3 = drugRepository.findUserProperDrugList(List.of(StandardNutrient.FAT,StandardNutrient.PROTEIN,
                 StandardNutrient.PHOSPHORUS));
 
+
+        //then
         assertThat(userProperDrugList1.size()).isEqualTo(3);
         assertThat(userProperDrugList1.get(0).getName()).isEqualTo("영양제C");
 
@@ -153,6 +159,19 @@ class DrugRepositoryTest {
         assertThat(userProperDrugList3.get(2).getName()).isEqualTo("영양제C");
 
 
+    }
+
+
+    @Test
+    @DisplayName("전체 영양제 리스트 확인")
+    public void 전체_영양제_리스트_확인(){
+        //given
+
+        //when
+        List<Drug> drugList = drugRepository.findAll();
+
+        //then
+        assertThat(drugList.size()).isEqualTo(3);
     }
 
 
