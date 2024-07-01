@@ -1,15 +1,9 @@
 package com.petplate.petplate.petdailymeal.domain.entity;
 
-import com.petplate.petplate.medicalcondition.domain.entity.Disease;
+import com.petplate.petplate.common.EmbeddedType.Nutrient;
+import com.petplate.petplate.common.EmbeddedType.Vitamin;
 import com.petplate.petplate.petfood.domain.entity.Raw;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,12 +28,33 @@ public class RawDailyMeal {
     private Raw raw;
 
     @Column(nullable = false)
-    private double weight;
+    private double serving;
+
+    @Column(nullable = false)
+    private double kcal;
+
+    @Embedded
+    private Nutrient nutrient;
 
     @Builder
-    public RawDailyMeal(DailyMeal dailyMeal, Raw raw, double weight) {
+    public RawDailyMeal(DailyMeal dailyMeal, Raw raw, double serving) {
         this.dailyMeal = dailyMeal;
         this.raw = raw;
-        this.weight = weight;
+        this.serving = serving;
+
+        double ratio = (serving / raw.getStandardAmount());
+
+        this.kcal = raw.getKcal() * ratio;
+
+        Nutrient rawNutrient = raw.getNutrient();
+        Vitamin vitamin = new Vitamin(rawNutrient.getVitamin().getVitaminA() * ratio,
+                rawNutrient.getVitamin().getVitaminD() * ratio,
+                rawNutrient.getVitamin().getVitaminE() * ratio);
+        this.nutrient = new Nutrient(rawNutrient.getCarbonHydrate()*ratio,
+                rawNutrient.getProtein()*ratio,
+                rawNutrient.getFat()*ratio,
+                rawNutrient.getCalcium()*ratio,
+                rawNutrient.getPhosphorus()*ratio,
+                vitamin);
     }
 }
