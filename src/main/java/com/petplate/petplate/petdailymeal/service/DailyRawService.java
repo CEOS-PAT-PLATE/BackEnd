@@ -8,14 +8,15 @@ import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
-import com.petplate.petplate.petdailymeal.domain.entity.RawDailyMeal;
-import com.petplate.petplate.petdailymeal.dto.request.AddRawDailyMealRequestDto;
-import com.petplate.petplate.petdailymeal.dto.response.ReadRawDailyMealResponseDto;
+import com.petplate.petplate.petdailymeal.domain.entity.DailyRaw;
+import com.petplate.petplate.petdailymeal.dto.request.AddDailyRawRequestDto;
+import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawResponseDto;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
-import com.petplate.petplate.petdailymeal.repository.RawDailyMealRepository;
+import com.petplate.petplate.petdailymeal.repository.DailyRawRepository;
 import com.petplate.petplate.petfood.domain.entity.Raw;
 import com.petplate.petplate.petfood.repository.RawRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,14 +30,22 @@ import java.util.Objects;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class RawDailyMealService {
+@Slf4j
+public class DailyRawService {
     private final RawRepository rawRepository;
     private final DailyMealRepository dailyMealRepository;
-    private final RawDailyMealRepository rawDailyMealRepository;
+    private final DailyRawRepository dailyRawRepository;
     private final PetRepository petRepository;
 
+    /**
+     * RawDailyMeal 생성
+     * @param username
+     * @param petId
+     * @param requestDto
+     * @return rawDailyMeal를 생성 후 id를 반환.
+     */
     @Transactional
-    public Long createRawDailyMeal(String username, Long petId, AddRawDailyMealRequestDto requestDto) {
+    public Long createDailyRaw(String username, Long petId, AddDailyRawRequestDto requestDto) {
         Pet pet = findPet(username, petId);
 
         // 오늘의 dailyMeal
@@ -46,20 +55,29 @@ public class RawDailyMealService {
 
         // rawDailyMeal 생성
         Raw raw = rawRepository.findById(requestDto.getRawId()).orElseThrow(
-                () -> new BadRequestException(ErrorCode.RAW_NOT_FOUND));
-        RawDailyMeal rawDailyMeal = RawDailyMeal.builder()
+                () -> new NotFoundException(ErrorCode.RAW_NOT_FOUND));
+
+        DailyRaw dailyRaw = DailyRaw.builder()
                 .dailyMeal(dailyMeal).raw(raw).serving(requestDto.getServing())
                 .build();
-        rawDailyMealRepository.save(rawDailyMeal);
+
+        dailyRawRepository.save(dailyRaw);
 
         // dailyMeal에 먹은만큼 칼로리, 영양소 추가
-        dailyMeal.addKcal(rawDailyMeal.getKcal());
-        dailyMeal.addNutrient(rawDailyMeal.getNutrient());
+        dailyMeal.addKcal(dailyRaw.getKcal());
+        dailyMeal.addNutrient(dailyRaw.getNutrient());
 
-        return rawDailyMeal.getId();
+        return dailyRaw.getId();
     }
 
-    public List<ReadRawDailyMealResponseDto> getRawDailyMeals(String username, Long petId, Long dailyMealId) {
+    /**
+     * 유저의 모든 DailyRaw 조회
+     * @param username
+     * @param petId
+     * @param dailyMealId
+     * @return
+     */
+    public List<ReadDailyRawResponseDto> getDailyRaws(String username, Long petId, Long dailyMealId) {
         Pet pet = findPet(username, petId);
 
         DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId)
@@ -69,38 +87,72 @@ public class RawDailyMealService {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
         }
 
-        List<ReadRawDailyMealResponseDto> responses = new ArrayList<>();
-        rawDailyMealRepository.findByDailyMealId(dailyMealId).forEach(rawDailyMeal -> {
-            responses.add(ReadRawDailyMealResponseDto.from(rawDailyMeal));
+        List<ReadDailyRawResponseDto> responses = new ArrayList<>();
+        dailyRawRepository.findByDailyMealId(dailyMealId).forEach(dailyRaw -> {
+            responses.add(ReadDailyRawResponseDto.from(dailyRaw));
         });
 
         return responses;
     }
 
-    public ReadRawDailyMealResponseDto getRawDailyMeal(String username, Long petId, Long rawDailyMealId) {
+    /**
+     * 최근 count 번의 식사에서 먹었던 DailyRaw의 정보를 반환
+     * @param username
+     * @param petId
+     * @param count
+     * @return
+     */
+    public List<ReadDailyRawResponseDto> getRecentDailyRaws(String username, Long petId, int count) {
+        findPet(username, petId);
+
+        List<ReadDailyRawResponseDto> responses = new ArrayList<>();
+
+        List<DailyMeal> dailyMeals = dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId);
+
+        int l = Math.min(dailyMeals.size(), count);
+        for(int i = 0; i < l; i++) {
+            dailyRawRepository.findByDailyMealId(dailyMeals.get(i).getId())
+                    .forEach(dailyRaw -> responses.add(ReadDailyRawResponseDto.from(dailyRaw)));
+        }
+
+        return responses;
+    }
+
+    /**
+     * pk로 DailyRaw 조회
+     * @param username
+     * @param petId
+     * @param dailyRawId
+     * @return
+     */
+    public ReadDailyRawResponseDto getDailyRaw(String username, Long petId, Long dailyRawId) {
         Pet pet = findPet(username, petId);
 
-        RawDailyMeal rawDailyMeal = rawDailyMealRepository.findById(rawDailyMealId)
+        DailyRaw dailyRaw = dailyRawRepository.findById(dailyRawId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.RAW_DAILY_MEAL_NOT_FOUND));
 
-        if(!Objects.equals(rawDailyMeal.getDailyMeal().getPet().getId(), pet.getId())) {
+        if(!Objects.equals(dailyRaw.getDailyMeal().getPet().getId(), pet.getId())) {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
         }
 
-        return ReadRawDailyMealResponseDto.from(rawDailyMeal);
+        return ReadDailyRawResponseDto.from(dailyRaw);
     }
 
+    /**
+     * rawDailyMeal 제거
+     * @param dailyRawId
+     */
     @Transactional
-    public void deleteRawDailyMeal(Long rawDailyMealId) {
-        RawDailyMeal rawDailyMeal =
-                rawDailyMealRepository.findById(rawDailyMealId).orElseThrow(() -> new NotFoundException(ErrorCode.RAW_DAILY_MEAL_NOT_FOUND));
+    public void deleteRawDailyMeal(Long dailyRawId) {
+        DailyRaw dailyRaw =
+                dailyRawRepository.findById(dailyRawId).orElseThrow(() -> new NotFoundException(ErrorCode.RAW_DAILY_MEAL_NOT_FOUND));
 
         // dailyMeal에서 삭제한 rawDailyMeal만큼의 영양분 제거
-        DailyMeal dailyMeal = rawDailyMeal.getDailyMeal();
-        dailyMeal.subtractKcal(rawDailyMeal.getKcal());
-        dailyMeal.subtractNutrient(rawDailyMeal.getNutrient());
+        DailyMeal dailyMeal = dailyRaw.getDailyMeal();
+        dailyMeal.subtractKcal(dailyRaw.getKcal());
+        dailyMeal.subtractNutrient(dailyRaw.getNutrient());
 
-        rawDailyMealRepository.delete(rawDailyMeal);
+        dailyRawRepository.delete(dailyRaw);
     }
 
     private DailyMeal getDailyMeal(Long petId, LocalDateTime startDatetime, LocalDateTime endDatetime, Pet pet) {

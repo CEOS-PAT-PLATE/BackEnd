@@ -1,13 +1,13 @@
 package com.petplate.petplate.petdailymeal.dto.request;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Min;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AddRawDailyMealRequestDto {
-    private Long dailyMealId;
+@AllArgsConstructor
+public class AddDailyRawRequestDto {
     private Long rawId;
+    @Min(10) // 섭취량 최소량은 10g
     private double serving;
 }
