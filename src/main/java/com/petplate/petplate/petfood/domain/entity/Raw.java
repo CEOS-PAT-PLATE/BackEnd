@@ -8,14 +8,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@ToString
 public class Raw extends BaseEntity {
 
     @Id
@@ -37,7 +35,7 @@ public class Raw extends BaseEntity {
 
     @Builder
     public Raw(double standardAmount, String name, double kcal, Nutrient nutrient) {
-        this.standardAmount = this.standardAmount;
+        this.standardAmount = standardAmount;
         this.name = name;
         this.kcal = kcal;
         this.nutrient = nutrient;
