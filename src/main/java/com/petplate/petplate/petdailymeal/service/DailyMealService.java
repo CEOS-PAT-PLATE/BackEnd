@@ -26,8 +26,8 @@ public class DailyMealService {
     private final PetRepository petRepository;
     private final UserRepository userRepository;
 
-    public DailyMeal createDailyMeal(Long userId, Long petId) {
-        Pet pet = findPet(userId, petId);
+    public DailyMeal createDailyMeal(String username, Long petId) {
+        Pet pet = findPet(username, petId);
         LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0, 0, 0));
         LocalDateTime endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
 
@@ -53,12 +53,12 @@ public class DailyMealService {
     }
 
 
-    private Pet findPet(Long userId, Long petId) {
+    private Pet findPet(String username, Long petId) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
         // 조회하려는 반려견이 본인의 반려견이 아닌 경우 예외 발생
-        if (!pet.getOwner().getId().equals(userId)) {
+        if (!pet.getOwner().getUsername().equals(username)) {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
         }
 
