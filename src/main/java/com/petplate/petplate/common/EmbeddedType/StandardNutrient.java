@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 public enum StandardNutrient {
-    CARBON_HYDRATE("탄수화물", 0.7 / 4, 1.5, "g", "탄수화물에 대한 설명"
+    CARBON_HYDRATE("탄수화물", 0.7 / 4, 1.7, "g", "탄수화물에 대한 설명"
             , Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요"))
             , Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
     PROTEIN("단백질", 4.95, 2.0, "g", "단백질에 대한 설명"
