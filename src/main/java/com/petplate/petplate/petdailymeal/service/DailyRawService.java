@@ -26,6 +26,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -103,20 +104,14 @@ public class DailyRawService {
      * @return
      */
     public List<ReadDailyRawResponseDto> getRecentDailyRaws(String username, Long petId, int count) {
-        findPet(username, petId);
+    findPet(username, petId);
 
-        List<ReadDailyRawResponseDto> responses = new ArrayList<>();
-
-        List<DailyMeal> dailyMeals = dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId);
-
-        int l = Math.min(dailyMeals.size(), count);
-        for(int i = 0; i < l; i++) {
-            dailyRawRepository.findByDailyMealId(dailyMeals.get(i).getId())
-                    .forEach(dailyRaw -> responses.add(ReadDailyRawResponseDto.from(dailyRaw)));
-        }
-
-        return responses;
-    }
+    return dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId).stream()
+            .limit(count)
+            .flatMap(dailyMeal -> dailyRawRepository.findByDailyMealId(dailyMeal.getId()).stream())
+            .map(ReadDailyRawResponseDto::from)
+            .collect(Collectors.toList());
+}
 
     /**
      * pk로 DailyRaw 조회
