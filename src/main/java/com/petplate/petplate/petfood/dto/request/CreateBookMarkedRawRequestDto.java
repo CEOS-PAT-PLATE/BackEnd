@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CreateBookMarkedRawRequest {
+public class CreateBookMarkedRawRequestDto {
     @NotBlank(message = "자연식이 입력되지 않았습니다")
     private Long rawId;
 
