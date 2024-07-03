@@ -52,14 +52,25 @@ public class DailyMealService {
                 ));
     }
 
+    public DailyMeal getDailyMeal(String username, Long petId, LocalDate date) {
+        findPet(username, petId);
+
+        LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
+
+        return dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime).orElseThrow(
+                () -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
+        );
+    }
+
 
     private Pet findPet(String username, Long petId) {
         Pet pet = petRepository.findById(petId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 
         // 조회하려는 반려견이 본인의 반려견이 아닌 경우 예외 발생
         if (!pet.getOwner().getUsername().equals(username)) {
-            throw new BadRequestException(ErrorCode.BAD_REQUEST);
+            throw new BadRequestException(ErrorCode.NOT_USER_PET);
         }
 
         return pet;

@@ -40,6 +40,7 @@ public class DailyRawService {
 
     /**
      * RawDailyMeal 생성
+     *
      * @param username
      * @param petId
      * @param requestDto
@@ -72,7 +73,8 @@ public class DailyRawService {
     }
 
     /**
-     * 유저의 모든 DailyRaw 조회
+     * 특정 DailyMeal에 대한 모든 DailyRaw 조회
+     *
      * @param username
      * @param petId
      * @param dailyMealId
@@ -84,7 +86,7 @@ public class DailyRawService {
         DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
 
-        if(!Objects.equals(dailyMeal.getPet().getId(), pet.getId())) {
+        if (!Objects.equals(dailyMeal.getPet().getId(), pet.getId())) {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
         }
 
@@ -98,23 +100,25 @@ public class DailyRawService {
 
     /**
      * 최근 count 번의 식사에서 먹었던 DailyRaw의 정보를 반환
+     *
      * @param username
      * @param petId
      * @param count
      * @return
      */
     public List<ReadDailyRawResponseDto> getRecentDailyRaws(String username, Long petId, int count) {
-    findPet(username, petId);
+        findPet(username, petId);
 
-    return dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId).stream()
-            .limit(count)
-            .flatMap(dailyMeal -> dailyRawRepository.findByDailyMealId(dailyMeal.getId()).stream())
-            .map(ReadDailyRawResponseDto::from)
-            .collect(Collectors.toList());
-}
+        return dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId).stream()
+                .limit(count)
+                .flatMap(dailyMeal -> dailyRawRepository.findByDailyMealId(dailyMeal.getId()).stream())
+                .map(ReadDailyRawResponseDto::from)
+                .collect(Collectors.toList());
+    }
 
     /**
      * pk로 DailyRaw 조회
+     *
      * @param username
      * @param petId
      * @param dailyRawId
@@ -126,7 +130,7 @@ public class DailyRawService {
         DailyRaw dailyRaw = dailyRawRepository.findById(dailyRawId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.RAW_DAILY_MEAL_NOT_FOUND));
 
-        if(!Objects.equals(dailyRaw.getDailyMeal().getPet().getId(), pet.getId())) {
+        if (!Objects.equals(dailyRaw.getDailyMeal().getPet().getId(), pet.getId())) {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
         }
 
@@ -135,10 +139,12 @@ public class DailyRawService {
 
     /**
      * rawDailyMeal 제거
+     *
      * @param dailyRawId
      */
     @Transactional
-    public void deleteRawDailyMeal(Long dailyRawId) {
+    public void deleteDailyRaw(String username, Long petId, Long dailyRawId) {
+        findPet(username, petId);
         DailyRaw dailyRaw =
                 dailyRawRepository.findById(dailyRawId).orElseThrow(() -> new NotFoundException(ErrorCode.RAW_DAILY_MEAL_NOT_FOUND));
 
@@ -173,11 +179,11 @@ public class DailyRawService {
 
     private Pet findPet(String username, Long petId) {
         Pet pet = petRepository.findById(petId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 
         // 조회하려는 반려견이 본인의 반려견이 아닌 경우 예외 발생
         if (!pet.getOwner().getUsername().equals(username)) {
-            throw new BadRequestException(ErrorCode.BAD_REQUEST);
+            throw new BadRequestException(ErrorCode.NOT_USER_PET);
         }
 
         return pet;

@@ -576,11 +576,11 @@ public class PetService {
 
     private Pet findPet(String username, Long petId) {
         Pet pet = petRepository.findById(petId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 
         // 조회하려는 반려견이 본인의 반려견이 아닌 경우 예외 발생
         if (!pet.getOwner().getUsername().equals(username)) {
-            throw new BadRequestException(ErrorCode.BAD_REQUEST);
+            throw new BadRequestException(ErrorCode.NOT_USER_PET);
         }
 
         return pet;
