@@ -13,6 +13,7 @@ import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyRawRequestDto;
 import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawResponseDto;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
+import com.petplate.petplate.petdailymeal.repository.DailyRawRepository;
 import com.petplate.petplate.petfood.domain.entity.Raw;
 import com.petplate.petplate.petfood.repository.RawRepository;
 import com.petplate.petplate.petfood.service.RawService;
@@ -63,6 +64,8 @@ class DailyRawServiceTest {
     private Long raw2Id;
     @Autowired
     private RawService rawService;
+    @Autowired
+    private DailyRawRepository dailyRawRepository;
 
 
     @BeforeEach
@@ -202,6 +205,7 @@ class DailyRawServiceTest {
     }
 
     @Test
+    @DisplayName("특정 dailyRaw 조회")
     void getDailyRaw() {
         // given
         CreateDailyRawRequestDto 소고기 = new CreateDailyRawRequestDto(raw1Id, 100);
@@ -248,13 +252,17 @@ class DailyRawServiceTest {
 
         // then
         Assertions.assertEquals(30, dailyMealRepository.findById(dailyMealId).get().getKcal());
+        Assertions.assertEquals(2, dailyRawRepository.findByDailyMealId(dailyMealId).size());
 
-        dailyRawService.deleteRawDailyMeal(dailyRawId1);
+        dailyRawService.deleteDailyRaw(user1Username, pet2Id, dailyRawId1);
         Assertions.assertEquals(20, dailyMealRepository.findById(dailyMealId).get().getKcal());
+        Assertions.assertEquals(1, dailyRawRepository.findByDailyMealId(dailyMealId).size());
 
-        dailyRawService.deleteRawDailyMeal(dailyRawId2);
+        dailyRawService.deleteDailyRaw(user1Username, pet2Id, dailyRawId2);
         Assertions.assertEquals(0, dailyMealRepository.findById(dailyMealId).get().getKcal());
+        Assertions.assertEquals(0, dailyRawRepository.findByDailyMealId(dailyMealId).size());
 
-        Assertions.assertThrows(NotFoundException.class, () -> dailyRawService.deleteRawDailyMeal(dailyRawId1));
+        Assertions.assertThrows(NotFoundException.class, () -> dailyRawService.deleteDailyRaw(user1Username, pet2Id, dailyRawId1));
+
     }
 }
