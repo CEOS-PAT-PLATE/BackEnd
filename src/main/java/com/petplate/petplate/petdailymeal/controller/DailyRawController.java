@@ -4,7 +4,7 @@ import com.petplate.petplate.auth.interfaces.CurrentUserUsername;
 import com.petplate.petplate.common.response.BaseResponse;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyRawRequestDto;
-import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawResponseDto;
+import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawBookMarkedRawResponseDto;
 import com.petplate.petplate.petdailymeal.service.DailyMealService;
 import com.petplate.petplate.petdailymeal.service.DailyRawService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,7 +50,7 @@ public class DailyRawController {
     @GetMapping("/pets/{petId}/dailyRaws")
     public ResponseEntity<BaseResponse> getDailyRaws(@CurrentUserUsername String username, @PathVariable Long petId, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         DailyMeal dailyMeal = dailyMealService.getDailyMeal(username, petId, date);
-        List<ReadDailyRawResponseDto> dailyRaws = dailyRawService.getDailyRaws(username, petId, dailyMeal.getId());
+        List<ReadDailyRawBookMarkedRawResponseDto> dailyRaws = dailyRawService.getDailyRaws(username, petId, dailyMeal.getId());
 
         return new ResponseEntity<>(BaseResponse.createSuccess(dailyRaws), HttpStatus.OK);
     }
@@ -64,7 +64,7 @@ public class DailyRawController {
     @GetMapping("/pets/{petId}/dailyRaws/recent")
     public ResponseEntity<BaseResponse> getRecentDailyRaws(@CurrentUserUsername String username, @PathVariable Long petId) {
         int days = 2;
-        List<ReadDailyRawResponseDto> recentDailyRaws = dailyRawService.getRecentDailyRaws(username, petId, days);
+        List<ReadDailyRawBookMarkedRawResponseDto> recentDailyRaws = dailyRawService.getRecentDailyRaws(username, petId, days);
 
         return new ResponseEntity<>(BaseResponse.createSuccess(recentDailyRaws), HttpStatus.OK);
     }
@@ -77,7 +77,7 @@ public class DailyRawController {
     })
     @GetMapping("/pets/{petId}/dailyRaws/{dailyRawId}")
     public ResponseEntity<BaseResponse> getDailyRaw(@CurrentUserUsername String username, @PathVariable Long petId, @PathVariable Long dailyRawId) {
-        ReadDailyRawResponseDto dailyRaw = dailyRawService.getDailyRaw(username, petId, dailyRawId);
+        ReadDailyRawBookMarkedRawResponseDto dailyRaw = dailyRawService.getDailyRaw(username, petId, dailyRawId);
 
         return new ResponseEntity<>(BaseResponse.createSuccess(dailyRaw), HttpStatus.OK);
     }
