@@ -32,7 +32,7 @@ public class ReadDailyRawBookMarkedRawResponseDto {
 
         response.id = dailyRaw.getId();
         response.name = dailyRaw.getRaw().getName();
-//        response.description = dailyRaw.getRaw().getDescription() != null ? dailyRaw.getRaw().getDescription() : null;
+        response.description = dailyRaw.getRaw().getDescription();
         response.serving = dailyRaw.getServing();
         response.kcal = dailyRaw.getKcal();
         response.carbonHydrate = dailyRaw.getNutrient().getCarbonHydrate();
@@ -53,7 +53,7 @@ public class ReadDailyRawBookMarkedRawResponseDto {
 
         response.id = bookMarkedRaw.getId();
         response.name = bookMarkedRaw.getRaw().getName();
-//        response.description = bookMarkedRaw.getRaw().getDescription() != null ? bookMarkedRaw.getRaw().getDescription() : null;
+        response.description = bookMarkedRaw.getRaw().getDescription();
         response.serving = bookMarkedRaw.getServing();
         response.kcal = bookMarkedRaw.getKcal();
         response.carbonHydrate = bookMarkedRaw.getNutrient().getCarbonHydrate();
