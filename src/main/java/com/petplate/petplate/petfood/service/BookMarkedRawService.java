@@ -6,7 +6,8 @@ import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.petdailymeal.repository.DailyBookMarkedRawRepository;
 import com.petplate.petplate.petfood.domain.entity.BookMarkedRaw;
 import com.petplate.petplate.petfood.domain.entity.Raw;
-import com.petplate.petplate.petfood.dto.request.CreateBookMarkedRawRequest;
+import com.petplate.petplate.petfood.dto.request.CreateBookMarkedRawRequestDto;
+import com.petplate.petplate.petfood.dto.response.ReadBookMarkedRawResponseDto;
 import com.petplate.petplate.petfood.repository.BookMarkedRawRepository;
 import com.petplate.petplate.petfood.repository.RawRepository;
 import com.petplate.petplate.user.domain.entity.User;
@@ -14,6 +15,10 @@ import com.petplate.petplate.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,9 +30,9 @@ public class BookMarkedRawService {
     private final DailyBookMarkedRawRepository dailyBookMarkedRawRepository;
 
     @Transactional
-    public Long createBookMarkedRaw(String username, CreateBookMarkedRawRequest requestDto) {
+    public Long createBookMarkedRaw(String username, CreateBookMarkedRawRequestDto requestDto) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->
-                new NotFoundException(ErrorCode.NOT_FOUND)
+                new NotFoundException(ErrorCode.USER_NOT_FOUND)
         );
 
         Raw raw = rawRepository.findById(requestDto.getRawId()).orElseThrow(
@@ -48,10 +53,39 @@ public class BookMarkedRawService {
         return bookMarkedRaw.getId();
     }
 
-    @Transactional
-    public void deleteBookMarkedRaw(Long bookMarkedRawId) {
+    public List<ReadBookMarkedRawResponseDto> getBookMarkedRaws(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        List<ReadBookMarkedRawResponseDto> responses = new ArrayList<>();
+        bookMarkedRawRepository.findByUserId(user.getId()).forEach(bookMarkedRaw -> {
+            responses.add(ReadBookMarkedRawResponseDto.from(bookMarkedRaw));
+        });
+
+        return responses;
+    }
+
+    public ReadBookMarkedRawResponseDto getBookMarkedRaw(String username, Long bookMarkedRawId) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
         BookMarkedRaw bookMarkedRaw = bookMarkedRawRepository.findById(bookMarkedRawId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.BOOK_MARK_NOT_FOUND));
+
+        if (!Objects.equals(user.getId(), bookMarkedRaw.getUser().getId())) {
+            throw new BadRequestException(ErrorCode.NOT_USER_BOOK_MARK);
+        }
+
+        return ReadBookMarkedRawResponseDto.from(bookMarkedRaw);
+    }
+
+    @Transactional
+    public void deleteBookMarkedRaw(String username, Long bookMarkedRawId) {
+        BookMarkedRaw bookMarkedRaw = bookMarkedRawRepository.findById(bookMarkedRawId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        if (!bookMarkedRaw.getUser().getUsername().equals(username)) {
+            throw new BadRequestException(ErrorCode.BAD_REQUEST);
+        }
 
         // pk가 -1인 BookMarkedRaw
         BookMarkedRaw noDataExistBookMark = bookMarkedRawRepository.findById(-1L).orElseThrow(() -> new NotFoundException(ErrorCode.BOOK_MARK_NOT_FOUND));

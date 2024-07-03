@@ -15,6 +15,7 @@ public enum ErrorCode {
     NOT_USER_PET("유저의 반려견이 아닙니다."),
     RAW_ALREADY_EXISTS("이미 존재하는 자연식입니다."),
     BOOK_MARK_ALREADY_EXISTS("이미 즐겨찾기가 존재합니다."),
+    NOT_USER_BOOK_MARK("유저의 즐겨찾기가 아닙니다."),
 
 
     /**
@@ -32,6 +33,7 @@ public enum ErrorCode {
      */
     NOT_FOUND("존재하지 않는 값입니다."),
     PET_NOT_FOUND("존재하지 않는 반려견입니다."),
+    USER_NOT_FOUND("존재하지 않는 유저입니다."),
 
     NUTRIENT_NOT_FOUND("존재하지 않는 영양소입니다."),
 
