@@ -1,8 +1,5 @@
 package com.petplate.petplate.petfood.dto.request;
 
-import com.petplate.petplate.common.EmbeddedType.Nutrient;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
@@ -11,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AddRawRequestDto {
+public class CreateRawRequestDto {
 
     @Min(0)
     @NotBlank(message = "기준 제공량(g)을 입력해주세요")

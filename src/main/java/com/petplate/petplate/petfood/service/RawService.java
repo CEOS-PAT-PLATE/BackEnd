@@ -5,7 +5,7 @@ import com.petplate.petplate.common.EmbeddedType.Vitamin;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
 import com.petplate.petplate.petfood.domain.entity.Raw;
-import com.petplate.petplate.petfood.dto.request.AddRawRequestDto;
+import com.petplate.petplate.petfood.dto.request.CreateRawRequestDto;
 import com.petplate.petplate.petfood.dto.response.ReadRawResponseDto;
 import com.petplate.petplate.petfood.repository.BookMarkedRawRepository;
 import com.petplate.petplate.petfood.repository.RawRepository;
@@ -29,7 +29,7 @@ public class RawService {
      * @return id
      */
     @Transactional
-    public Long createRaw(AddRawRequestDto requestDto) {
+    public Long createRaw(CreateRawRequestDto requestDto) {
         if (rawRepository.existsByName(requestDto.getName())) {
             throw new BadRequestException(ErrorCode.RAW_ALREADY_EXISTS);
         }
