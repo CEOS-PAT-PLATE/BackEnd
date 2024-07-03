@@ -5,7 +5,7 @@ import com.petplate.petplate.common.EmbeddedType.Vitamin;
 import com.petplate.petplate.pet.domain.Activity;
 import com.petplate.petplate.pet.domain.Neutering;
 import com.petplate.petplate.pet.domain.entity.Pet;
-import com.petplate.petplate.pet.dto.request.AddPetRequestDto;
+import com.petplate.petplate.pet.dto.request.CreatePetRequestDto;
 import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.pet.service.PetService;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
@@ -69,22 +69,22 @@ class DailyMealServiceTest {
         UserMemberShip user1MemberShip = new UserMemberShip(memberShip, user1);
         userMemberShipRepository.save(user1MemberShip);
 
-        AddPetRequestDto pet1Dto =
-                AddPetRequestDto.builder()
+        CreatePetRequestDto pet1Dto =
+                CreatePetRequestDto.builder()
                         .name("pet1")
                         .age(3).weight(5).activity(Activity.ACTIVE)
                         .neutering(Neutering.INTACT).build();
 
-        AddPetRequestDto pet2Dto =
-                AddPetRequestDto.builder()
+        CreatePetRequestDto pet2Dto =
+                CreatePetRequestDto.builder()
                         .name("pet2")
                         .age(3).weight(5).activity(Activity.SOMEWHAT_ACTIVE)
                         .neutering(Neutering.INTACT)
 
                         .build();
 
-        AddPetRequestDto pet3Dto =
-                AddPetRequestDto.builder()
+        CreatePetRequestDto pet3Dto =
+                CreatePetRequestDto.builder()
                         .name("pet3")
                         .age(3).weight(5).activity(Activity.INACTIVE)
                         .neutering(Neutering.INTACT)

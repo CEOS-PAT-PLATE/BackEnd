@@ -58,7 +58,7 @@ public class PetService {
      * @return Pet 엔티티
      */
     @Transactional
-    public Pet createPet(String username, @Valid AddPetRequestDto requestDto) {
+    public Pet createPet(String username, @Valid CreatePetRequestDto requestDto) {
         // 해당 username을 가지는 유저가 존재하지 않는 경우
         User owner = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
 
@@ -156,7 +156,7 @@ public class PetService {
     }
 
     @Transactional
-    public void addPetAllergy(String username, Long petId, @Valid AddPetAllergyRequestDto request) {
+    public void createPetAllergy(String username, Long petId, @Valid CreatePetAllergyRequestDto request) {
         Pet pet = findPet(username, petId);
         Allergy allergy = allergyRepository.findById(request.getAllergyId())
                 .orElseThrow(() -> new BadRequestException(ErrorCode.BAD_REQUEST));
@@ -176,7 +176,7 @@ public class PetService {
     }
 
     @Transactional
-    public void addPetDisease(String username, Long petId, @Valid AddPetDiseaseRequestDto request) {
+    public void createPetDisease(String username, Long petId, @Valid CreatePetDiseaseRequestDto request) {
         Pet pet = findPet(username, petId);
         Disease disease = diseaseRepository.findById(request.getDiseaseId())
                 .orElseThrow(() -> new BadRequestException(ErrorCode.BAD_REQUEST));

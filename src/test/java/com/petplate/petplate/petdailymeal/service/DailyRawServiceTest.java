@@ -6,11 +6,11 @@ import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.pet.domain.Activity;
 import com.petplate.petplate.pet.domain.Neutering;
 import com.petplate.petplate.pet.domain.entity.Pet;
-import com.petplate.petplate.pet.dto.request.AddPetRequestDto;
+import com.petplate.petplate.pet.dto.request.CreatePetRequestDto;
 import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.pet.service.PetService;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
-import com.petplate.petplate.petdailymeal.dto.request.AddDailyRawRequestDto;
+import com.petplate.petplate.petdailymeal.dto.request.CreateDailyRawRequestDto;
 import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawResponseDto;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import com.petplate.petplate.petfood.domain.entity.Raw;
@@ -84,22 +84,22 @@ class DailyRawServiceTest {
         UserMemberShip user1MemberShip = new UserMemberShip(memberShip, user1);
         userMemberShipRepository.save(user1MemberShip);
 
-        AddPetRequestDto pet1Dto =
-                AddPetRequestDto.builder()
+        CreatePetRequestDto pet1Dto =
+                CreatePetRequestDto.builder()
                         .name("pet1")
                         .age(3).weight(5).activity(Activity.ACTIVE)
                         .neutering(Neutering.INTACT).build();
 
-        AddPetRequestDto pet2Dto =
-                AddPetRequestDto.builder()
+        CreatePetRequestDto pet2Dto =
+                CreatePetRequestDto.builder()
                         .name("pet2")
                         .age(3).weight(5).activity(Activity.SOMEWHAT_ACTIVE)
                         .neutering(Neutering.INTACT)
 
                         .build();
 
-        AddPetRequestDto pet3Dto =
-                AddPetRequestDto.builder()
+        CreatePetRequestDto pet3Dto =
+                CreatePetRequestDto.builder()
                         .name("pet3")
                         .age(3).weight(5).activity(Activity.INACTIVE)
                         .neutering(Neutering.INTACT)
@@ -163,9 +163,9 @@ class DailyRawServiceTest {
         // given
 
         //when
-        AddDailyRawRequestDto invalidRaw = new AddDailyRawRequestDto(12345L, 100);
-        AddDailyRawRequestDto 소고기 = new AddDailyRawRequestDto(raw1Id, 100);
-        AddDailyRawRequestDto 닭고기 = new AddDailyRawRequestDto(raw2Id, 100);
+        CreateDailyRawRequestDto invalidRaw = new CreateDailyRawRequestDto(12345L, 100);
+        CreateDailyRawRequestDto 소고기 = new CreateDailyRawRequestDto(raw1Id, 100);
+        CreateDailyRawRequestDto 닭고기 = new CreateDailyRawRequestDto(raw2Id, 100);
 
         //then
         Assertions.assertThrows(NotFoundException.class, () -> dailyRawService.createDailyRaw(user1Username, pet1Id, invalidRaw));
@@ -186,8 +186,8 @@ class DailyRawServiceTest {
     @DisplayName("펫이 특정일자에 먹은 모든 자연식 리스트 조회")
     void getDailyRaws() {
         //given
-        AddDailyRawRequestDto 소고기 = new AddDailyRawRequestDto(raw1Id, 100);
-        AddDailyRawRequestDto 닭고기 = new AddDailyRawRequestDto(raw2Id, 100);
+        CreateDailyRawRequestDto 소고기 = new CreateDailyRawRequestDto(raw1Id, 100);
+        CreateDailyRawRequestDto 닭고기 = new CreateDailyRawRequestDto(raw2Id, 100);
 
         //when
         dailyRawService.createDailyRaw(user1Username, pet2Id, 소고기);
@@ -204,7 +204,7 @@ class DailyRawServiceTest {
     @Test
     void getDailyRaw() {
         // given
-        AddDailyRawRequestDto 소고기 = new AddDailyRawRequestDto(raw1Id, 100);
+        CreateDailyRawRequestDto 소고기 = new CreateDailyRawRequestDto(raw1Id, 100);
 
         // when
         Long dailyRawId = dailyRawService.createDailyRaw(user1Username, pet2Id, 소고기);
@@ -217,8 +217,8 @@ class DailyRawServiceTest {
     @DisplayName("최근 count일 동안 먹은 모든 자연식 반환")
     void getRecentDailyRaw() {
         // given
-        AddDailyRawRequestDto 소고기 = new AddDailyRawRequestDto(raw1Id, 100);
-        AddDailyRawRequestDto 닭고기 = new AddDailyRawRequestDto(raw2Id, 100);
+        CreateDailyRawRequestDto 소고기 = new CreateDailyRawRequestDto(raw1Id, 100);
+        CreateDailyRawRequestDto 닭고기 = new CreateDailyRawRequestDto(raw2Id, 100);
 
         // when
         dailyRawService.createDailyRaw(user1Username, pet2Id, 소고기);
@@ -237,8 +237,8 @@ class DailyRawServiceTest {
     @DisplayName("섭취한 자연식 내역 제거")
     void deleteDailyRaw() {
         // given
-        AddDailyRawRequestDto 소고기 = new AddDailyRawRequestDto(raw1Id, 100);
-        AddDailyRawRequestDto 닭고기 = new AddDailyRawRequestDto(raw2Id, 100);
+        CreateDailyRawRequestDto 소고기 = new CreateDailyRawRequestDto(raw1Id, 100);
+        CreateDailyRawRequestDto 닭고기 = new CreateDailyRawRequestDto(raw2Id, 100);
 
         // when
         Long dailyRawId1 = dailyRawService.createDailyRaw(user1Username, pet2Id, 소고기);

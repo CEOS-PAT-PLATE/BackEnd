@@ -3,7 +3,7 @@ package com.petplate.petplate.pet.controller;
 import com.petplate.petplate.auth.interfaces.CurrentUserUsername;
 import com.petplate.petplate.common.response.BaseResponse;
 import com.petplate.petplate.pet.domain.entity.Pet;
-import com.petplate.petplate.pet.dto.request.AddPetRequestDto;
+import com.petplate.petplate.pet.dto.request.CreatePetRequestDto;
 import com.petplate.petplate.pet.dto.request.ModifyPetInfoRequestDto;
 import com.petplate.petplate.pet.dto.request.ModifyPetProfileImgRequestDto;
 import com.petplate.petplate.pet.dto.response.*;
@@ -26,7 +26,7 @@ public class PetController {
     private final PetService petService;
 
     @PostMapping("/pets")
-    public ResponseEntity<BaseResponse> createPet(@CurrentUserUsername String username, @RequestBody @Valid AddPetRequestDto requestDto) {
+    public ResponseEntity<BaseResponse> createPet(@CurrentUserUsername String username, @RequestBody @Valid CreatePetRequestDto requestDto) {
         Pet pet = petService.createPet(username, requestDto);
 
         return new ResponseEntity(BaseResponse.createSuccess(pet.getName()), HttpStatus.CREATED);

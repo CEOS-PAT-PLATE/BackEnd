@@ -91,22 +91,22 @@ class PetServiceTest {
         UserMemberShip user1MemberShip = new UserMemberShip(memberShip, user1);
         userMemberShipRepository.save(user1MemberShip);
 
-        AddPetRequestDto pet1Dto =
-                AddPetRequestDto.builder()
+        CreatePetRequestDto pet1Dto =
+                CreatePetRequestDto.builder()
                         .name("pet1")
                         .age(3).weight(5).activity(Activity.ACTIVE)
                         .neutering(Neutering.INTACT).build();
 
-        AddPetRequestDto pet2Dto =
-                AddPetRequestDto.builder()
+        CreatePetRequestDto pet2Dto =
+                CreatePetRequestDto.builder()
                         .name("pet2")
                         .age(3).weight(5).activity(Activity.SOMEWHAT_ACTIVE)
                         .neutering(Neutering.INTACT)
 
                         .build();
 
-        AddPetRequestDto pet3Dto =
-                AddPetRequestDto.builder()
+        CreatePetRequestDto pet3Dto =
+                CreatePetRequestDto.builder()
                         .name("pet3")
                         .age(3).weight(5).activity(Activity.INACTIVE)
                         .neutering(Neutering.INTACT)
@@ -143,22 +143,22 @@ class PetServiceTest {
         UserMemberShip user2MemberShip = new UserMemberShip(memberShip, user2);
         userMemberShipRepository.save(user2MemberShip);
 
-        AddPetRequestDto pet4Dto =
-                AddPetRequestDto.builder()
+        CreatePetRequestDto pet4Dto =
+                CreatePetRequestDto.builder()
                         .name("pet4")
                         .age(5).weight(15).activity(Activity.ACTIVE)
                         .neutering(Neutering.INTACT)
                         .build();
 
-        AddPetRequestDto pet5Dto =
-                AddPetRequestDto.builder()
+        CreatePetRequestDto pet5Dto =
+                CreatePetRequestDto.builder()
                         .name("pet5")
                         .age(5).weight(15).activity(Activity.SOMEWHAT_ACTIVE)
                         .neutering(Neutering.INTACT)
                         .build();
 
-        AddPetRequestDto pet6Dto =
-                AddPetRequestDto.builder()
+        CreatePetRequestDto pet6Dto =
+                CreatePetRequestDto.builder()
                         .name("pet6")
                         .age(5).weight(15).activity(Activity.INACTIVE)
                         .neutering(Neutering.INTACT)
@@ -179,8 +179,8 @@ class PetServiceTest {
 
         user3Username = userRepository.save(user3).getUsername();
 
-        AddPetRequestDto pet7Dto =
-                AddPetRequestDto.builder()
+        CreatePetRequestDto pet7Dto =
+                CreatePetRequestDto.builder()
                         .name("pet7")
                         .age(7).weight(10).activity(Activity.ACTIVE)
                         .neutering(Neutering.INTACT)
@@ -222,8 +222,8 @@ class PetServiceTest {
     @DisplayName("펫 등록 테스트")
     void addPet() {
         // given
-        AddPetRequestDto newPetDto =
-                AddPetRequestDto.builder()
+        CreatePetRequestDto newPetDto =
+                CreatePetRequestDto.builder()
                         .name("newPet")
                         .age(8).weight(13).activity(Activity.ACTIVE)
                         .neutering(Neutering.INTACT).build();
@@ -364,10 +364,10 @@ class PetServiceTest {
         Allergy allergy1 = allergyRepository.findByName("당근").get();
         Allergy allergy2 = allergyRepository.findByName("소고기").get();
 
-        AddPetAllergyRequestDto request1
-                = AddPetAllergyRequestDto.builder().allergyId(allergy1.getId()).build();
-        AddPetAllergyRequestDto request2
-                = AddPetAllergyRequestDto.builder().allergyId(allergy2.getId()).build();
+        CreatePetAllergyRequestDto request1
+                = CreatePetAllergyRequestDto.builder().allergyId(allergy1.getId()).build();
+        CreatePetAllergyRequestDto request2
+                = CreatePetAllergyRequestDto.builder().allergyId(allergy2.getId()).build();
 
         //when
         petService.addPetAllergy(user1Username, pet1Id, request1);
@@ -386,9 +386,9 @@ class PetServiceTest {
         Disease disease2 = diseaseRepository.findByName("피부질환").get();
         Disease disease3 = diseaseRepository.findByName("고관절").get();
 
-        AddPetDiseaseRequestDto request1 = AddPetDiseaseRequestDto.builder().diseaseId(disease1.getId()).build();
-        AddPetDiseaseRequestDto request2 = AddPetDiseaseRequestDto.builder().diseaseId(disease2.getId()).build();
-        AddPetDiseaseRequestDto request3 = AddPetDiseaseRequestDto.builder().diseaseId(disease3.getId()).build();
+        CreatePetDiseaseRequestDto request1 = CreatePetDiseaseRequestDto.builder().diseaseId(disease1.getId()).build();
+        CreatePetDiseaseRequestDto request2 = CreatePetDiseaseRequestDto.builder().diseaseId(disease2.getId()).build();
+        CreatePetDiseaseRequestDto request3 = CreatePetDiseaseRequestDto.builder().diseaseId(disease3.getId()).build();
 
         //when
         petService.addPetDisease(user1Username, pet1Id,request1);

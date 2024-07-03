@@ -9,7 +9,7 @@ import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyRaw;
-import com.petplate.petplate.petdailymeal.dto.request.AddDailyRawRequestDto;
+import com.petplate.petplate.petdailymeal.dto.request.CreateDailyRawRequestDto;
 import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawResponseDto;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import com.petplate.petplate.petdailymeal.repository.DailyRawRepository;
@@ -46,7 +46,7 @@ public class DailyRawService {
      * @return rawDailyMeal를 생성 후 id를 반환.
      */
     @Transactional
-    public Long createDailyRaw(String username, Long petId, AddDailyRawRequestDto requestDto) {
+    public Long createDailyRaw(String username, Long petId, CreateDailyRawRequestDto requestDto) {
         Pet pet = findPet(username, petId);
 
         // 오늘의 dailyMeal
