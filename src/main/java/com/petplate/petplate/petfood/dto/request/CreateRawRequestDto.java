@@ -15,6 +15,9 @@ public class CreateRawRequestDto {
     private double standardAmount;
     @NotBlank(message = "식품 이름을 입력해주세요")
     private String name;
+
+    private String description;
+
     @Min(0)
     @NotBlank(message = "칼로리를 입력해주세요")
     private double kcal;

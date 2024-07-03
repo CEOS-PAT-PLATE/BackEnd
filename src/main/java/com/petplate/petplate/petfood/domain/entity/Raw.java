@@ -24,6 +24,9 @@ public class Raw extends BaseEntity {
     @Column(nullable = false)
     private double standardAmount;
 
+    @Column(nullable = true)
+    private String description;
+
     @Column(nullable = false, unique = true)
     private String name;
 
@@ -34,9 +37,10 @@ public class Raw extends BaseEntity {
     private Nutrient nutrient;
 
     @Builder
-    public Raw(double standardAmount, String name, double kcal, Nutrient nutrient) {
+    public Raw(double standardAmount, String name, String description, double kcal, Nutrient nutrient) {
         this.standardAmount = standardAmount;
         this.name = name;
+        this.description = description;
         this.kcal = kcal;
         this.nutrient = nutrient;
     }

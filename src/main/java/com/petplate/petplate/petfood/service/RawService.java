@@ -52,6 +52,7 @@ public class RawService {
                 .build();
 
         Raw raw = Raw.builder().name(requestDto.getName())
+                .description(requestDto.getDescription())
                 .kcal(requestDto.getKcal())
                 .standardAmount(requestDto.getStandardAmount())
                 .nutrient(nutrient)
@@ -65,7 +66,7 @@ public class RawService {
     /**
      * PK로 Raw 조회
      * @param rawId
-     * @return rawId, standardAmount, name, kcal, carbonHydrate, protein, fat, calcium, phosphorus, vitaminA, vitaminD, vitaminE
+     * @return rawId, standardAmount, name, description, kcal, carbonHydrate, protein, fat, calcium, phosphorus, vitaminA, vitaminD, vitaminE
      */
     public ReadRawResponseDto getRaw(Long rawId) {
         Raw raw = rawRepository.findById(rawId)
@@ -77,7 +78,7 @@ public class RawService {
     /**
      * 키워드가 포함된 이름을 가진 Raw 조회
      * @param keyword
-     * @return rawId, standardAmount, name, kcal, carbonHydrate, protein, fat, calcium, phosphorus, vitaminA, vitaminD, vitaminE
+     * @return rawId, standardAmount, name, description, kcal, carbonHydrate, protein, fat, calcium, phosphorus, vitaminA, vitaminD, vitaminE
      */
     public List<ReadRawResponseDto> getRawByKeyword(String keyword) {
         List<ReadRawResponseDto> responses = new ArrayList<>();
@@ -93,7 +94,7 @@ public class RawService {
     /**
      * 이름으로 Raw 조회
      * @param name
-     * @return rawId, standardAmount, name, kcal, carbonHydrate, protein, fat, calcium, phosphorus, vitaminA, vitaminD, vitaminE
+     * @return rawId, standardAmount, name, description, kcal, carbonHydrate, protein, fat, calcium, phosphorus, vitaminA, vitaminD, vitaminE
      */
     public ReadRawResponseDto getRawByName(String name) {
         Raw raw = rawRepository.findByName(name).orElseThrow(
