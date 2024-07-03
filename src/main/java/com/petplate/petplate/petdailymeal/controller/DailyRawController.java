@@ -41,7 +41,7 @@ public class DailyRawController {
         return new ResponseEntity(BaseResponse.createSuccess(dailyRawId), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "특정 일자에 섭취함 자연식들 조회")
+    @Operation(summary = "특정 일자에 섭취한 자연식들 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",description = "섭취 자연식 성공적 조회"),
             @ApiResponse(responseCode = "400",description = "유저의 반려견이 아님"),
