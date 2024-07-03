@@ -8,14 +8,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@ToString
 public class Raw extends BaseEntity {
 
     @Id
@@ -24,9 +22,9 @@ public class Raw extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private int totalAmount;
+    private double standardAmount;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false)
@@ -36,8 +34,8 @@ public class Raw extends BaseEntity {
     private Nutrient nutrient;
 
     @Builder
-    public Raw(int totalAmount, String name, double kcal, Nutrient nutrient) {
-        this.totalAmount = totalAmount;
+    public Raw(double standardAmount, String name, double kcal, Nutrient nutrient) {
+        this.standardAmount = standardAmount;
         this.name = name;
         this.kcal = kcal;
         this.nutrient = nutrient;

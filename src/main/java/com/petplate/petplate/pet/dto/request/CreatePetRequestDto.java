@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class AddPetRequestDto {
+public class CreatePetRequestDto {
     @NotBlank(message = "잘못된 이름 입력입니다. (이름은 최소 한글자 이상 입력되어야 합니다.)")
     private String name;
     @NotNull(message = "나이가 입력되지 않았습니다.")
