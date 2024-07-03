@@ -63,7 +63,7 @@ public class RawController {
             @ApiResponse(responseCode = "200", description = "자연식 성공적 조회"),
             @ApiResponse(responseCode = "404", description = "존재하지 않은 자연식")
     })
-    @GetMapping("/raws")
+    @DeleteMapping("/raws")
     public ResponseEntity<BaseResponse> deleteRaw(@RequestParam Long rawId) {
         rawService.deleteRawById(rawId);
 
