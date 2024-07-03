@@ -10,7 +10,7 @@ import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyRaw;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyRawRequestDto;
-import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawBookMarkedRawResponseDto;
+import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawResponseDto;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import com.petplate.petplate.petdailymeal.repository.DailyRawRepository;
 import com.petplate.petplate.petfood.domain.entity.Raw;
@@ -78,7 +78,7 @@ public class DailyRawService {
      * @param dailyMealId
      * @return
      */
-    public List<ReadDailyRawBookMarkedRawResponseDto> getDailyRaws(String username, Long petId, Long dailyMealId) {
+    public List<ReadDailyRawResponseDto> getDailyRaws(String username, Long petId, Long dailyMealId) {
         Pet pet = findPet(username, petId);
 
         DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId)
@@ -88,9 +88,9 @@ public class DailyRawService {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
         }
 
-        List<ReadDailyRawBookMarkedRawResponseDto> responses = new ArrayList<>();
+        List<ReadDailyRawResponseDto> responses = new ArrayList<>();
         dailyRawRepository.findByDailyMealId(dailyMealId).forEach(dailyRaw -> {
-            responses.add(ReadDailyRawBookMarkedRawResponseDto.from(dailyRaw));
+            responses.add(ReadDailyRawResponseDto.from(dailyRaw));
         });
 
         return responses;
@@ -104,13 +104,13 @@ public class DailyRawService {
      * @param count
      * @return
      */
-    public List<ReadDailyRawBookMarkedRawResponseDto> getRecentDailyRaws(String username, Long petId, int count) {
+    public List<ReadDailyRawResponseDto> getRecentDailyRaws(String username, Long petId, int count) {
         findPet(username, petId);
 
         return dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId).stream()
                 .limit(count)
                 .flatMap(dailyMeal -> dailyRawRepository.findByDailyMealId(dailyMeal.getId()).stream())
-                .map(ReadDailyRawBookMarkedRawResponseDto::from)
+                .map(ReadDailyRawResponseDto::from)
                 .collect(Collectors.toList());
     }
 
@@ -122,7 +122,7 @@ public class DailyRawService {
      * @param dailyRawId
      * @return
      */
-    public ReadDailyRawBookMarkedRawResponseDto getDailyRaw(String username, Long petId, Long dailyRawId) {
+    public ReadDailyRawResponseDto getDailyRaw(String username, Long petId, Long dailyRawId) {
         Pet pet = findPet(username, petId);
 
         DailyRaw dailyRaw = dailyRawRepository.findById(dailyRawId)
@@ -132,7 +132,7 @@ public class DailyRawService {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
         }
 
-        return ReadDailyRawBookMarkedRawResponseDto.from(dailyRaw);
+        return ReadDailyRawResponseDto.from(dailyRaw);
     }
 
     /**

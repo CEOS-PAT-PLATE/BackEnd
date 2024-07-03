@@ -10,10 +10,11 @@ import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyBookMarkedRaw;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyBookMarkedRawRequestDto;
-import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawBookMarkedRawResponseDto;
+import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawResponseDto;
 import com.petplate.petplate.petdailymeal.repository.DailyBookMarkedRawRepository;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import com.petplate.petplate.petfood.domain.entity.BookMarkedRaw;
+import com.petplate.petplate.petfood.dto.response.ReadBookMarkedRawResponseDto;
 import com.petplate.petplate.petfood.repository.BookMarkedRawRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -55,7 +55,7 @@ public class DailyBookMarkedRawService {
         return dailyBookMarkedRaw.getId();
     }
 
-    public List<ReadDailyRawBookMarkedRawResponseDto> getBookMarkedRaws(String username, Long petId, Long dailyMealId) {
+    public List<ReadBookMarkedRawResponseDto> getBookMarkedRaws(String username, Long petId, Long dailyMealId) {
         Pet pet = findPet(username, petId);
 
         DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId)
@@ -65,26 +65,26 @@ public class DailyBookMarkedRawService {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
         }
 
-        List<ReadDailyRawBookMarkedRawResponseDto> responses = new ArrayList<>();
+        List<ReadBookMarkedRawResponseDto> responses = new ArrayList<>();
         dailyBookMarkedRawRepository.findByDailyMealId(dailyMealId).forEach(dailyBookMarkedRaw -> {
                     BookMarkedRaw bookMarkedRaw = dailyBookMarkedRaw.getBookMarkedRaw();
-                    responses.add(ReadDailyRawBookMarkedRawResponseDto.from(bookMarkedRaw));
+                    responses.add(ReadBookMarkedRawResponseDto.from(bookMarkedRaw));
                 }
         );
 
         return responses;
     }
 
-    public List<ReadDailyRawBookMarkedRawResponseDto> getRecentBookMarkedRaws(String username, Long petId, int count) {
+    public List<ReadBookMarkedRawResponseDto> getRecentBookMarkedRaws(String username, Long petId, int count) {
         findPet(username, petId);
 
-        List<ReadDailyRawBookMarkedRawResponseDto> responses = new ArrayList<>();
+        List<ReadBookMarkedRawResponseDto> responses = new ArrayList<>();
         dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId).stream()
                 .limit(count)
                 .flatMap(dailyMeal -> dailyBookMarkedRawRepository.findByDailyMealId(dailyMeal.getId()).stream())
                 .forEach(dailyBookMarkedRaw -> {
                     BookMarkedRaw bookMarkedRaw = dailyBookMarkedRaw.getBookMarkedRaw();
-                    responses.add(ReadDailyRawBookMarkedRawResponseDto.from(bookMarkedRaw));
+                    responses.add(ReadBookMarkedRawResponseDto.from(bookMarkedRaw));
                 });
 
         return responses;

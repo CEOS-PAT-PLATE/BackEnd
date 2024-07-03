@@ -11,7 +11,7 @@ import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.pet.service.PetService;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyRawRequestDto;
-import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawBookMarkedRawResponseDto;
+import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawResponseDto;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import com.petplate.petplate.petdailymeal.repository.DailyRawRepository;
 import com.petplate.petplate.petfood.domain.entity.Raw;
@@ -200,7 +200,7 @@ class DailyRawServiceTest {
         Long dailyMealId = dailyMealRepository.findByPetIdOrderByCreatedAtDesc(pet2Id).get(0).getId();
 
         //then
-        List<ReadDailyRawBookMarkedRawResponseDto> dailyRaws = dailyRawService.getDailyRaws(user1Username, pet2Id, dailyMealId);
+        List<ReadDailyRawResponseDto> dailyRaws = dailyRawService.getDailyRaws(user1Username, pet2Id, dailyMealId);
         Assertions.assertEquals(3, dailyRaws.size());
     }
 
@@ -231,8 +231,8 @@ class DailyRawServiceTest {
         dailyRawService.createDailyRaw(user1Username, pet2Id, 닭고기);
 
         // then
-        List<ReadDailyRawBookMarkedRawResponseDto> recentDailyRaws = dailyRawService.getRecentDailyRaws(user1Username, pet2Id, 3);
-        for (ReadDailyRawBookMarkedRawResponseDto recentDailyRaw : recentDailyRaws) {
+        List<ReadDailyRawResponseDto> recentDailyRaws = dailyRawService.getRecentDailyRaws(user1Username, pet2Id, 3);
+        for (ReadDailyRawResponseDto recentDailyRaw : recentDailyRaws) {
             System.out.println("recentDailyRaw = " + recentDailyRaw.getName());
         }
     }

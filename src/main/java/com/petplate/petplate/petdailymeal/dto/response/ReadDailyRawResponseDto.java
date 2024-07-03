@@ -1,8 +1,6 @@
 package com.petplate.petplate.petdailymeal.dto.response;
 
-import com.petplate.petplate.petdailymeal.domain.entity.DailyBookMarkedRaw;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyRaw;
-import com.petplate.petplate.petfood.domain.entity.BookMarkedRaw;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReadDailyRawBookMarkedRawResponseDto {
+public class ReadDailyRawResponseDto {
     private Long id;
     private String name;
     private String description;
@@ -26,9 +24,9 @@ public class ReadDailyRawBookMarkedRawResponseDto {
     private double vitaminD;
     private double vitaminE;
 
-    public static ReadDailyRawBookMarkedRawResponseDto from(DailyRaw dailyRaw) {
-        ReadDailyRawBookMarkedRawResponseDto response
-                = new ReadDailyRawBookMarkedRawResponseDto();
+    public static ReadDailyRawResponseDto from(DailyRaw dailyRaw) {
+        ReadDailyRawResponseDto response
+                = new ReadDailyRawResponseDto();
 
         response.id = dailyRaw.getId();
         response.name = dailyRaw.getRaw().getName();
@@ -43,27 +41,6 @@ public class ReadDailyRawBookMarkedRawResponseDto {
         response.vitaminA = dailyRaw.getNutrient().getVitamin().getVitaminA();
         response.vitaminD = dailyRaw.getNutrient().getVitamin().getVitaminD();
         response.vitaminE = dailyRaw.getNutrient().getVitamin().getVitaminE();
-
-        return response;
-    }
-
-    public static ReadDailyRawBookMarkedRawResponseDto from(BookMarkedRaw bookMarkedRaw) {
-        ReadDailyRawBookMarkedRawResponseDto response
-                = new ReadDailyRawBookMarkedRawResponseDto();
-
-        response.id = bookMarkedRaw.getId();
-        response.name = bookMarkedRaw.getRaw().getName();
-        response.description = bookMarkedRaw.getRaw().getDescription();
-        response.serving = bookMarkedRaw.getServing();
-        response.kcal = bookMarkedRaw.getKcal();
-        response.carbonHydrate = bookMarkedRaw.getNutrient().getCarbonHydrate();
-        response.protein = bookMarkedRaw.getNutrient().getProtein();
-        response.fat = bookMarkedRaw.getNutrient().getFat();
-        response.calcium = bookMarkedRaw.getNutrient().getCalcium();
-        response.phosphorus = bookMarkedRaw.getNutrient().getPhosphorus();
-        response.vitaminA = bookMarkedRaw.getNutrient().getVitamin().getVitaminA();
-        response.vitaminD = bookMarkedRaw.getNutrient().getVitamin().getVitaminD();
-        response.vitaminE = bookMarkedRaw.getNutrient().getVitamin().getVitaminE();
 
         return response;
     }
