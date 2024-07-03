@@ -20,4 +20,6 @@ public interface DailyRawRepository extends JpaRepository<DailyRaw, Long> {
     List<DailyRaw> findAllByDailyMealCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 
     void deleteByDailyMealId(Long dailyMealId);
+
+    List<DailyRaw> findByRawId(Long rawId);
 }

@@ -55,4 +55,8 @@ public class DailyRaw {
                 rawNutrient.getPhosphorus()*ratio,
                 vitamin);
     }
+
+    public void updateRaw(Raw raw) {
+        this.raw = raw;
+    }
 }

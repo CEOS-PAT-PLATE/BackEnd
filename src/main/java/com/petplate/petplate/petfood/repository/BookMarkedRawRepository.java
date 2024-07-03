@@ -12,4 +12,5 @@ import java.util.List;
 
 public interface BookMarkedRawRepository extends JpaRepository<BookMarkedRaw, Long> {
     List<BookMarkedRaw> findByUserId(Long userId);
+    List<BookMarkedRaw> findByRawId(Long rawId);
 }
