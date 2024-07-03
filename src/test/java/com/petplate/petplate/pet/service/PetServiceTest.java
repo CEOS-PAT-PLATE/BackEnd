@@ -370,12 +370,12 @@ class PetServiceTest {
                 = CreatePetAllergyRequestDto.builder().allergyId(allergy2.getId()).build();
 
         //when
-        petService.addPetAllergy(user1Username, pet1Id, request1);
-        petService.addPetAllergy(user1Username, pet1Id, request2);
+        petService.createPetAllergy(user1Username, pet1Id, request1);
+        petService.createPetAllergy(user1Username, pet1Id, request2);
 
         //then
         Assertions.assertEquals(2, petAllergyRepository.findByPetId(pet1Id).size());
-        Assertions.assertThrows(BadRequestException.class, () -> petService.addPetAllergy(user1Username, pet1Id, request2));  // 이미 보유한 질병 재등록시 예외 발생
+        Assertions.assertThrows(BadRequestException.class, () -> petService.createPetAllergy(user1Username, pet1Id, request2));  // 이미 보유한 질병 재등록시 예외 발생
     }
 
     @Test
@@ -391,9 +391,9 @@ class PetServiceTest {
         CreatePetDiseaseRequestDto request3 = CreatePetDiseaseRequestDto.builder().diseaseId(disease3.getId()).build();
 
         //when
-        petService.addPetDisease(user1Username, pet1Id,request1);
-        petService.addPetDisease(user1Username, pet1Id,request2);
-        petService.addPetDisease(user1Username, pet1Id,request3);
+        petService.createPetDisease(user1Username, pet1Id,request1);
+        petService.createPetDisease(user1Username, pet1Id,request2);
+        petService.createPetDisease(user1Username, pet1Id,request3);
 
         //then
         List<ReadPetDiseaseResponseDto> allDiseases = petService.getAllDiseases(user1Username, pet1Id);
