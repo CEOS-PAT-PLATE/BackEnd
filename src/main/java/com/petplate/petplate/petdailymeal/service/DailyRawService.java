@@ -44,7 +44,7 @@ public class DailyRawService {
      * @param username
      * @param petId
      * @param requestDto
-     * @return rawDailyMeal를 생성 후 id를 반환.
+     * @return DailyRaw를 생성 후 id를 반환.
      */
     @Transactional
     public Long createDailyRaw(String username, Long petId, CreateDailyRawRequestDto requestDto) {
