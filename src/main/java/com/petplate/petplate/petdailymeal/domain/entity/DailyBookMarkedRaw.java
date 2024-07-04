@@ -26,7 +26,7 @@ public class DailyBookMarkedRaw {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_marked_raw_id",nullable = false)
+    @JoinColumn(name = "book_marked_raw_id")
     private BookMarkedRaw bookMarkedRaw;
 
     @ManyToOne(fetch = FetchType.LAZY)

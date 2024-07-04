@@ -166,7 +166,7 @@ class DailyRawServiceTest {
         // given
 
         //when
-        CreateDailyRawRequestDto invalidRaw = new CreateDailyRawRequestDto(12345L, 100);
+        CreateDailyRawRequestDto invalidRaw = new CreateDailyRawRequestDto(-12345L, 100);
         CreateDailyRawRequestDto 소고기 = new CreateDailyRawRequestDto(raw1Id, 100);
         CreateDailyRawRequestDto 닭고기 = new CreateDailyRawRequestDto(raw2Id, 100);
 

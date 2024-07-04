@@ -4,6 +4,7 @@ import com.petplate.petplate.common.EmbeddedType.Nutrient;
 import com.petplate.petplate.common.EmbeddedType.Vitamin;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
+import com.petplate.petplate.common.response.error.exception.InternalServerErrorException;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.petdailymeal.repository.DailyRawRepository;
 import com.petplate.petplate.petfood.domain.entity.Raw;
@@ -70,7 +71,7 @@ public class RawService {
      */
     public ReadRawResponseDto getRaw(Long rawId) {
         Raw raw = rawRepository.findById(rawId)
-                .orElseThrow(() -> new BadRequestException(ErrorCode.RAW_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.RAW_NOT_FOUND));
 
         return ReadRawResponseDto.from(raw);
     }
@@ -98,30 +99,28 @@ public class RawService {
      */
     public ReadRawResponseDto getRawByName(String name) {
         Raw raw = rawRepository.findByName(name).orElseThrow(
-                () -> new BadRequestException(ErrorCode.RAW_NOT_FOUND));
+                () -> new NotFoundException(ErrorCode.RAW_NOT_FOUND));
 
         return ReadRawResponseDto.from(raw);
     }
 
     /**
      * Raw 제거. 연관관계 해제를 위해 해당 Raw와 연관된
-     * DailyRaw, BookMarkedDailyRaw의 Raw는 모두 PK가 -1인 Raw로 수정됨.
-     * 해당 Raw에는 "존재하지 않은 정보입니다" 이름의 모든 데이터가 0인 정보가 존재하도록 함.
+     * DailyRaw, BookMarkedDailyRaw의 Raw는 null로 수정됨.
      * @param rawId
      */
     public void deleteRawById(Long rawId) {
-        Raw noDataExistRaw = rawRepository.findById(-1L).orElseThrow(() -> new NotFoundException(ErrorCode.RAW_NOT_FOUND));
-
-        dailyRawRepository.findByRawId(rawId).forEach(raw->{
-            raw.updateRaw(noDataExistRaw);
+        dailyRawRepository.findByRawId(rawId).forEach(dailyRaw->{
+            dailyRaw.updateRaw(null);
         });
 
-        bookMarkedRawRepository.findByRawId(rawId).forEach(raw->{
-            raw.updateRaw(noDataExistRaw);
+        bookMarkedRawRepository.findByRawId(rawId).forEach(bookMarkedRaw->{
+            bookMarkedRaw.updateRaw(null);
+            bookMarkedRaw.updateName("존재하지 않는 자연식입니다.");
         });
 
         if (!rawRepository.existsById(rawId)) {
-            throw new BadRequestException(ErrorCode.RAW_NOT_FOUND);
+            throw new NotFoundException(ErrorCode.RAW_NOT_FOUND);
         }
 
         rawRepository.deleteById(rawId);

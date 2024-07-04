@@ -113,11 +113,9 @@ public class PetService {
     /**
      * 선택할 수 있는 프로필 이미지들 반환
      *
-     * @param username
      * @return 이미지 이름, 이미지 경로
      */
-    public List<ReadPetProfileImageResponseDto> getPetProfileImages(String username) {
-        userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
+    public List<ReadPetProfileImageResponseDto> getPetProfileImages() {
         List<ReadPetProfileImageResponseDto> responses = new ArrayList<>();
 
         ProfileImg[] profileImgs = ProfileImg.values();
@@ -241,7 +239,7 @@ public class PetService {
      */
     public List<ReadPetNutrientResponseDto> getPetNutrientToday(String username, Long petId) {
         Pet pet = findPet(username, petId);
-        DailyMeal dailyMeal = getDailyMealToday(petId);
+        DailyMeal dailyMeal = findDailyMealToday(petId);
 
         Nutrient nutrient = dailyMeal.getNutrient();
 
@@ -264,7 +262,7 @@ public class PetService {
     public List<ReadPetNutrientResponseDto> getPetNutrient(String username, Long petId, LocalDate date) {
         Pet pet = findPet(username, petId);
 
-        DailyMeal dailyMeal = getDailyMeal(petId, date);
+        DailyMeal dailyMeal = findDailyMeal(petId, date);
 
         Nutrient nutrient = dailyMeal.getNutrient();
 
@@ -366,7 +364,7 @@ public class PetService {
      */
     public List<ReadPetNutrientRatioResponseDto> getPetNutrientRatioToday(String username, Long petId) {
         Pet pet = findPet(username, petId);
-        DailyMeal dailyMeal = getDailyMealToday(petId);
+        DailyMeal dailyMeal = findDailyMealToday(petId);
 
         List<ReadPetNutrientRatioResponseDto> responses = new ArrayList<>();
 
@@ -393,7 +391,7 @@ public class PetService {
     public List<ReadPetNutrientRatioResponseDto> getPetNutrientRatio(String username, Long petId, LocalDate date) {
         Pet pet = findPet(username, petId);
 
-        DailyMeal dailyMeal = getDailyMeal(petId, date);
+        DailyMeal dailyMeal = findDailyMeal(petId, date);
 
         List<ReadPetNutrientRatioResponseDto> responses = new ArrayList<>();
 
@@ -422,7 +420,7 @@ public class PetService {
         Activity activity = pet.getActivity();
         Neutering neutering = pet.getNeutering();
 
-        DailyMeal dailyMeal = getDailyMeal(petId, date);
+        DailyMeal dailyMeal = findDailyMeal(petId, date);
 
         List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
 
@@ -457,7 +455,7 @@ public class PetService {
         Activity activity = pet.getActivity();
         Neutering neutering = pet.getNeutering();
 
-        DailyMeal dailyMeal = getDailyMeal(petId, date);
+        DailyMeal dailyMeal = findDailyMeal(petId, date);
 
         List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
 
@@ -488,7 +486,7 @@ public class PetService {
     public ReadPetKcalResponseDto getPetKcalToday(String username, Long petId) {
         Pet pet = findPet(username, petId);
 
-        DailyMeal dailyMeal = getDailyMealToday(petId);
+        DailyMeal dailyMeal = findDailyMealToday(petId);
 
         return ReadPetKcalResponseDto.of(dailyMeal.getKcal());
     }
@@ -504,7 +502,7 @@ public class PetService {
     public ReadPetKcalResponseDto getPetKcal(String username, Long petId, LocalDate date) {
         Pet pet = findPet(username, petId);
 
-        DailyMeal dailyMeal = getDailyMeal(petId, date);
+        DailyMeal dailyMeal = findDailyMeal(petId, date);
 
         return ReadPetKcalResponseDto.of(dailyMeal.getKcal());
     }
@@ -533,7 +531,7 @@ public class PetService {
      */
     public ReadPetKcalRatioResponseDto getPetKcalRatioToday(String username, Long petId) {
         Pet pet = findPet(username, petId);
-        DailyMeal dailyMeal = getDailyMealToday(petId);
+        DailyMeal dailyMeal = findDailyMealToday(petId);
 
         double properKcal = pet.getProperKcal();
 
@@ -552,7 +550,7 @@ public class PetService {
      */
     public ReadPetKcalRatioResponseDto getPetKcalRatio(String username, Long petId, LocalDate date) {
         Pet pet = findPet(username, petId);
-        DailyMeal dailyMeal = getDailyMeal(petId, date);
+        DailyMeal dailyMeal = findDailyMeal(petId, date);
 
         double properKcal = pet.getProperKcal();
 
@@ -561,16 +559,16 @@ public class PetService {
         return ReadPetKcalRatioResponseDto.of(properKcalRatio);
     }
 
-    private DailyMeal getDailyMealToday(Long petId) {
-        return getDailyMeal(petId, LocalDate.now());
+    private DailyMeal findDailyMealToday(Long petId) {
+        return findDailyMeal(petId, LocalDate.now());
     }
 
-    private DailyMeal getDailyMeal(Long petId, LocalDate date) {
+    private DailyMeal findDailyMeal(Long petId, LocalDate date) {
         LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
         LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
 
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
         return dailyMeal;
     }
 
