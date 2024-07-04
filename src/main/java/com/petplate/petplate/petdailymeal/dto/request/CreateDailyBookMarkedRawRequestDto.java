@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateDailyBookMarkedRawRequestDto {
     @NotBlank(message = "즐겨찾기한 자연식이 입력되지 않았습니다")
-    private Long dailyRawId;
+    private Long bookMarkedRawId;
 }
