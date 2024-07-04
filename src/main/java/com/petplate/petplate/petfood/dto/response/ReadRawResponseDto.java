@@ -1,14 +1,13 @@
 package com.petplate.petplate.petfood.dto.response;
 
 import com.petplate.petplate.petfood.domain.entity.Raw;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReadRawResponseDto {
-    private Long id;
+    private Long rawId;
     private double standardAmount;
     private String name;
     private String description;
@@ -25,7 +24,7 @@ public class ReadRawResponseDto {
     public static ReadRawResponseDto from(Raw raw) {
         ReadRawResponseDto response
                 = new ReadRawResponseDto();
-        response.id = raw.getId();
+        response.rawId = raw.getId();
         response.standardAmount = raw.getStandardAmount();
         response.name = raw.getName();
         response.description = raw.getDescription();

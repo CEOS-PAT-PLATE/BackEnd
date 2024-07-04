@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReadBookMarkedRawResponseDto {
-    private Long id;
+    private Long bookMarkedRawId;
     private String name;
     private String description;
     private double serving;
@@ -28,7 +28,7 @@ public class ReadBookMarkedRawResponseDto {
         ReadBookMarkedRawResponseDto response
                 = new ReadBookMarkedRawResponseDto();
 
-        response.id = bookMarkedRaw.getId();
+        response.bookMarkedRawId = bookMarkedRaw.getId();
         response.name = bookMarkedRaw.getRaw().getName();
         response.description = bookMarkedRaw.getRaw().getDescription();
         response.serving = bookMarkedRaw.getServing();

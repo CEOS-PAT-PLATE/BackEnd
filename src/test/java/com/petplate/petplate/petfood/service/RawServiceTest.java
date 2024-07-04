@@ -34,8 +34,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @Transactional
 class RawServiceTest {
@@ -179,11 +177,11 @@ class RawServiceTest {
         ReadRawResponseDto beef = rawService.getRaw(beefId);
 
         // then
-        Assertions.assertEquals(appleId, apple.getId());
+        Assertions.assertEquals(appleId, apple.getRawId());
         Assertions.assertEquals("사과", apple.getName());
         Assertions.assertEquals("1개", apple.getDescription());
 
-        Assertions.assertEquals(beefId, beef.getId());
+        Assertions.assertEquals(beefId, beef.getRawId());
         Assertions.assertEquals("소고기", beef.getName());
         Assertions.assertNull(beef.getDescription());
 
@@ -260,7 +258,7 @@ class RawServiceTest {
         ReadRawResponseDto apple = rawService.getRawByName("사과");
 
         // then
-        Assertions.assertEquals(appleId, apple.getId());
+        Assertions.assertEquals(appleId, apple.getRawId());
         Assertions.assertEquals("사과", apple.getName());
         Assertions.assertThrows(NotFoundException.class, () -> rawService.getRawByName("없는 음식"));
     }

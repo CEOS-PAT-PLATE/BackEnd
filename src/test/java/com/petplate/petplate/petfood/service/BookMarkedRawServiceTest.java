@@ -7,7 +7,6 @@ import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.pet.domain.Activity;
 import com.petplate.petplate.pet.domain.Neutering;
 import com.petplate.petplate.pet.domain.entity.Pet;
-import com.petplate.petplate.pet.dto.request.CreatePetRequestDto;
 import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyBookMarkedRaw;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
@@ -22,7 +21,6 @@ import com.petplate.petplate.petfood.repository.RawRepository;
 import com.petplate.petplate.user.domain.Role;
 import com.petplate.petplate.user.domain.SocialType;
 import com.petplate.petplate.user.domain.entity.User;
-import com.petplate.petplate.user.domain.entity.UserMemberShip;
 import com.petplate.petplate.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
@@ -31,10 +29,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -175,7 +169,7 @@ class BookMarkedRawServiceTest {
 
         // then
         ReadBookMarkedRawResponseDto bookMarkedRaw = bookMarkedRawService.getBookMarkedRaw(username, id);
-        Assertions.assertEquals(id, bookMarkedRaw.getId());
+        Assertions.assertEquals(id, bookMarkedRaw.getBookMarkedRawId());
         Assertions.assertEquals(150, bookMarkedRaw.getKcal());
     }
 
