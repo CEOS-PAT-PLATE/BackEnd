@@ -39,7 +39,7 @@ public class DailyBookMarkedRawService {
     @Transactional
     public Long createDailyBookMarkedRaw(String username, Long petId, CreateDailyBookMarkedRawRequestDto requestDto) {
         Pet pet = findPet(username, petId);
-        BookMarkedRaw bookMarkedRaw = bookMarkedRawRepository.findById(requestDto.getDailyRawId()).orElseThrow(() ->
+        BookMarkedRaw bookMarkedRaw = bookMarkedRawRepository.findById(requestDto.getBookMarkedRawId()).orElseThrow(() ->
                 new NotFoundException(ErrorCode.BOOK_MARK_NOT_FOUND)
         );
 
@@ -55,18 +55,17 @@ public class DailyBookMarkedRawService {
         return dailyBookMarkedRaw.getId();
     }
 
-    public List<ReadBookMarkedRawResponseDto> getBookMarkedRaws(String username, Long petId, Long dailyMealId) {
+    public List<ReadBookMarkedRawResponseDto> getBookMarkedRaws(String username, Long petId, LocalDate date) {
         Pet pet = findPet(username, petId);
 
-        DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
+        DailyMeal dailyMeal = findDailyMeal(petId, date);
 
         if (!Objects.equals(dailyMeal.getPet().getId(), pet.getId())) {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
         }
 
         List<ReadBookMarkedRawResponseDto> responses = new ArrayList<>();
-        dailyBookMarkedRawRepository.findByDailyMealId(dailyMealId).forEach(dailyBookMarkedRaw -> {
+        dailyBookMarkedRawRepository.findByDailyMealId(dailyMeal.getId()).forEach(dailyBookMarkedRaw -> {
                     BookMarkedRaw bookMarkedRaw = dailyBookMarkedRaw.getBookMarkedRaw();
                     responses.add(ReadBookMarkedRawResponseDto.from(bookMarkedRaw));
                 }
@@ -126,6 +125,19 @@ public class DailyBookMarkedRawService {
                                 pet,
                                 0)
                 ));
+    }
+
+    private DailyMeal findDailyMealToday(Long petId) {
+        return findDailyMeal(petId, LocalDate.now());
+    }
+
+    private DailyMeal findDailyMeal(Long petId, LocalDate date) {
+        LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
+
+        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
+        return dailyMeal;
     }
 
     private Pet findPet(String username, Long petId) {
