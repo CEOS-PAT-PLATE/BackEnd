@@ -4,6 +4,7 @@ import com.petplate.petplate.auth.jwt.JwtFilter;
 import com.petplate.petplate.auth.jwt.TokenProvider;
 import com.petplate.petplate.auth.jwt.handler.JwtAccessDeniedHandler;
 import com.petplate.petplate.auth.jwt.handler.JwtAuthenticationEntryPointHandler;
+import com.petplate.petplate.auth.oauth.cookie.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.petplate.petplate.auth.oauth.handler.OAuth2LoginSuccessHandler;
 import com.petplate.petplate.auth.oauth.service.CustomOAuth2UserService;
 import com.petplate.petplate.user.domain.Role;
@@ -31,6 +32,7 @@ public class SecurityConfig {
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationEntryPointHandler jwtAuthenticationEntryPointHandler;
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
 
     @Bean
@@ -54,7 +56,8 @@ public class SecurityConfig {
                                 .anyRequest().permitAll()//지금은 다 permit all 로 합시다! (개발 과정 동안은)
                 )
                 .oauth2Login(configure ->
-                        configure
+                        configure.authorizationEndpoint(
+                                config-> config.authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository))
                                 .userInfoEndpoint(
                                         config -> config.userService(customOAuth2UserService))
                                 .successHandler(oAuth2LoginSuccessHandler)
