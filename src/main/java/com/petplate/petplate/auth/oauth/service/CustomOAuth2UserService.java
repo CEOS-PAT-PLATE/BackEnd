@@ -7,9 +7,12 @@ import com.petplate.petplate.user.domain.entity.User;
 import com.petplate.petplate.user.repository.UserRepository;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -25,9 +28,18 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private static final String NAVER="naver";
 
+    private final RedisTemplate<String,String> redisTemplate;
+    private static final String SOCIAL_LOGIN_ACCESS_TOKEN = "SocialLoginAccessToken";
+
+    private static final Long SOCIAL_LOGIN_ACCESS_TOKEN_EXPIRE = 3600L;
+
+
+
+
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+
 
         OAuth2UserService<OAuth2UserRequest,OAuth2User> delegate=new DefaultOAuth2UserService();
         OAuth2User oAuth2User=delegate.loadUser(userRequest);
@@ -46,12 +58,16 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         OAuthAttributes extractAttributes=OAuthAttributes.of(socialType,userNameAttributeName,attributes);
 
-        User createdMember=getUser(extractAttributes,socialType);
+        User createdMember=getUser(extractAttributes,socialType,userRequest.getAccessToken().getTokenValue());
+
+        redisTemplate.opsForValue().set(SOCIAL_LOGIN_ACCESS_TOKEN+createdMember.getUsername(),userRequest.getAccessToken().getTokenValue(),
+                SOCIAL_LOGIN_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
 
         /*
         String socialLoginAccessToken = userRequest.getAccessToken().getTokenValue();
         System.out.println("socialLoginAccessToken"+socialLoginAccessToken);
         */
+
 
 
         return new CustomOAuth2User(
@@ -72,8 +88,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     //email과 socialtype으로 member
-    private User getUser(OAuthAttributes attributes,SocialType socialType){
+    private User getUser(OAuthAttributes attributes,SocialType socialType,String code){
         User  findUser=userRepository.findBySocialTypeAndUsername(socialType,attributes.getOauth2UserInfo().getEmail()).orElseGet(()->saveUser(attributes,socialType));
+        redisTemplate.opsForValue().set(socialType.name()+findUser.getUsername(),code);
         return findUser;
     }
 
