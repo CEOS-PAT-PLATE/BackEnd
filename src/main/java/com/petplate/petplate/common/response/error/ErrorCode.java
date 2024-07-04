@@ -44,7 +44,7 @@ public enum ErrorCode {
     DAILY_RAW_NOT_FOUND("존재하지 않는 자연식 식사 내역입니다."),
     DAILY_BOOK_MARKED_NOT_FOUND("존재하지 않는 즐겨찾기 식사 내역입니다."),
 
-    DRUG_NOT_FOUND("존재하지 않는 약입니다.");
+    DRUG_NOT_FOUND("존재하지 않는 약입니다."),
 
 
     /**
@@ -56,12 +56,10 @@ public enum ErrorCode {
      */
 
 
-
-
     /**
      * 500 Internal Server Error
      */
-
+    DATA_NOT_READY("데이터가 준비되지 않았습니다");
 
 
 

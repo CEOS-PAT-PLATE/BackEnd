@@ -2,6 +2,7 @@ package com.petplate.petplate.petfood.service;
 
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
+import com.petplate.petplate.common.response.error.exception.InternalServerErrorException;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.petdailymeal.repository.DailyBookMarkedRawRepository;
 import com.petplate.petplate.petfood.domain.entity.BookMarkedRaw;
@@ -46,6 +47,7 @@ public class BookMarkedRawService {
 
         BookMarkedRaw bookMarkedRaw = BookMarkedRaw.builder().raw(raw)
                 .user(user)
+                .serving(requestDto.getServing())
                 .build();
 
         bookMarkedRawRepository.save(bookMarkedRaw);
@@ -88,7 +90,7 @@ public class BookMarkedRawService {
         }
 
         // pk가 -1인 BookMarkedRaw
-        BookMarkedRaw noDataExistBookMark = bookMarkedRawRepository.findById(-1L).orElseThrow(() -> new NotFoundException(ErrorCode.BOOK_MARK_NOT_FOUND));
+        BookMarkedRaw noDataExistBookMark = bookMarkedRawRepository.findById(-1L).orElseThrow(() -> new InternalServerErrorException(ErrorCode.DATA_NOT_READY));
 
         dailyBookMarkedRawRepository.findByBookMarkedRawId(bookMarkedRawId)
                 .forEach(dailyBookMarkedRaw -> dailyBookMarkedRaw.updateBookMarkedRaw(noDataExistBookMark));

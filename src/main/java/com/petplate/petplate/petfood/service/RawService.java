@@ -4,6 +4,7 @@ import com.petplate.petplate.common.EmbeddedType.Nutrient;
 import com.petplate.petplate.common.EmbeddedType.Vitamin;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
+import com.petplate.petplate.common.response.error.exception.InternalServerErrorException;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.petdailymeal.repository.DailyRawRepository;
 import com.petplate.petplate.petfood.domain.entity.Raw;
@@ -70,7 +71,7 @@ public class RawService {
      */
     public ReadRawResponseDto getRaw(Long rawId) {
         Raw raw = rawRepository.findById(rawId)
-                .orElseThrow(() -> new BadRequestException(ErrorCode.RAW_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.RAW_NOT_FOUND));
 
         return ReadRawResponseDto.from(raw);
     }
@@ -98,7 +99,7 @@ public class RawService {
      */
     public ReadRawResponseDto getRawByName(String name) {
         Raw raw = rawRepository.findByName(name).orElseThrow(
-                () -> new BadRequestException(ErrorCode.RAW_NOT_FOUND));
+                () -> new NotFoundException(ErrorCode.RAW_NOT_FOUND));
 
         return ReadRawResponseDto.from(raw);
     }
@@ -110,18 +111,18 @@ public class RawService {
      * @param rawId
      */
     public void deleteRawById(Long rawId) {
-        Raw noDataExistRaw = rawRepository.findById(-1L).orElseThrow(() -> new NotFoundException(ErrorCode.RAW_NOT_FOUND));
+        Raw noDataExistRaw = rawRepository.findById(-1L).orElseThrow(() -> new InternalServerErrorException(ErrorCode.DATA_NOT_READY));
 
-        dailyRawRepository.findByRawId(rawId).forEach(raw->{
-            raw.updateRaw(noDataExistRaw);
+        dailyRawRepository.findByRawId(rawId).forEach(dailyRaw->{
+            dailyRaw.updateRaw(noDataExistRaw);
         });
 
-        bookMarkedRawRepository.findByRawId(rawId).forEach(raw->{
-            raw.updateRaw(noDataExistRaw);
+        bookMarkedRawRepository.findByRawId(rawId).forEach(bookMarkedRaw->{
+            bookMarkedRaw.updateRaw(noDataExistRaw);
         });
 
         if (!rawRepository.existsById(rawId)) {
-            throw new BadRequestException(ErrorCode.RAW_NOT_FOUND);
+            throw new NotFoundException(ErrorCode.RAW_NOT_FOUND);
         }
 
         rawRepository.deleteById(rawId);

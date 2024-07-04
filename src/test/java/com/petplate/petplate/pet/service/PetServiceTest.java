@@ -278,7 +278,7 @@ class PetServiceTest {
         //then
         // 존재하지 않는 펫 조회시 예외 발생
         Assertions.assertThrows(NotFoundException.class,
-                () -> petService.getPet(user1Username, 123456L));
+                () -> petService.getPet(user1Username, -123456L));
     }
 
     @Test
