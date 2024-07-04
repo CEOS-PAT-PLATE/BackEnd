@@ -9,6 +9,9 @@ import com.petplate.petplate.drug.dto.response.DrugResponseDto;
 import com.petplate.petplate.drug.dto.response.RecommendDrugResponseDto;
 import com.petplate.petplate.drug.repository.DrugNutrientRepository;
 import com.petplate.petplate.drug.repository.DrugRepository;
+import com.petplate.petplate.pet.dto.response.ReadPetNutrientResponseDto;
+import com.petplate.petplate.pet.service.PetService;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +26,7 @@ public class DrugRecommendService {
 
     private final DrugRepository drugRepository;
     private final DrugNutrientRepository drugNutrientRepository;
+    private final PetService petService;
 
     /*
      테스트 용도로 만든 메서드입니다.
@@ -43,6 +47,23 @@ public class DrugRecommendService {
 
         List<StandardNutrient> standardNutrientList = drugFindRequestDto.getNutrients().stream().map(this::toStandardNutrient).collect(
                 Collectors.toList());
+
+
+        List<RecommendDrugResponseDto> suitableDrugResponseDtoList = drugRepository.findUserProperDrugList(standardNutrientList).stream()
+                .map(drug->RecommendDrugResponseDto.from(drug))
+                .collect(Collectors.toList());
+
+        return suitableDrugResponseDtoList;
+
+    }
+
+    public List<RecommendDrugResponseDto> findDrugByDeficientNutrientsName(String username,Long petId,
+            LocalDate date){
+
+        List<ReadPetNutrientResponseDto> ReadPetNutrientResponseDtoList = petService.getDeficientNutrient(username, petId, date);
+
+        List<StandardNutrient> standardNutrientList = ReadPetNutrientResponseDtoList.stream().map(deficientNutrient->toStandardNutrient(deficientNutrient.getName()))
+                .collect(Collectors.toList());
 
 
         List<RecommendDrugResponseDto> suitableDrugResponseDtoList = drugRepository.findUserProperDrugList(standardNutrientList).stream()

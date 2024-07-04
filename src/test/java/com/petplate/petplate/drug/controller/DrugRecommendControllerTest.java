@@ -2,6 +2,9 @@ package com.petplate.petplate.drug.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -18,6 +21,7 @@ import com.petplate.petplate.drug.dto.response.DrugResponseDto;
 import com.petplate.petplate.drug.dto.response.RecommendDrugResponseDto;
 import com.petplate.petplate.drug.service.DrugCRUDService;
 import com.petplate.petplate.drug.service.DrugRecommendService;
+import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -117,6 +121,37 @@ class DrugRecommendControllerTest {
                         .content(gson.toJson(DrugFindRequestDto.builder().nutrients(List.of("탄수화물")).build()))
                         .contentType(MediaType.APPLICATION_JSON)
         );
+
+
+        //then
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.data[0].name").value("한글"));
+
+
+    }
+
+    @Test
+    @DisplayName("내부적 부족 영양소 바탕으로 영양제 추천 컨트롤러")
+    public void 내부적_부족_영양소_기반_영양제_추천_컨트롤러() throws Exception {
+        //given
+
+        given(drugRecommendService.findDrugByDeficientNutrientsName(any(),anyLong(),eq(
+                LocalDate.of(2023,1,1)))).willReturn(List.of(
+                RecommendDrugResponseDto.from(Drug.builder()
+                        .drugImgPath("img")
+                        .url("www.naver")
+                        .vendor("vendor")
+                        .englishName("english")
+                        .name("한글").build()
+                )));
+
+        //when
+        final ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(DRUG_RECOMMEND+"/pets/{petId}",1)
+                        .param("date",LocalDate.of(2023,1,1).toString())
+                        .contentType(MediaType.APPLICATION_JSON));
 
 
         //then

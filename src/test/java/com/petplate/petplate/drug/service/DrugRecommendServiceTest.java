@@ -11,6 +11,9 @@ import com.petplate.petplate.drug.dto.response.DrugResponseDto;
 import com.petplate.petplate.drug.dto.response.RecommendDrugResponseDto;
 import com.petplate.petplate.drug.repository.DrugNutrientRepository;
 import com.petplate.petplate.drug.repository.DrugRepository;
+import com.petplate.petplate.pet.dto.response.ReadPetNutrientResponseDto;
+import com.petplate.petplate.pet.service.PetService;
+import java.time.LocalDate;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +24,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -36,6 +41,9 @@ class DrugRecommendServiceTest {
 
     @Mock
     DrugNutrientRepository drugNutrientRepository;
+
+    @Mock
+    PetService petService;
 
 
     private Drug getTestDrug(){
@@ -125,5 +133,45 @@ class DrugRecommendServiceTest {
         assertThat(drugResponseDtoList.size()).isEqualTo(1);
 
     }
+
+    @Test
+    @DisplayName("Pet의 부족 영양분 기반 추천 영양제")
+    public void Pet_부족_영양분_기반_추천_영양제(){
+        //given
+        Drug drug = getTestDrug();
+
+        List<DrugNutrient> drugNutrientList = getTestDrugNutrientList(drug);
+
+        given(petService.getDeficientNutrient(anyString(),anyLong(),eq(LocalDate.of(2023,1,1)))).willReturn(
+                List.of(ReadPetNutrientResponseDto.of("탄수화물",null,null,3.5,2.6,1.3),
+                        ReadPetNutrientResponseDto.of("지방",null,null,3.6,2.6,1.3))
+        );
+        given(petService.getDeficientNutrient(anyString(),anyLong(),eq(LocalDate.of(2023,1,2)))).willReturn(
+                List.of(ReadPetNutrientResponseDto.of("비타민A",null,null,3.5,2.6,1.3)
+                      )
+        );
+
+        given(drugRepository.findUserProperDrugList(eq(List.of(StandardNutrient.CARBON_HYDRATE,StandardNutrient.FAT)))
+        ).willReturn(List.of(drug));
+        given(drugRepository.findUserProperDrugList(eq(List.of(StandardNutrient.VITAMIN_A)))
+        ).willReturn(List.of());
+
+
+
+        //when
+        List<RecommendDrugResponseDto> drugResponseDtoList1 = drugRecommendService.findDrugByDeficientNutrientsName("any",1L,LocalDate.of(2023,1,1));
+        List<RecommendDrugResponseDto> drugResponseDtoList2 = drugRecommendService.findDrugByDeficientNutrientsName("any",1L,LocalDate.of(2023,1,2));
+
+
+
+
+
+
+        //then
+        assertThat(drugResponseDtoList1.size()).isEqualTo(1);
+        assertThat(drugResponseDtoList2.size()).isEqualTo(0);
+
+    }
+
 
 }
