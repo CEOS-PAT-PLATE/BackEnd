@@ -2,6 +2,7 @@ package com.petplate.petplate.petfood.service;
 
 import com.petplate.petplate.common.EmbeddedType.Nutrient;
 import com.petplate.petplate.common.EmbeddedType.Vitamin;
+import com.petplate.petplate.common.response.error.exception.BadRequestException;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.pet.domain.Activity;
 import com.petplate.petplate.pet.domain.Neutering;
@@ -129,6 +130,7 @@ class BookMarkedRawServiceTest {
 
         Assertions.assertThrows(NotFoundException.class, () -> bookMarkedRawService.createBookMarkedRaw("asklfjdvxchio", createBookMarkedRawRequestDto));
         Assertions.assertThrows(NotFoundException.class, () -> bookMarkedRawService.createBookMarkedRaw(username, new CreateBookMarkedRawRequestDto(-12345L, 200)));
+        Assertions.assertThrows(BadRequestException.class, () -> bookMarkedRawService.createBookMarkedRaw(username, createBookMarkedRawRequestDto));
     }
 
     @Test
@@ -154,7 +156,6 @@ class BookMarkedRawServiceTest {
 
         // then
         Assertions.assertEquals(2, bookMarkedRawService.getBookMarkedRaws(username).size());
-        Assertions.assertThrows(NotFoundException.class, () -> bookMarkedRawService.getBookMarkedRaws("askfj;alsjfh;whlkasdfh;klah"));
     }
 
     @Test

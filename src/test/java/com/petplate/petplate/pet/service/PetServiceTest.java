@@ -330,7 +330,7 @@ class PetServiceTest {
         //given
 
         //when
-        List<ReadPetProfileImageResponseDto> petProfileImages = petService.getPetProfileImages(user1Username);
+        List<ReadPetProfileImageResponseDto> petProfileImages = petService.getPetProfileImages();
         for (ReadPetProfileImageResponseDto petProfileImage : petProfileImages) {
             System.out.println("petProfileImage = " + petProfileImage);
         }

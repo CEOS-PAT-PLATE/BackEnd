@@ -13,6 +13,8 @@ import java.util.Optional;
 
 public interface BookMarkedRawRepository extends JpaRepository<BookMarkedRaw, Long> {
     List<BookMarkedRaw> findByUserId(Long userId);
+    List<BookMarkedRaw> findByUserUsername(String username);
     List<BookMarkedRaw> findByRawId(Long rawId);
     Optional<BookMarkedRaw> findByUserIdAndRawId(Long userId, Long rawId);
+    Optional<BookMarkedRaw> findByUserIdAndRawIdAndServing(Long userId, Long rawId, double serving);
 }
