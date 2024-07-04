@@ -89,11 +89,9 @@ public class BookMarkedRawService {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
         }
 
-        // pk가 -1인 BookMarkedRaw
-        BookMarkedRaw noDataExistBookMark = bookMarkedRawRepository.findById(-1L).orElseThrow(() -> new InternalServerErrorException(ErrorCode.DATA_NOT_READY));
-
+        // 연관관계 제거
         dailyBookMarkedRawRepository.findByBookMarkedRawId(bookMarkedRawId)
-                .forEach(dailyBookMarkedRaw -> dailyBookMarkedRaw.updateBookMarkedRaw(noDataExistBookMark));
+                .forEach(dailyBookMarkedRaw -> dailyBookMarkedRaw.updateBookMarkedRaw(null));
 
         bookMarkedRawRepository.delete(bookMarkedRaw);
     }

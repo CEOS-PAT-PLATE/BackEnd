@@ -80,4 +80,8 @@ public class BookMarkedRaw extends BaseEntity{
     public void updateRaw(Raw raw) {
         this.raw = raw;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }

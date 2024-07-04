@@ -338,14 +338,11 @@ class RawServiceTest {
         // then
         DailyRaw dailyRawDeletedRaw = dailyRawRepository.findById(dailyRawId).get();  // Raw를 제거해도 DailyRaw의 영양성분에는 영향을 미치지 않음.
         Assertions.assertEquals(30, dailyRawDeletedRaw.getKcal());
-        Assertions.assertEquals(-1L, dailyRawDeletedRaw.getRaw().getId());
-        Assertions.assertEquals("존재하지 않는 정보입니다", dailyRawDeletedRaw.getRaw().getName());
-        Assertions.assertEquals(0, dailyRawDeletedRaw.getRaw().getKcal());
+        Assertions.assertEquals(null, dailyRawDeletedRaw.getRaw());
 
         DailyBookMarkedRaw dailyBookMarkedRawDeletedRaw = dailyBookMarkedRawRepository.findById(dailyBookMarkedRawId).get();
-        Assertions.assertEquals(-1L, dailyBookMarkedRawDeletedRaw.getBookMarkedRaw().getRaw().getId());
-        Assertions.assertEquals("존재하지 않는 정보입니다", dailyBookMarkedRawDeletedRaw.getBookMarkedRaw().getRaw().getName());
-        Assertions.assertEquals(0, dailyBookMarkedRawDeletedRaw.getBookMarkedRaw().getRaw().getNutrient().getFat());
+        Assertions.assertEquals(null, dailyBookMarkedRawDeletedRaw.getBookMarkedRaw().getRaw());
+        Assertions.assertEquals("존재하지 않는 자연식입니다.",dailyBookMarkedRawDeletedRaw.getBookMarkedRaw().getName());
 
         DailyMeal dailyMealDeletedRaw = dailyMealRepository.findById(dailyMealId).get();  // Raw를 제거해도 DailyMeal에는 영향을 미치지 않음
         Assertions.assertEquals(60, dailyMealDeletedRaw.getKcal());

@@ -106,19 +106,17 @@ public class RawService {
 
     /**
      * Raw 제거. 연관관계 해제를 위해 해당 Raw와 연관된
-     * DailyRaw, BookMarkedDailyRaw의 Raw는 모두 PK가 -1인 Raw로 수정됨.
-     * 해당 Raw에는 "존재하지 않은 정보입니다" 이름의 모든 데이터가 0인 정보가 존재하도록 함.
+     * DailyRaw, BookMarkedDailyRaw의 Raw는 null로 수정됨.
      * @param rawId
      */
     public void deleteRawById(Long rawId) {
-        Raw noDataExistRaw = rawRepository.findById(-1L).orElseThrow(() -> new InternalServerErrorException(ErrorCode.DATA_NOT_READY));
-
         dailyRawRepository.findByRawId(rawId).forEach(dailyRaw->{
-            dailyRaw.updateRaw(noDataExistRaw);
+            dailyRaw.updateRaw(null);
         });
 
         bookMarkedRawRepository.findByRawId(rawId).forEach(bookMarkedRaw->{
-            bookMarkedRaw.updateRaw(noDataExistRaw);
+            bookMarkedRaw.updateRaw(null);
+            bookMarkedRaw.updateName("존재하지 않는 자연식입니다.");
         });
 
         if (!rawRepository.existsById(rawId)) {
