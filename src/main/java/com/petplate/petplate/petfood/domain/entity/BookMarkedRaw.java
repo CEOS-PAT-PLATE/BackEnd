@@ -35,6 +35,9 @@ public class BookMarkedRaw extends BaseEntity{
     @Column(nullable = false)
     private double serving;
 
+    @Column(nullable = true)
+    private String description;
+
     @Column(nullable = false)
     private double kcal;
 
@@ -51,9 +54,11 @@ public class BookMarkedRaw extends BaseEntity{
 
     @Builder
     public BookMarkedRaw(double serving, Raw raw, User user) {
-        this.serving = serving;
-        this.name = raw.getName();
+        this.user = user;
+
         this.raw = raw;
+        this.name = raw.getName();
+        this.description = raw.getDescription();
         this.serving = serving;
 
         double ratio = (serving / raw.getStandardAmount());

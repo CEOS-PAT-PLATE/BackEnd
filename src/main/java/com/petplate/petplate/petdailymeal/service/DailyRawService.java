@@ -44,18 +44,16 @@ public class DailyRawService {
      * @param username
      * @param petId
      * @param requestDto
-     * @return rawDailyMeal를 생성 후 id를 반환.
+     * @return DailyRaw를 생성 후 id를 반환.
      */
     @Transactional
     public Long createDailyRaw(String username, Long petId, CreateDailyRawRequestDto requestDto) {
         Pet pet = findPet(username, petId);
 
         // 오늘의 dailyMeal
-        LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0, 0, 0));
-        LocalDateTime endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
-        DailyMeal dailyMeal = getDailyMeal(petId, startDatetime, endDatetime, pet);
+        DailyMeal dailyMeal = getDailyMealToday(pet);
 
-        // rawDailyMeal 생성
+        // DailyRaw 생성
         Raw raw = rawRepository.findById(requestDto.getRawId()).orElseThrow(
                 () -> new NotFoundException(ErrorCode.RAW_NOT_FOUND));
 
@@ -128,7 +126,7 @@ public class DailyRawService {
         Pet pet = findPet(username, petId);
 
         DailyRaw dailyRaw = dailyRawRepository.findById(dailyRawId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.RAW_DAILY_MEAL_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_RAW_NOT_FOUND));
 
         if (!Objects.equals(dailyRaw.getDailyMeal().getPet().getId(), pet.getId())) {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
@@ -138,7 +136,7 @@ public class DailyRawService {
     }
 
     /**
-     * rawDailyMeal 제거
+     * DailyRaw 제거
      *
      * @param dailyRawId
      */
@@ -146,7 +144,7 @@ public class DailyRawService {
     public void deleteDailyRaw(String username, Long petId, Long dailyRawId) {
         findPet(username, petId);
         DailyRaw dailyRaw =
-                dailyRawRepository.findById(dailyRawId).orElseThrow(() -> new NotFoundException(ErrorCode.RAW_DAILY_MEAL_NOT_FOUND));
+                dailyRawRepository.findById(dailyRawId).orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_RAW_NOT_FOUND));
 
         // dailyMeal에서 삭제한 rawDailyMeal만큼의 영양분 제거
         DailyMeal dailyMeal = dailyRaw.getDailyMeal();
@@ -156,8 +154,11 @@ public class DailyRawService {
         dailyRawRepository.delete(dailyRaw);
     }
 
-    private DailyMeal getDailyMeal(Long petId, LocalDateTime startDatetime, LocalDateTime endDatetime, Pet pet) {
-        return dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime)
+    private DailyMeal getDailyMealToday(Pet pet) {
+        LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
+
+        return dailyMealRepository.findByPetIdAndCreatedAtBetween(pet.getId(), startDatetime, endDatetime)
                 .orElseGet(() -> dailyMealRepository.save(  // 없다면 새로운 엔티티를 생성한 후 반환
                         new DailyMeal(
                                 Nutrient.builder()

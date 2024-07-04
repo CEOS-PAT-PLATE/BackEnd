@@ -38,4 +38,8 @@ public class DailyBookMarkedRaw {
         this.bookMarkedRaw = bookMarkedRaw;
         this.dailyMeal = dailyMeal;
     }
+
+    public void updateBookMarkedRaw(BookMarkedRaw bookMarkedRaw) {
+        this.bookMarkedRaw = bookMarkedRaw;
+    }
 }

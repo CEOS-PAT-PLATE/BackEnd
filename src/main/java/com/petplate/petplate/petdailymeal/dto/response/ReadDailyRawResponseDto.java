@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class ReadDailyRawResponseDto {
     private Long id;
     private String name;
+    private String description;
     private double serving;
     private double kcal;
     private double carbonHydrate;
@@ -29,6 +30,7 @@ public class ReadDailyRawResponseDto {
 
         response.id = dailyRaw.getId();
         response.name = dailyRaw.getRaw().getName();
+        response.description = dailyRaw.getRaw().getDescription();
         response.serving = dailyRaw.getServing();
         response.kcal = dailyRaw.getKcal();
         response.carbonHydrate = dailyRaw.getNutrient().getCarbonHydrate();

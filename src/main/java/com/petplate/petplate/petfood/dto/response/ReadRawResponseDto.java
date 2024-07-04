@@ -11,6 +11,7 @@ public class ReadRawResponseDto {
     private Long id;
     private double standardAmount;
     private String name;
+    private String description;
     private double kcal;
     private double carbonHydrate;
     private double protein;
@@ -27,6 +28,7 @@ public class ReadRawResponseDto {
         response.id = raw.getId();
         response.standardAmount = raw.getStandardAmount();
         response.name = raw.getName();
+        response.description = raw.getDescription();
         response.kcal = raw.getKcal();
         response.carbonHydrate = raw.getNutrient().getCarbonHydrate();
         response.protein = raw.getNutrient().getProtein();

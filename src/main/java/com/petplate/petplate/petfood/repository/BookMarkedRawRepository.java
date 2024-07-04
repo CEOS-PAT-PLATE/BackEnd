@@ -9,8 +9,10 @@ import org.springframework.data.jpa.repository.Query;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface BookMarkedRawRepository extends JpaRepository<BookMarkedRaw, Long> {
     List<BookMarkedRaw> findByUserId(Long userId);
     List<BookMarkedRaw> findByRawId(Long rawId);
+    Optional<BookMarkedRaw> findByUserIdAndRawId(Long userId, Long rawId);
 }

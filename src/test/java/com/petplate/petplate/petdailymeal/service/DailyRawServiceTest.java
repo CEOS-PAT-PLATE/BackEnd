@@ -263,6 +263,5 @@ class DailyRawServiceTest {
         Assertions.assertEquals(0, dailyRawRepository.findByDailyMealId(dailyMealId).size());
 
         Assertions.assertThrows(NotFoundException.class, () -> dailyRawService.deleteDailyRaw(user1Username, pet2Id, dailyRawId1));
-
     }
 }
