@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReadDailyRawResponseDto {
-    private Long id;
+    private Long dailyRawId;
     private String name;
     private String description;
     private double serving;
@@ -28,7 +28,7 @@ public class ReadDailyRawResponseDto {
         ReadDailyRawResponseDto response
                 = new ReadDailyRawResponseDto();
 
-        response.id = dailyRaw.getId();
+        response.dailyRawId = dailyRaw.getId();
         response.name = dailyRaw.getRaw().getName();
         response.description = dailyRaw.getRaw().getDescription();
         response.serving = dailyRaw.getServing();
