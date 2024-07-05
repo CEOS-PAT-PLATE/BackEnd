@@ -31,10 +31,10 @@ public class BookMarkedRawController {
     private final DailyBookMarkedRawService dailyBookMarkedRawService;
     private final BookMarkedRawService bookMarkedRawService;
 
-    private final String OK = "200";
-    private final String CREATED = "201";
-    private final String BAD_REQUEST = "400";
-    private final String NOT_FOUND = "404";
+    private static final String OK = "200";
+    private static final String CREATED = "201";
+    private static final String BAD_REQUEST = "400";
+    private static final String NOT_FOUND = "404";
 
 
     @Operation(summary = "자연식을 즐겨찾기에 추가")
@@ -44,7 +44,7 @@ public class BookMarkedRawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "해당 username을 가지는 유저가 존재하지 않는 경우, 해당 rawId를 가지는 자연식이 존재하지 않는 경우")
     })
     @PostMapping("/bookmark/raws")
-    public ResponseEntity<BaseResponse> createBookMarkedRaws(@CurrentUserUsername String username, @Valid CreateBookMarkedRawRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createBookMarkedRaws(@CurrentUserUsername String username, @Valid CreateBookMarkedRawRequestDto requestDto) {
         Long bookMarkedRawId = bookMarkedRawService.createBookMarkedRaw(username, requestDto);
 
         return new ResponseEntity(BaseResponse.createSuccess(bookMarkedRawId), HttpStatus.CREATED);
@@ -55,7 +55,7 @@ public class BookMarkedRawController {
             @ApiResponse(responseCode = OK, description = "즐겨찾기 자연식 성공적 조회"),
     })
     @GetMapping("/bookmark/raws")
-    public ResponseEntity<BaseResponse> readBookMarkedRaws(@CurrentUserUsername String username) {
+    public ResponseEntity<BaseResponse<List<ReadBookMarkedRawResponseDto>>> readBookMarkedRaws(@CurrentUserUsername String username) {
         List<ReadBookMarkedRawResponseDto> bookMarkedRaws = bookMarkedRawService.getBookMarkedRaws(username);
 
         return new ResponseEntity(BaseResponse.createSuccess(bookMarkedRaws), HttpStatus.OK);
@@ -68,7 +68,7 @@ public class BookMarkedRawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 즐겨찾기를 조회하는 경우"),
     })
     @GetMapping("/bookmark/raws/{bookMarkedRawId}")
-    public ResponseEntity<BaseResponse> readBookMarkedRaw(@CurrentUserUsername String username, @PathVariable Long bookMarkedRawId) {
+    public ResponseEntity<BaseResponse<ReadBookMarkedRawResponseDto>> readBookMarkedRaw(@CurrentUserUsername String username, @PathVariable Long bookMarkedRawId) {
         ReadBookMarkedRawResponseDto bookMarkedRaw = bookMarkedRawService.getBookMarkedRaw(username, bookMarkedRawId);
 
         return new ResponseEntity(BaseResponse.createSuccess(bookMarkedRaw), HttpStatus.OK);
@@ -94,7 +94,7 @@ public class BookMarkedRawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 bookMarkedRawId"),
     })
     @PostMapping("/pet/{petId}/bookmark/raws")
-    public ResponseEntity<BaseResponse> createDailyBookMarkRaw(@CurrentUserUsername String username, @PathVariable Long petId, @Valid CreateDailyBookMarkedRawRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createDailyBookMarkRaw(@CurrentUserUsername String username, @PathVariable Long petId, @Valid CreateDailyBookMarkedRawRequestDto requestDto) {
         Long id = dailyBookMarkedRawService.createDailyBookMarkedRaw(username, petId, requestDto);
 
         return new ResponseEntity(BaseResponse.createSuccess(id), HttpStatus.CREATED);
@@ -107,7 +107,7 @@ public class BookMarkedRawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
     @GetMapping("/pet/{petId}/bookmark/raws")
-    public ResponseEntity<BaseResponse> getBookMarkedRaws(@CurrentUserUsername String username,@PathVariable Long petId, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedRawResponseDto>>> getBookMarkedRaws(@CurrentUserUsername String username,@PathVariable Long petId, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         List<ReadDailyBookMarkedRawResponseDto> bookMarkedRaws = dailyBookMarkedRawService.getBookMarkedRaws(username, petId, date);
 
         return new ResponseEntity(BaseResponse.createSuccess(bookMarkedRaws), HttpStatus.OK);
