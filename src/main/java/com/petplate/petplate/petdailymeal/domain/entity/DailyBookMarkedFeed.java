@@ -25,11 +25,11 @@ public class DailyBookMarkedFeed {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_marked_feed_id",nullable = false)
+    @JoinColumn(name = "book_marked_feed_id")
     private BookMarkedFeed bookMarkedFeed;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "daily_meal_id",nullable = false)
+    @JoinColumn(name = "daily_meal_id", nullable = false)
     private DailyMeal dailyMeal;
 
     @Builder
