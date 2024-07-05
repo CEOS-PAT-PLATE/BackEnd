@@ -48,7 +48,7 @@ public class DailyRawService {
      */
     @Transactional
     public Long createDailyRaw(String username, Long petId, CreateDailyRawRequestDto requestDto) {
-        Pet pet = findPet(username, petId);
+        Pet pet = validUserAndFindPet(username, petId);
 
         // 오늘의 dailyMeal
         DailyMeal dailyMeal = getDailyMealToday(pet);
@@ -79,7 +79,7 @@ public class DailyRawService {
      * @return
      */
     public List<ReadDailyRawResponseDto> getDailyRaws(String username, Long petId, Long dailyMealId) {
-        Pet pet = findPet(username, petId);
+        Pet pet = validUserAndFindPet(username, petId);
 
         DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
@@ -105,7 +105,7 @@ public class DailyRawService {
      * @return
      */
     public List<ReadDailyRawResponseDto> getRecentDailyRaws(String username, Long petId, int count) {
-        findPet(username, petId);
+        validUserAndFindPet(username, petId);
 
         return dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId).stream()
                 .limit(count)
@@ -123,7 +123,7 @@ public class DailyRawService {
      * @return
      */
     public ReadDailyRawResponseDto getDailyRaw(String username, Long petId, Long dailyRawId) {
-        Pet pet = findPet(username, petId);
+        Pet pet = validUserAndFindPet(username, petId);
 
         DailyRaw dailyRaw = dailyRawRepository.findById(dailyRawId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_RAW_NOT_FOUND));
@@ -142,7 +142,7 @@ public class DailyRawService {
      */
     @Transactional
     public void deleteDailyRaw(String username, Long petId, Long dailyRawId) {
-        findPet(username, petId);
+        validUserAndFindPet(username, petId);
         DailyRaw dailyRaw =
                 dailyRawRepository.findById(dailyRawId).orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_RAW_NOT_FOUND));
 
@@ -178,7 +178,7 @@ public class DailyRawService {
                 ));
     }
 
-    private Pet findPet(String username, Long petId) {
+    private Pet validUserAndFindPet(String username, Long petId) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 

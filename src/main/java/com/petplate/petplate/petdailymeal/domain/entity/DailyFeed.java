@@ -2,7 +2,6 @@ package com.petplate.petplate.petdailymeal.domain.entity;
 
 import com.petplate.petplate.common.EmbeddedType.Nutrient;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,7 +29,7 @@ public class DailyFeed {
     private String name;
 
     @Column(nullable = false)
-    private int totalAmount;
+    private double serving;
 
     @Column(nullable = false)
     private double kcal;
@@ -44,10 +43,10 @@ public class DailyFeed {
 
 
     @Builder
-    public DailyFeed(String name, int totalAmount, double kcal, Nutrient nutrient,
-            DailyMeal dailyMeal) {
+    public DailyFeed(String name, double serving, double kcal, Nutrient nutrient,
+                     DailyMeal dailyMeal) {
         this.name = name;
-        this.totalAmount = totalAmount;
+        this.serving = serving;
         this.kcal = kcal;
         this.nutrient = nutrient;
         this.dailyMeal = dailyMeal;

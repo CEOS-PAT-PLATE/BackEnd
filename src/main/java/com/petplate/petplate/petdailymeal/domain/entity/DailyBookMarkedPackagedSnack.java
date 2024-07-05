@@ -25,7 +25,7 @@ public class DailyBookMarkedPackagedSnack {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_marked_packaged_snack_id",nullable = false)
+    @JoinColumn(name = "book_marked_packaged_snack_id")
     private BookMarkedPackagedSnack bookMarkedPackagedSnack;
 
     @ManyToOne(fetch = FetchType.LAZY)

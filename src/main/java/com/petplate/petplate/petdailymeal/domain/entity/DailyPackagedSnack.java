@@ -29,7 +29,7 @@ public class DailyPackagedSnack {
     private String name;
 
     @Column(nullable = false)
-    private int totalAmount;
+    private double serving;
 
     @Column(nullable = false)
     private double kcal;
@@ -42,10 +42,10 @@ public class DailyPackagedSnack {
     private DailyMeal dailyMeal;
 
     @Builder
-    public DailyPackagedSnack(String name, int totalAmount, double kcal, Nutrient nutrient,
-            DailyMeal dailyMeal) {
+    public DailyPackagedSnack(String name, double serving, double kcal, Nutrient nutrient,
+                              DailyMeal dailyMeal) {
         this.name = name;
-        this.totalAmount = totalAmount;
+        this.serving = serving;
         this.kcal = kcal;
         this.nutrient = nutrient;
         this.dailyMeal = dailyMeal;

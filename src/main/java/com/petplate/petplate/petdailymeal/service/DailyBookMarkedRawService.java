@@ -39,7 +39,7 @@ public class DailyBookMarkedRawService {
 
     @Transactional
     public Long createDailyBookMarkedRaw(String username, Long petId, CreateDailyBookMarkedRawRequestDto requestDto) {
-        Pet pet = findPet(username, petId);
+        Pet pet = validUserAndFindPet(username, petId);
         BookMarkedRaw bookMarkedRaw = bookMarkedRawRepository.findById(requestDto.getBookMarkedRawId()).orElseThrow(() ->
                 new NotFoundException(ErrorCode.BOOK_MARK_NOT_FOUND)
         );
@@ -57,7 +57,7 @@ public class DailyBookMarkedRawService {
     }
 
     public List<ReadDailyBookMarkedRawResponseDto> getBookMarkedRaws(String username, Long petId, LocalDate date) {
-        Pet pet = findPet(username, petId);
+        Pet pet = validUserAndFindPet(username, petId);
 
         DailyMeal dailyMeal = findDailyMeal(petId, date);
 
@@ -75,7 +75,7 @@ public class DailyBookMarkedRawService {
     }
 
     public List<ReadBookMarkedRawResponseDto> getRecentBookMarkedRaws(String username, Long petId, int count) {
-        findPet(username, petId);
+        validUserAndFindPet(username, petId);
 
         List<ReadBookMarkedRawResponseDto> responses = new ArrayList<>();
         dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId).stream()
@@ -91,7 +91,7 @@ public class DailyBookMarkedRawService {
 
     @Transactional
     public void deleteDailyBookMarkedRaw(String username, Long petId, Long dailyBookMarkedRawId) {
-        findPet(username, petId);
+        validUserAndFindPet(username, petId);
         DailyBookMarkedRaw dailyBookMarkedRaw = dailyBookMarkedRawRepository.findById(dailyBookMarkedRawId).orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_BOOK_MARKED_NOT_FOUND));
 
         // dailyMeal에서 삭제한 dailyBookMarkedRaw만큼의 영양분 제거
@@ -140,7 +140,7 @@ public class DailyBookMarkedRawService {
         return dailyMeal;
     }
 
-    private Pet findPet(String username, Long petId) {
+    private Pet validUserAndFindPet(String username, Long petId) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 

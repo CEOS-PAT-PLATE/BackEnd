@@ -29,22 +29,23 @@ import java.util.List;
 public class PetController {
 
     private final PetService petService;
-    private final String OK = "200";
-    private final String CREATED = "201";
-    private final String BAD_REQUEST = "400";
-    private final String NOT_FOUND = "404";
+    private static final String OK = "200";
+    private static final String CREATED = "201";
+    private static final String BAD_REQUEST = "400";
+    private static final String NOT_FOUND = "404";
 
-    @Operation(summary = "반려견 추가")
+    @Operation(summary = "반려견 추가", description = "1) Neutering(중성화)에 들어갈 값: INTACT(중성화 안함), NEUTERED(중성화 함) " +
+            "2) 활동량(Activity)에 들어갈 값: INACTIVE(차분), SOMEWHAT_ACTIVE(보통), ACTIVE(활발), VERY_ACTIVE(초활발)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = CREATED, description = "반려견 성공적 추가"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "멤버십이 존재하지 않으면서 두마리 이상의 반려견을 추가하려는 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "해당 username을 가지는 유저가 존재하지 않는 경우")
     })
     @PostMapping("/pets")
-    public ResponseEntity<BaseResponse> createPet(@CurrentUserUsername String username, @RequestBody @Valid CreatePetRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createPet(@CurrentUserUsername String username, @RequestBody @Valid CreatePetRequestDto requestDto) {
         Pet pet = petService.createPet(username, requestDto);
 
-        return new ResponseEntity(BaseResponse.createSuccess(pet.getName()), HttpStatus.CREATED);
+        return new ResponseEntity(BaseResponse.createSuccess(pet.getId()), HttpStatus.CREATED);
     }
 
     @Operation(summary = "유저의 모든 반려견 조회")
@@ -52,7 +53,7 @@ public class PetController {
             @ApiResponse(responseCode = OK, description = "반려견 성공적 조회"),
     })
     @GetMapping("/pets")
-    public ResponseEntity<BaseResponse> readAllPets(@CurrentUserUsername String username) {
+    public ResponseEntity<BaseResponse<List<ReadPetResponseDto>>> readAllPets(@CurrentUserUsername String username) {
         List<ReadPetResponseDto> allPets = petService.getAllPets(username);
 
         return new ResponseEntity(BaseResponse.createSuccess(allPets), HttpStatus.OK);
@@ -65,7 +66,7 @@ public class PetController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId"),
     })
     @GetMapping("/pets/{petId}")
-    public ResponseEntity<BaseResponse> readAllPets(@CurrentUserUsername String username, @PathVariable Long petId) {
+    public ResponseEntity<BaseResponse<ReadPetResponseDto>> readAllPets(@CurrentUserUsername String username, @PathVariable Long petId) {
         ReadPetResponseDto pet = petService.getPet(username, petId);
 
         return new ResponseEntity(BaseResponse.createSuccess(pet), HttpStatus.OK);
@@ -89,7 +90,7 @@ public class PetController {
             @ApiResponse(responseCode = OK, description = "프로필 이미지 성공적 조회"),
     })
     @GetMapping("/pets/images")
-    public ResponseEntity<BaseResponse> readPetProfileImages() {
+    public ResponseEntity<BaseResponse<List<ReadPetProfileImageResponseDto>>> readPetProfileImages() {
         List<ReadPetProfileImageResponseDto> petProfileImages = petService.getPetProfileImages();
 
         return new ResponseEntity(BaseResponse.createSuccess(petProfileImages), HttpStatus.OK);
@@ -115,7 +116,7 @@ public class PetController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
     @GetMapping("/pets/{petId}/nutrients")
-    public ResponseEntity<BaseResponse> readPetNutrients(@CurrentUserUsername String username, @PathVariable Long petId,
+    public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readPetNutrients(@CurrentUserUsername String username, @PathVariable Long petId,
                                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
             List<ReadPetNutrientResponseDto> petNutrientToday = petService.getPetNutrientToday(username, petId);
@@ -128,14 +129,14 @@ public class PetController {
 
     @Operation(summary = "반려견이 하루 섭취한 적정 영양소 대비 영양소 비율을 조회. (날짜 미입력시 오늘 정보 조회)",
             description = "반려견이 섭취한 영양소를 적정 섭취량에 대한 비율로 반환함\n" +
-            "예) 체중에 대해서 계산한 단백질 적정량이 100g인데 총 200g을 섭취한 경우 protein = 2가 반환")
+                    "예) 체중에 대해서 계산한 단백질 적정량이 100g인데 총 200g을 섭취한 경우 protein = 2가 반환")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "반려견 성공적 정보 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
     @GetMapping("/pets/{petId}/nutrients/ratio")
-    public ResponseEntity<BaseResponse> readPetNutrientRatio(@CurrentUserUsername String username, @PathVariable Long petId,
+    public ResponseEntity<BaseResponse<List<ReadPetNutrientRatioResponseDto>>> readPetNutrientRatio(@CurrentUserUsername String username, @PathVariable Long petId,
                                                              @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
             List<ReadPetNutrientRatioResponseDto> petNutrientRatioToday = petService.getPetNutrientRatioToday(username, petId);
@@ -146,27 +147,27 @@ public class PetController {
         }
     }
 
-    @Operation(summary = "반려견이 하루동안 과잉 섭취한 영양소 조회. (날짜 미입력시 오늘 정보 조회)")
+    @Operation(summary = "반려견이 하루동안 과잉 섭취한 영양소 조회.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "반려견 성공적 정보 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
     @GetMapping("/pets/{petId}/nutrient/sufficient")
-    public ResponseEntity<BaseResponse> readPetSufficientNutrients(@CurrentUserUsername String username, @PathVariable Long petId,
+    public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readPetSufficientNutrients(@CurrentUserUsername String username, @PathVariable Long petId,
                                                                    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         List<ReadPetNutrientResponseDto> sufficientNutrient = petService.getSufficientNutrient(username, petId, date);
         return new ResponseEntity(BaseResponse.createSuccess(sufficientNutrient), HttpStatus.OK);
     }
 
-    @Operation(summary = "반려견이 하루동안 부족 섭취한 영양소 조회. (날짜 미입력시 오늘 정보 조회)")
+    @Operation(summary = "반려견이 하루동안 부족 섭취한 영양소 조회.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "반려견 성공적 정보 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
     @GetMapping("/pets/{petId}/nutrient/deficient")
-    public ResponseEntity<BaseResponse> readPetDeficientNutrients(@CurrentUserUsername String username, @PathVariable Long petId,
+    public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readPetDeficientNutrients(@CurrentUserUsername String username, @PathVariable Long petId,
                                                                   @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         List<ReadPetNutrientResponseDto> deficientNutrient = petService.getDeficientNutrient(username, petId, date);
         return new ResponseEntity(BaseResponse.createSuccess(deficientNutrient), HttpStatus.OK);
@@ -179,7 +180,7 @@ public class PetController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
     @GetMapping("/pets/{petId}/kcal")
-    public ResponseEntity<BaseResponse> readPetKcal(@CurrentUserUsername String username, @PathVariable Long petId,
+    public ResponseEntity<BaseResponse<ReadPetKcalResponseDto>> readPetKcal(@CurrentUserUsername String username, @PathVariable Long petId,
                                                     @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
             ReadPetKcalResponseDto petKcalToday = petService.getPetKcalToday(username, petId);
@@ -197,7 +198,7 @@ public class PetController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId"),
     })
     @GetMapping("/pets/{petId}/kcal/proper")
-    public ResponseEntity<BaseResponse> readPetProperKcal(@CurrentUserUsername String username, @PathVariable Long petId) {
+    public ResponseEntity<BaseResponse<ReadPetKcalResponseDto>> readPetProperKcal(@CurrentUserUsername String username, @PathVariable Long petId) {
         ReadPetKcalResponseDto petProperKcal = petService.getPetProperKcal(username, petId);
         return new ResponseEntity(BaseResponse.createSuccess(petProperKcal), HttpStatus.OK);
     }
@@ -209,7 +210,7 @@ public class PetController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
     @GetMapping("/pets/{petId}/kcal/ratio")
-    public ResponseEntity<BaseResponse> readPetKcalRatio(@CurrentUserUsername String username, @PathVariable Long petId,
+    public ResponseEntity<BaseResponse<ReadPetKcalRatioResponseDto>> readPetKcalRatio(@CurrentUserUsername String username, @PathVariable Long petId,
                                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
             ReadPetKcalRatioResponseDto petKcalRatioToday = petService.getPetKcalRatioToday(username, petId);

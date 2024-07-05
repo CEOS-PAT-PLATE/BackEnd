@@ -8,7 +8,8 @@ import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
-import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
+import com.petplate.petplate.petdailymeal.dto.response.ReadDailyMealResponseDto;
+import com.petplate.petplate.petdailymeal.repository.*;
 import com.petplate.petplate.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -26,8 +29,17 @@ public class DailyMealService {
     private final PetRepository petRepository;
     private final UserRepository userRepository;
 
+    private final DailyRawRepository dailyRawRepository;
+    private final DailyFeedRepository dailyFeedRepository;
+    private final DailyPackagedSnackRepository dailyPackagedSnackRepository;
+
+    private final DailyBookMarkedRawRepository dailyBookMarkedRawRepository;
+    private final DailyBookMarkedFeedRepository dailyBookMarkedFeedRepository;
+    private final DailyBookMarkedPackagedSnackRepository dailyBookMarkedPackagedSnackRepository;
+
+
     public DailyMeal createDailyMeal(String username, Long petId) {
-        Pet pet = findPet(username, petId);
+        Pet pet = validUserAndFindPet(username, petId);
         LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0, 0, 0));
         LocalDateTime endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
 
@@ -52,19 +64,95 @@ public class DailyMealService {
                 ));
     }
 
-    public DailyMeal getDailyMeal(String username, Long petId, LocalDate date) {
-        findPet(username, petId);
+    public DailyMeal getDailyMealByDate(String username, Long petId, LocalDate date) {
+        validUserAndFindPet(username, petId);
 
         LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
         LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
 
-        return dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime).orElseThrow(
+        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime).orElseThrow(
                 () -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
+        );
+
+        return dailyMeal;
+    }
+
+    /**
+     * 특정 일자의 반려견의 식사 내역 반환
+     * @param username
+     * @param petId
+     * @param date
+     * @return
+     */
+    public ReadDailyMealResponseDto getDailyMealWithFoods(String username, Long petId, LocalDate date) {
+        validUserAndFindPet(username, petId);
+
+        LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
+
+        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime).orElseThrow(
+                () -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
+        );
+
+        return ReadDailyMealResponseDto.of(dailyMeal,
+                dailyRawRepository.findByDailyMealId(dailyMeal.getId()),
+                dailyFeedRepository.findByDailyMealId(dailyMeal.getId()),
+                dailyPackagedSnackRepository.findByDailyMealId(dailyMeal.getId()),
+                dailyBookMarkedRawRepository.findByDailyMealId(dailyMeal.getId()),
+                dailyBookMarkedFeedRepository.findByDailyMealId(dailyMeal.getId()),
+                dailyBookMarkedPackagedSnackRepository.findByDailyMealId(dailyMeal.getId())
         );
     }
 
+    /**
+     * id로 조회하여 반려견의 식사 내역 반환
+     * @param username
+     * @param petId
+     * @return
+     */
+    public ReadDailyMealResponseDto getDailyMealWithFoods(String username, Long petId, Long dailyMealId) {
+        validUserAndFindPet(username, petId);
+        DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
 
-    private Pet findPet(String username, Long petId) {
+        return ReadDailyMealResponseDto.of(dailyMeal,
+                dailyRawRepository.findByDailyMealId(dailyMeal.getId()),
+                dailyFeedRepository.findByDailyMealId(dailyMeal.getId()),
+                dailyPackagedSnackRepository.findByDailyMealId(dailyMeal.getId()),
+                dailyBookMarkedRawRepository.findByDailyMealId(dailyMeal.getId()),
+                dailyBookMarkedFeedRepository.findByDailyMealId(dailyMeal.getId()),
+                dailyBookMarkedPackagedSnackRepository.findByDailyMealId(dailyMeal.getId())
+        );
+    }
+
+    /**
+     * 반려견의 모든 식사 내역 반환
+     * @param username
+     * @param petId
+     * @return
+     */
+    public List<ReadDailyMealResponseDto> getDailyMealsWithFoods(String username, Long petId) {
+        validUserAndFindPet(username, petId);
+
+        List<ReadDailyMealResponseDto> response = new ArrayList<>();
+        dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId).forEach(dailyMeal ->{
+
+                response.add(ReadDailyMealResponseDto.of(dailyMeal,
+                        dailyRawRepository.findByDailyMealId(dailyMeal.getId()),
+                        dailyFeedRepository.findByDailyMealId(dailyMeal.getId()),
+                        dailyPackagedSnackRepository.findByDailyMealId(dailyMeal.getId()),
+                        dailyBookMarkedRawRepository.findByDailyMealId(dailyMeal.getId()),
+                        dailyBookMarkedFeedRepository.findByDailyMealId(dailyMeal.getId()),
+                        dailyBookMarkedPackagedSnackRepository.findByDailyMealId(dailyMeal.getId())
+                        )
+                );
+    });
+
+        return response;
+    }
+
+
+    private Pet validUserAndFindPet(String username, Long petId) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
 

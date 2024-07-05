@@ -30,7 +30,7 @@ public class DailyBookMarkedRaw {
     private BookMarkedRaw bookMarkedRaw;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "daily_meal_id",nullable = false)
+    @JoinColumn(name = "daily_meal_id", nullable = false)
     private DailyMeal dailyMeal;
 
     @Builder

@@ -22,7 +22,7 @@ public class DailyRaw {
     private DailyMeal dailyMeal;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "raw_id",nullable = false)
+    @JoinColumn(name = "raw_id")
     private Raw raw;
 
     @Column(nullable = false)
