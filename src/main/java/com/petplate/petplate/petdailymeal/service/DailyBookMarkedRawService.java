@@ -10,6 +10,7 @@ import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyBookMarkedRaw;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyBookMarkedRawRequestDto;
+import com.petplate.petplate.petdailymeal.dto.response.ReadDailyBookMarkedRawResponseDto;
 import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawResponseDto;
 import com.petplate.petplate.petdailymeal.repository.DailyBookMarkedRawRepository;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
@@ -55,7 +56,7 @@ public class DailyBookMarkedRawService {
         return dailyBookMarkedRaw.getId();
     }
 
-    public List<ReadBookMarkedRawResponseDto> getBookMarkedRaws(String username, Long petId, LocalDate date) {
+    public List<ReadDailyBookMarkedRawResponseDto> getBookMarkedRaws(String username, Long petId, LocalDate date) {
         Pet pet = findPet(username, petId);
 
         DailyMeal dailyMeal = findDailyMeal(petId, date);
@@ -64,10 +65,9 @@ public class DailyBookMarkedRawService {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
         }
 
-        List<ReadBookMarkedRawResponseDto> responses = new ArrayList<>();
+        List<ReadDailyBookMarkedRawResponseDto> responses = new ArrayList<>();
         dailyBookMarkedRawRepository.findByDailyMealId(dailyMeal.getId()).forEach(dailyBookMarkedRaw -> {
-                    BookMarkedRaw bookMarkedRaw = dailyBookMarkedRaw.getBookMarkedRaw();
-                    responses.add(ReadBookMarkedRawResponseDto.from(bookMarkedRaw));
+                    responses.add(ReadDailyBookMarkedRawResponseDto.from(dailyBookMarkedRaw));
                 }
         );
 

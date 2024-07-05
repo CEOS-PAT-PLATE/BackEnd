@@ -3,6 +3,7 @@ package com.petplate.petplate.petfood.controller;
 import com.petplate.petplate.auth.interfaces.CurrentUserUsername;
 import com.petplate.petplate.common.response.BaseResponse;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyBookMarkedRawRequestDto;
+import com.petplate.petplate.petdailymeal.dto.response.ReadDailyBookMarkedRawResponseDto;
 import com.petplate.petplate.petdailymeal.service.DailyBookMarkedRawService;
 import com.petplate.petplate.petfood.dto.request.CreateBookMarkedRawRequestDto;
 import com.petplate.petplate.petfood.dto.response.ReadBookMarkedRawResponseDto;
@@ -107,7 +108,7 @@ public class BookMarkedRawController {
     })
     @GetMapping("/pet/{petId}/bookmark/raws")
     public ResponseEntity<BaseResponse> getBookMarkedRaws(@CurrentUserUsername String username,@PathVariable Long petId, @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-        List<ReadBookMarkedRawResponseDto> bookMarkedRaws = dailyBookMarkedRawService.getBookMarkedRaws(username, petId, date);
+        List<ReadDailyBookMarkedRawResponseDto> bookMarkedRaws = dailyBookMarkedRawService.getBookMarkedRaws(username, petId, date);
 
         return new ResponseEntity(BaseResponse.createSuccess(bookMarkedRaws), HttpStatus.OK);
     }

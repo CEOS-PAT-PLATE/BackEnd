@@ -262,7 +262,7 @@ class PetServiceTest {
 
         // when
         user1Pets.forEach(user1Pet -> {
-            Long petId = user1Pet.getId();
+            Long petId = user1Pet.getPetId();
             ReadPetResponseDto pet = petService.getPet(user1Username, petId);
 
             System.out.println("pet = " + pet);

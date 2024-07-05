@@ -69,7 +69,7 @@ public class RawController {
         return new ResponseEntity<>(BaseResponse.createSuccess(responses), HttpStatus.OK);
     }
 
-    @Operation(summary = "rawId로 자연식 제거",description = "자연식이 제거된 경우, 해당 자연식을 참조하고 있던 즐겨찾기 자연식과 하루식사 자연식은 '존재하지 않은 정보입니다'로 표기됨")
+    @Operation(summary = "rawId로 자연식 제거")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "자연식 성공적 조회"),
             @ApiResponse(responseCode = "404", description = "존재하지 않은 자연식")
@@ -93,14 +93,17 @@ public class RawController {
         return new ResponseEntity(BaseResponse.createSuccess(dailyRawId), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "특정 일자에 섭취한 자연식들 조회")
+    @Operation(summary = "특정 일자에 섭취한 자연식들 조회. (날짜 미입력시 오늘 정보 조회)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",description = "섭취 자연식 성공적 조회"),
             @ApiResponse(responseCode = "400",description = "유저의 반려견이 아님"),
             @ApiResponse(responseCode = "404",description = "존재하지 않은 반려견 혹은 존재하지 않은 식사 내역")
     })
     @GetMapping("/pets/{petId}/raws")
-    public ResponseEntity<BaseResponse> getDailyRaws(@CurrentUserUsername String username, @PathVariable Long petId, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public ResponseEntity<BaseResponse> getDailyRaws(@CurrentUserUsername String username, @PathVariable Long petId, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        if(date == null) {
+            date = LocalDate.now();
+        }
         DailyMeal dailyMeal = dailyMealService.getDailyMeal(username, petId, date);
         List<ReadDailyRawResponseDto> dailyRaws = dailyRawService.getDailyRaws(username, petId, dailyMeal.getId());
 

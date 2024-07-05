@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 public class ReadPetResponseDto {
-    private Long id;
+    private Long petId;
     private String name;
     private int age;
     private double weight;
@@ -18,7 +18,7 @@ public class ReadPetResponseDto {
     public static ReadPetResponseDto from(Pet pet) {
         ReadPetResponseDto response = new ReadPetResponseDto();
 
-        response.id = pet.getId();
+        response.petId = pet.getId();
         response.name = pet.getName();
         response.age = pet.getAge();
         response.weight = pet.getWeight();
