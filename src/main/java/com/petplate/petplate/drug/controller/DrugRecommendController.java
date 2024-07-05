@@ -32,9 +32,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/drug/recommend")
-@Tag(name = "영양제 추천 컨트롤러", description = "영양제 추천을  위한 컨트롤러 입니다. 다만 영양제 추천은 컨트롤러를 통해 조회하지 않을 예정이므로"
-        + "테스트 용도로 파악해주십시오!")
+@RequestMapping("/api/v1/drugs/recommend")
+@Tag(name = "영양제 추천 컨트롤러", description = "영양제 추천을  위한 컨트롤러 입니다.")
 public class DrugRecommendController {
 
     private final DrugRecommendService drugRecommendService;

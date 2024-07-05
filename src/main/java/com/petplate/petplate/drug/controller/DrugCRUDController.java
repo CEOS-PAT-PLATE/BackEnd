@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/drug")
+@RequestMapping("/api/v1/drugs")
 @Tag(name = "영양제 기본 컨트롤러", description = "영양제 등록, 조회, 수정, 삭제를 위한 컨트롤러 입니다")
 public class DrugCRUDController {
 
