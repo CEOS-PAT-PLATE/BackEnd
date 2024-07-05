@@ -32,7 +32,7 @@ public class BookMarkedPackagedSnack extends BaseEntity {
 
 
     @Column(nullable = false)
-    private float serving;
+    private double serving;
 
     @Column(nullable = false)
     private double kcal;
@@ -45,7 +45,7 @@ public class BookMarkedPackagedSnack extends BaseEntity {
     private User user;
 
     @Builder
-    public BookMarkedPackagedSnack(String name, float serving, double kcal, Nutrient nutrient,
+    public BookMarkedPackagedSnack(String name, double serving, double kcal, Nutrient nutrient,
             User user) {
         this.name = name;
         this.serving = serving;

@@ -31,7 +31,7 @@ public class BookMarkedFeed extends BaseEntity {
     private String name;
 
     @Column(nullable = false)
-    private float serving;
+    private double serving;
 
     @Column(nullable = false)
     private double kcal;
@@ -44,7 +44,7 @@ public class BookMarkedFeed extends BaseEntity {
     private User user;
 
     @Builder
-    public BookMarkedFeed(String name, float serving, double kcal, Nutrient nutrient, User user) {
+    public BookMarkedFeed(String name, double serving, double kcal, Nutrient nutrient, User user) {
         this.name = name;
         this.serving = serving;
         this.kcal = kcal;
