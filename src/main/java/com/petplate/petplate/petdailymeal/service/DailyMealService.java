@@ -79,12 +79,13 @@ public class DailyMealService {
 
     /**
      * 특정 일자의 반려견의 식사 내역 반환
+     *
      * @param username
      * @param petId
      * @param date
      * @return
      */
-    public ReadDailyMealResponseDto getDailyMealWithFoods(String username, Long petId, LocalDate date) {
+    public ReadDailyMealResponseDto getDailyMealWithAllFoods(String username, Long petId, LocalDate date) {
         validUserAndFindPet(username, petId);
 
         LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
@@ -105,7 +106,176 @@ public class DailyMealService {
     }
 
     /**
+     * 특정 일자의 반려견의 식사 내역중 자연식만 반환
+     *
+     * @param username
+     * @param petId
+     * @param date
+     * @return
+     */
+    public ReadDailyMealResponseDto getDailyMealWithDailyRaws(String username, Long petId, LocalDate date) {
+        validUserAndFindPet(username, petId);
+
+        LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
+
+        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime).orElseThrow(
+                () -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
+        );
+
+        return ReadDailyMealResponseDto.of(dailyMeal,
+                dailyRawRepository.findByDailyMealId(dailyMeal.getId()),
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    /**
+     * 특정 일자의 반려견의 식사 내역중 사료만 반환
+     *
+     * @param username
+     * @param petId
+     * @param date
+     * @return
+     */
+    public ReadDailyMealResponseDto getDailyMealWithDailyFeeds(String username, Long petId, LocalDate date) {
+        validUserAndFindPet(username, petId);
+
+        LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
+
+        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime).orElseThrow(
+                () -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
+        );
+
+        return ReadDailyMealResponseDto.of(dailyMeal,
+                null,
+                dailyFeedRepository.findByDailyMealId(dailyMeal.getId()),
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    /**
+     * 특정 일자의 반려견의 식사 내역중 포장간식만 반환
+     *
+     * @param username
+     * @param petId
+     * @param date
+     * @return
+     */
+    public ReadDailyMealResponseDto getDailyMealWithDailyPackagedSnacks(String username, Long petId, LocalDate date) {
+        validUserAndFindPet(username, petId);
+
+        LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
+
+        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime).orElseThrow(
+                () -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
+        );
+
+        return ReadDailyMealResponseDto.of(dailyMeal,
+                null,
+                null,
+                dailyPackagedSnackRepository.findByDailyMealId(dailyMeal.getId()),
+                null,
+                null,
+                null
+        );
+    }
+
+    /**
+     * 특정 일자의 반려견의 식사 내역중 즐겨찾기 만 반환
+     *
+     * @param username
+     * @param petId
+     * @param date
+     * @return
+     */
+    public ReadDailyMealResponseDto getDailyMealWithDailyBookMarkedRaws(String username, Long petId, LocalDate date) {
+        validUserAndFindPet(username, petId);
+
+        LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
+
+        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime).orElseThrow(
+                () -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
+        );
+
+        return ReadDailyMealResponseDto.of(dailyMeal,
+                null,
+                null,
+                null,
+                dailyBookMarkedRawRepository.findByDailyMealId(dailyMeal.getId()),
+                null,
+                null
+        );
+    }
+
+    /**
+     * 특정 일자의 반려견의 식사 내역중 즐겨찾기 사료만 반환
+     *
+     * @param username
+     * @param petId
+     * @param date
+     * @return
+     */
+    public ReadDailyMealResponseDto getDailyMealWithDailyBookMarkedFeeds(String username, Long petId, LocalDate date) {
+        validUserAndFindPet(username, petId);
+
+        LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
+
+        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime).orElseThrow(
+                () -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
+        );
+
+        return ReadDailyMealResponseDto.of(dailyMeal,
+                null,
+                null,
+                null,
+                null,
+                dailyBookMarkedFeedRepository.findByDailyMealId(dailyMeal.getId()),
+                null
+        );
+    }
+
+    /**
+     * 특정 일자의 반려견의 식사 내역중 즐겨찾기 포장 간식만 반환
+     *
+     * @param username
+     * @param petId
+     * @param date
+     * @return
+     */
+    public ReadDailyMealResponseDto getDailyMealWithDailyBookMarkedPackagedSnacks(String username, Long petId, LocalDate date) {
+        validUserAndFindPet(username, petId);
+
+        LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
+
+        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime).orElseThrow(
+                () -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
+        );
+
+        return ReadDailyMealResponseDto.of(dailyMeal,
+                null,
+                null,
+                null,
+                null,
+                null,
+                dailyBookMarkedPackagedSnackRepository.findByDailyMealId(dailyMeal.getId())
+        );
+    }
+
+    /**
      * id로 조회하여 반려견의 식사 내역 반환
+     *
      * @param username
      * @param petId
      * @return
@@ -127,26 +297,27 @@ public class DailyMealService {
 
     /**
      * 반려견의 모든 식사 내역 반환
+     *
      * @param username
      * @param petId
      * @return
      */
-    public List<ReadDailyMealResponseDto> getDailyMealsWithFoods(String username, Long petId) {
+    public List<ReadDailyMealResponseDto> getDailyMealsWithAllFoods(String username, Long petId) {
         validUserAndFindPet(username, petId);
 
         List<ReadDailyMealResponseDto> response = new ArrayList<>();
-        dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId).forEach(dailyMeal ->{
+        dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId).forEach(dailyMeal -> {
 
-                response.add(ReadDailyMealResponseDto.of(dailyMeal,
-                        dailyRawRepository.findByDailyMealId(dailyMeal.getId()),
-                        dailyFeedRepository.findByDailyMealId(dailyMeal.getId()),
-                        dailyPackagedSnackRepository.findByDailyMealId(dailyMeal.getId()),
-                        dailyBookMarkedRawRepository.findByDailyMealId(dailyMeal.getId()),
-                        dailyBookMarkedFeedRepository.findByDailyMealId(dailyMeal.getId()),
-                        dailyBookMarkedPackagedSnackRepository.findByDailyMealId(dailyMeal.getId())
-                        )
-                );
-    });
+            response.add(ReadDailyMealResponseDto.of(dailyMeal,
+                            dailyRawRepository.findByDailyMealId(dailyMeal.getId()),
+                            dailyFeedRepository.findByDailyMealId(dailyMeal.getId()),
+                            dailyPackagedSnackRepository.findByDailyMealId(dailyMeal.getId()),
+                            dailyBookMarkedRawRepository.findByDailyMealId(dailyMeal.getId()),
+                            dailyBookMarkedFeedRepository.findByDailyMealId(dailyMeal.getId()),
+                            dailyBookMarkedPackagedSnackRepository.findByDailyMealId(dailyMeal.getId())
+                    )
+            );
+        });
 
         return response;
     }
