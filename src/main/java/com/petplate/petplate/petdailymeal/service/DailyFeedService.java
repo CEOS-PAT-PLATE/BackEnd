@@ -33,7 +33,7 @@ public class DailyFeedService {
     static final double vitaminAIuRetinolPerGram = 3333333.3333333335; // == 10E6 / 0.3
 
     // 1 IU = 0.025 μg
-    static final double vitaminDIuRetinolPerGram = 4.0E7; // == 10E6 / 0.025
+    static final double vitaminDIuPerGram = 4.0E7; // == 10E6 / 0.025
 
     // 1 IU (natural) = 0.67 mg Vitamin E (as alpha-tocopherol)
     // 1 IU (synthetic) = 0.45 mg Vitamin E (as alpha-tocopherol)
@@ -66,7 +66,7 @@ public class DailyFeedService {
                         .phosphorus(calculateNutritionAmount(serving, requestDto.getPhosphorusPercent()))
                         .vitamin(Vitamin.builder()
                                 .vitaminA(vitaminAIuRetinolPerGram * calculateNutritionAmount(serving, requestDto.getVitaminAPercent()))
-                                .vitaminD(vitaminDIuRetinolPerGram * calculateNutritionAmount(serving, requestDto.getVitaminDPercent()))
+                                .vitaminD(vitaminDIuPerGram * calculateNutritionAmount(serving, requestDto.getVitaminDPercent()))
                                 .vitaminE(vitaminEIuNaturalPerGram * calculateNutritionAmount(serving, requestDto.getVitaminEPercent()))
                                 .build())
                         .build())

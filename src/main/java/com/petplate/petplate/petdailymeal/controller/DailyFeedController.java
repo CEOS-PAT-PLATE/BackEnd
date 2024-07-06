@@ -43,7 +43,7 @@ public class DailyFeedController {
 
     @Operation(summary = "섭취 사료 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = CREATED, description = "사료 성공적 조회"),
+            @ApiResponse(responseCode = OK, description = "사료 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "본인의 반려견이 아닌 경우, 해당 반려견의 사료가 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyFeedId")
     })
@@ -57,7 +57,7 @@ public class DailyFeedController {
 
      @Operation(summary = "섭취 사료 제거")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = CREATED, description = "사료 성공적 제거"),
+            @ApiResponse(responseCode = OK, description = "사료 성공적 제거"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "본인의 반려견이 아닌 경우, 해당 반려견의 사료가 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyFeedId")
     })
