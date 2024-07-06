@@ -53,6 +53,10 @@ public class DailyBookMarkedRawService {
 
         dailyBookMarkedRawRepository.save(dailyBookMarkedRaw);
 
+        // dailyMeal에 먹은만큼 칼로리, 영양소 추가
+        dailyMealToday.addKcal(dailyBookMarkedRaw.getBookMarkedRaw().getKcal());
+        dailyMealToday.addNutrient(dailyBookMarkedRaw.getBookMarkedRaw().getNutrient());
+
         return dailyBookMarkedRaw.getId();
     }
 

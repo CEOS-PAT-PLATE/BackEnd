@@ -16,6 +16,8 @@ public enum ErrorCode {
     RAW_ALREADY_EXISTS("이미 존재하는 자연식입니다."),
     BOOK_MARK_ALREADY_EXISTS("이미 즐겨찾기가 존재합니다."),
     NOT_USER_BOOK_MARK("유저의 즐겨찾기가 아닙니다."),
+    NOT_PET_FOOD("해당 반려견의 음식이 아닙니다"),
+    NOT_PET_DAILY_MEAL("해당 반려견의 식사 내역이 아닙니다"),
     ACCESS_TOKEN_NOT_MATCH("엑세스 토큰을 확인해주세요"),
     REFRESH_TOKEN_NOT_MATCH("리프레시 토큰을 확인해주세요"),
 
@@ -44,6 +46,8 @@ public enum ErrorCode {
 
     DAILY_MEAL_NOT_FOUND("존재하지 않는 식사 내역입니다."),
     DAILY_RAW_NOT_FOUND("존재하지 않는 자연식 식사 내역입니다."),
+    DAILY_FEED_NOT_FOUND("존재하지 않는 사료 식사 내역입니다."),
+    DAILY_PACKAGED_SNACK_NOT_FOUND("존재하지 않는 포장 간식 식사 내역입니다"),
     DAILY_BOOK_MARKED_NOT_FOUND("존재하지 않는 즐겨찾기 식사 내역입니다."),
 
     DRUG_NOT_FOUND("존재하지 않는 약입니다."),
