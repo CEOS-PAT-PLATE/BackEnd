@@ -37,7 +37,7 @@ import java.util.List;
 
 @SpringBootTest
 @Transactional
-class DailyDailyFeedServiceTest {
+class DailyFeedServiceTest {
 
     @Autowired
     DailyFeedService dailyFeedService;
