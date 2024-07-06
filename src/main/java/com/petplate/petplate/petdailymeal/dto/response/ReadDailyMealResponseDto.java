@@ -1,6 +1,7 @@
 package com.petplate.petplate.petdailymeal.dto.response;
 
 import com.petplate.petplate.petdailymeal.domain.entity.*;
+import com.petplate.petplate.petdailymeal.domain.entity.DailyFeed;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -41,24 +41,14 @@ public class Nutrient {
     }
 
     public double getNutrientAmountByName(String name) {
-        return switch (name) {
-            case "carbonHydrate" -> carbonHydrate;
-            case "탄수화물" -> carbonHydrate;
-            case "protein" -> protein;
-            case "단백질" -> protein;
-            case "fat" -> fat;
-            case "지방" -> fat;
-            case "calcium" -> calcium;
-            case "칼슘" -> calcium;
-            case "phosphorus" -> phosphorus;
-            case "인" -> phosphorus;
-            case "vitaminA" -> vitamin.getVitaminA();
-            case "비타민A" -> vitamin.getVitaminA();
-            case "vitaminD" -> vitamin.getVitaminD();
-            case "비타민D" -> vitamin.getVitaminD();
-            case "vitaminE" -> vitamin.getVitaminE();
-            case "비타민E" -> vitamin.getVitaminE();
-            default -> throw new RuntimeException("Unknown nutrient name: " + name);
-        };
+        if(name.equals(StandardNutrient.CARBON_HYDRATE.getName())) return carbonHydrate;
+        else if(name.equals(StandardNutrient.PROTEIN.getName())) return protein;
+        else if(name.equals(StandardNutrient.FAT.getName())) return fat;
+        else if(name.equals(StandardNutrient.CALCIUM.getName())) return calcium;
+        else if(name.equals(StandardNutrient.PHOSPHORUS.getName())) return phosphorus;
+        else if(name.equals(StandardNutrient.VITAMIN_A.getName())) return vitamin.getVitaminA();
+        else if(name.equals(StandardNutrient.VITAMIN_D.getName())) return vitamin.getVitaminD();
+        else if(name.equals(StandardNutrient.VITAMIN_E.getName())) return vitamin.getVitaminE();
+        else throw new IllegalArgumentException("Invalid Nutrient name: " + name);
     }
 }

@@ -2,9 +2,7 @@ package com.petplate.petplate.petfood.controller;
 
 import com.petplate.petplate.auth.interfaces.CurrentUserUsername;
 import com.petplate.petplate.common.response.BaseResponse;
-import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyRawRequestDto;
-import com.petplate.petplate.petdailymeal.dto.response.ReadDailyMealResponseDto;
 import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawResponseDto;
 import com.petplate.petplate.petdailymeal.service.DailyMealService;
 import com.petplate.petplate.petdailymeal.service.DailyRawService;
@@ -17,12 +15,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -96,23 +92,6 @@ public class RawController {
         Long dailyRawId = dailyRawService.createDailyRaw(username, petId, requestDto);
 
         return new ResponseEntity(BaseResponse.createSuccess(dailyRawId), HttpStatus.CREATED);
-    }
-
-    @Operation(summary = "특정 일자에 섭취한 자연식들 조회. (날짜 미입력시 오늘 정보 조회)")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = OK, description = "섭취 자연식 성공적 조회"),
-            @ApiResponse(responseCode = BAD_REQUEST, description = "유저의 반려견이 아님"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않은 반려견 혹은 존재하지 않은 식사 내역")
-    })
-    @GetMapping("/pets/{petId}/raws")
-    public ResponseEntity<BaseResponse<List<ReadDailyRawResponseDto>>> getDailyRaws(@CurrentUserUsername String username, @PathVariable Long petId, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        if (date == null) {
-            date = LocalDate.now();
-        }
-        DailyMeal dailyMeal = dailyMealService.getDailyMealByDate(username, petId, date);
-        List<ReadDailyRawResponseDto> dailyRaws = dailyRawService.getDailyRaws(username, petId, dailyMeal.getId());
-
-        return new ResponseEntity<>(BaseResponse.createSuccess(dailyRaws), HttpStatus.OK);
     }
 
     @Operation(summary = "최근 2일 동안 섭취한 자연식들 조회")

@@ -84,8 +84,8 @@ public class DailyRawService {
         DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
 
-        if (!Objects.equals(dailyMeal.getPet().getId(), pet.getId())) {
-            throw new BadRequestException(ErrorCode.BAD_REQUEST);
+        if (!dailyMeal.getPet().getId().equals(pet.getId())) {
+            throw new BadRequestException(ErrorCode.NOT_PET_DAILY_MEAL);
         }
 
         List<ReadDailyRawResponseDto> responses = new ArrayList<>();
@@ -128,8 +128,8 @@ public class DailyRawService {
         DailyRaw dailyRaw = dailyRawRepository.findById(dailyRawId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_RAW_NOT_FOUND));
 
-        if (!Objects.equals(dailyRaw.getDailyMeal().getPet().getId(), pet.getId())) {
-            throw new BadRequestException(ErrorCode.BAD_REQUEST);
+        if (!dailyRaw.getDailyMeal().getPet().getId().equals(pet.getId())) {
+            throw new BadRequestException(ErrorCode.NOT_PET_FOOD);
         }
 
         return ReadDailyRawResponseDto.from(dailyRaw);
@@ -142,11 +142,15 @@ public class DailyRawService {
      */
     @Transactional
     public void deleteDailyRaw(String username, Long petId, Long dailyRawId) {
-        validUserAndFindPet(username, petId);
+        Pet pet = validUserAndFindPet(username, petId);
         DailyRaw dailyRaw =
                 dailyRawRepository.findById(dailyRawId).orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_RAW_NOT_FOUND));
 
-        // dailyMeal에서 삭제한 rawDailyMeal만큼의 영양분 제거
+        if (!dailyRaw.getDailyMeal().getPet().getId().equals(pet.getId())) {
+            throw new BadRequestException(ErrorCode.NOT_PET_FOOD);
+        }
+
+        // dailyMeal에서 삭제한 dailyRaw만큼의 영양분 제거
         DailyMeal dailyMeal = dailyRaw.getDailyMeal();
         dailyMeal.subtractKcal(dailyRaw.getKcal());
         dailyMeal.subtractNutrient(dailyRaw.getNutrient());
