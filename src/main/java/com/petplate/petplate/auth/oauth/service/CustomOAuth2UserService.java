@@ -37,6 +37,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 
 
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
@@ -58,10 +59,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         OAuthAttributes extractAttributes=OAuthAttributes.of(socialType,userNameAttributeName,attributes);
 
-        User createdMember=getUser(extractAttributes,socialType,userRequest.getAccessToken().getTokenValue());
-
-        redisTemplate.opsForValue().set(SOCIAL_LOGIN_ACCESS_TOKEN+createdMember.getUsername(),userRequest.getAccessToken().getTokenValue(),
-                SOCIAL_LOGIN_ACCESS_TOKEN_EXPIRE, TimeUnit.SECONDS);
+        User createdMember=getUser(extractAttributes,socialType);
 
         /*
         String socialLoginAccessToken = userRequest.getAccessToken().getTokenValue();
@@ -88,9 +86,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     //email과 socialtype으로 member
-    private User getUser(OAuthAttributes attributes,SocialType socialType,String code){
+    private User getUser(OAuthAttributes attributes,SocialType socialType){
         User  findUser=userRepository.findBySocialTypeAndUsername(socialType,attributes.getOauth2UserInfo().getEmail()).orElseGet(()->saveUser(attributes,socialType));
-        redisTemplate.opsForValue().set(socialType.name()+findUser.getUsername(),code);
         return findUser;
     }
 

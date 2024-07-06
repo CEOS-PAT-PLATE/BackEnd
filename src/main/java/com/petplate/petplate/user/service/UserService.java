@@ -1,5 +1,6 @@
 package com.petplate.petplate.user.service;
 
+import com.petplate.petplate.auth.oauth.service.SocialLoginTokenUtil;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.user.domain.entity.User;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final SocialLoginTokenUtil socialLoginTokenUtil;
 
     public MyProfileResponseDto showMyProfile(String username){
 
@@ -24,10 +26,25 @@ public class UserService {
 
     }
 
+    @Transactional
+    public void deleteUser(final String username){
+
+        socialLoginTokenUtil.unlinkNaver(username);
+
+        User findUser = findUserByUsername(username);
+        userRepository.delete(findUser);
+
+    }
+
     private User findUserByUsername(String username){
+
         return userRepository.findByUsername(username).orElseThrow(()->new NotFoundException(
                 ErrorCode.USER_NOT_FOUND));
     }
+
+
+
+
 
 
 }
