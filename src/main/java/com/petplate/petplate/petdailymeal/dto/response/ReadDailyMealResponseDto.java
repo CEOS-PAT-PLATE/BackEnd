@@ -1,8 +1,7 @@
 package com.petplate.petplate.petdailymeal.dto.response;
 
 import com.petplate.petplate.petdailymeal.domain.entity.*;
-import com.petplate.petplate.petfood.domain.entity.Feed;
-import com.petplate.petplate.petfood.dto.response.ReadFeedResponseDto;
+import com.petplate.petplate.petdailymeal.domain.entity.DailyFeed;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,13 +18,13 @@ public class ReadDailyMealResponseDto {
     private LocalDate date;
 
     private List<ReadDailyRawResponseDto> dailyRaws;
-    private List<ReadFeedResponseDto> feeds;
-    private List<ReadDailyPackagedSnackResponseDto> packagedSnacks;
+    private List<ReadDailyFeedResponseDto> dailyFeeds;
+    private List<ReadDailyPackagedSnackResponseDto> dailyPackagedSnacks;
     private List<ReadDailyBookMarkedRawResponseDto> dailyBookMarkedRaws;
     private List<ReadDailyBookMarkedFeedResponseDto> dailyBookMarkedFeeds;
     private List<ReadDailyBookMarkedPackagedSnackResponseDto> dailyBookMarkedPackagedSnacks;
 
-    public static ReadDailyMealResponseDto of(DailyMeal dailyMeal, List<DailyRaw> dailyRaws, List<Feed> feeds, List<DailyPackagedSnack> packagedSnacks, List<DailyBookMarkedRaw> dailyBookMarkedRaws, List<DailyBookMarkedFeed> dailyBookMarkedFeeds, List<DailyBookMarkedPackagedSnack> dailyBookMarkedPackagedSnacks) {
+    public static ReadDailyMealResponseDto of(DailyMeal dailyMeal, List<DailyRaw> dailyRaws, List<DailyFeed> dailyFeeds, List<DailyPackagedSnack> dailyPackagedSnacks, List<DailyBookMarkedRaw> dailyBookMarkedRaws, List<DailyBookMarkedFeed> dailyBookMarkedFeeds, List<DailyBookMarkedPackagedSnack> dailyBookMarkedPackagedSnacks) {
         ReadDailyMealResponseDto responseDto = new ReadDailyMealResponseDto();
         responseDto.dailyMealId = dailyMeal.getId();
         responseDto.date = dailyMeal.getCreatedAt().toLocalDate();
@@ -34,10 +33,10 @@ public class ReadDailyMealResponseDto {
         dailyRaws.forEach(dailyRaw -> responseDto.dailyRaws.add(ReadDailyRawResponseDto.from(dailyRaw)));
 
         // dailyFeed
-        feeds.forEach(feed -> responseDto.feeds.add(ReadFeedResponseDto.from(feed)));
+        dailyFeeds.forEach(dailyFeed -> responseDto.dailyFeeds.add(ReadDailyFeedResponseDto.from(dailyFeed)));
 
         // dailyPackagedSnack
-        packagedSnacks.forEach(packagedSnack -> responseDto.packagedSnacks.add(ReadDailyPackagedSnackResponseDto.from(packagedSnack)));
+        dailyPackagedSnacks.forEach(dailyPackagedSnack -> responseDto.dailyPackagedSnacks.add(ReadDailyPackagedSnackResponseDto.from(dailyPackagedSnack)));
 
         // dailyBookMarkedRaw
         dailyBookMarkedRaws.forEach(dailyBookMarkedRaw -> responseDto.dailyBookMarkedRaws.add(ReadDailyBookMarkedRawResponseDto.from(dailyBookMarkedRaw)));

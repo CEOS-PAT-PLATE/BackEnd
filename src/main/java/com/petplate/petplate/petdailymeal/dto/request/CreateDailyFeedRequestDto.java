@@ -1,4 +1,4 @@
-package com.petplate.petplate.petfood.dto.request;
+package com.petplate.petplate.petdailymeal.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class CreateFeedRequestDto {
+public class CreateDailyFeedRequestDto {
     @Min(0)
     @NotBlank(message = "사료 총량(g)을 입력해주세요")
     private double serving;

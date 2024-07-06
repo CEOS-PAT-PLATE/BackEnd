@@ -1,18 +1,17 @@
-package com.petplate.petplate.petfood.domain.entity;
+package com.petplate.petplate.petdailymeal.domain.entity;
 
 import com.petplate.petplate.common.EmbeddedType.Nutrient;
-import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Feed {
+public class DailyFeed {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "feed_id")
+    @Column(name = "daily_feed_id")
     private Long id;
 
     @Column(nullable = false)
@@ -33,8 +32,8 @@ public class Feed {
 
 
     @Builder
-    public Feed(String name, double serving, double kcal, Nutrient nutrient,
-                DailyMeal dailyMeal) {
+    public DailyFeed(String name, double serving, double kcal, Nutrient nutrient,
+                     DailyMeal dailyMeal) {
         this.name = name;
         this.serving = serving;
         this.kcal = kcal;

@@ -10,7 +10,7 @@ import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.dto.response.ReadDailyMealResponseDto;
 import com.petplate.petplate.petdailymeal.repository.*;
-import com.petplate.petplate.petfood.repository.FeedRepository;
+import com.petplate.petplate.petdailymeal.repository.DailyFeedRepository;
 import com.petplate.petplate.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class DailyMealService {
     private final UserRepository userRepository;
 
     private final DailyRawRepository dailyRawRepository;
-    private final FeedRepository feedRepository;
+    private final DailyFeedRepository dailyFeedRepository;
     private final DailyPackagedSnackRepository dailyPackagedSnackRepository;
 
     private final DailyBookMarkedRawRepository dailyBookMarkedRawRepository;
@@ -98,7 +98,7 @@ public class DailyMealService {
 
         return ReadDailyMealResponseDto.of(dailyMeal,
                 dailyRawRepository.findByDailyMealId(dailyMeal.getId()),
-                feedRepository.findByDailyMealId(dailyMeal.getId()),
+                dailyFeedRepository.findByDailyMealId(dailyMeal.getId()),
                 dailyPackagedSnackRepository.findByDailyMealId(dailyMeal.getId()),
                 dailyBookMarkedRawRepository.findByDailyMealId(dailyMeal.getId()),
                 dailyBookMarkedFeedRepository.findByDailyMealId(dailyMeal.getId()),
@@ -142,7 +142,7 @@ public class DailyMealService {
      * @param date
      * @return
      */
-    public ReadDailyMealResponseDto getDailyMealWithFeeds(String username, Long petId, LocalDate date) {
+    public ReadDailyMealResponseDto getDailyMealWithDailyFeeds(String username, Long petId, LocalDate date) {
         validUserAndFindPet(username, petId);
 
         LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
@@ -154,7 +154,7 @@ public class DailyMealService {
 
         return ReadDailyMealResponseDto.of(dailyMeal,
                 null,
-                feedRepository.findByDailyMealId(dailyMeal.getId()),
+                dailyFeedRepository.findByDailyMealId(dailyMeal.getId()),
                 null,
                 null,
                 null,
@@ -288,7 +288,7 @@ public class DailyMealService {
 
         return ReadDailyMealResponseDto.of(dailyMeal,
                 dailyRawRepository.findByDailyMealId(dailyMeal.getId()),
-                feedRepository.findByDailyMealId(dailyMeal.getId()),
+                dailyFeedRepository.findByDailyMealId(dailyMeal.getId()),
                 dailyPackagedSnackRepository.findByDailyMealId(dailyMeal.getId()),
                 dailyBookMarkedRawRepository.findByDailyMealId(dailyMeal.getId()),
                 dailyBookMarkedFeedRepository.findByDailyMealId(dailyMeal.getId()),
@@ -311,7 +311,7 @@ public class DailyMealService {
 
             response.add(ReadDailyMealResponseDto.of(dailyMeal,
                             dailyRawRepository.findByDailyMealId(dailyMeal.getId()),
-                            feedRepository.findByDailyMealId(dailyMeal.getId()),
+                            dailyFeedRepository.findByDailyMealId(dailyMeal.getId()),
                             dailyPackagedSnackRepository.findByDailyMealId(dailyMeal.getId()),
                             dailyBookMarkedRawRepository.findByDailyMealId(dailyMeal.getId()),
                             dailyBookMarkedFeedRepository.findByDailyMealId(dailyMeal.getId()),

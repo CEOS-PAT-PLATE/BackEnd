@@ -1,4 +1,4 @@
-package com.petplate.petplate.petfood.service;
+package com.petplate.petplate.petdailymeal.service;
 
 import com.petplate.petplate.common.EmbeddedType.Nutrient;
 import com.petplate.petplate.common.EmbeddedType.Vitamin;
@@ -7,11 +7,11 @@ import com.petplate.petplate.common.response.error.exception.BadRequestException
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.repository.PetRepository;
-import com.petplate.petplate.petfood.domain.entity.Feed;
+import com.petplate.petplate.petdailymeal.domain.entity.DailyFeed;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
-import com.petplate.petplate.petfood.dto.request.CreateFeedRequestDto;
-import com.petplate.petplate.petfood.dto.response.ReadFeedResponseDto;
-import com.petplate.petplate.petfood.repository.FeedRepository;
+import com.petplate.petplate.petdailymeal.dto.request.CreateDailyFeedRequestDto;
+import com.petplate.petplate.petdailymeal.dto.response.ReadDailyFeedResponseDto;
+import com.petplate.petplate.petdailymeal.repository.DailyFeedRepository;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,8 +24,8 @@ import java.time.LocalTime;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class FeedService {
-    private final FeedRepository feedRepository;
+public class DailyFeedService {
+    private final DailyFeedRepository dailyFeedRepository;
     private final PetRepository petRepository;
     private final DailyMealRepository dailyMealRepository;
 
@@ -40,20 +40,20 @@ public class FeedService {
     static final double vitaminEIuNaturalPerGram = 1492.5373134328358; // == 10E3 / 0.67
 
     /**
-     * Feed를 오늘 식사에 추가
+     * dailyFeed를 오늘 식사에 추가
      * @param username
      * @param petId
      * @param requestDto
      * @return
      */
     @Transactional
-    public Long createDailyFeed(String username, Long petId, CreateFeedRequestDto requestDto) {
+    public Long createDailyFeed(String username, Long petId, CreateDailyFeedRequestDto requestDto) {
         Pet pet = validUserAndFindPet(username, petId);
         DailyMeal dailyMealToday = getDailyMealToday(pet);
 
         double serving = requestDto.getServing();
 
-        Feed feed = Feed.builder()
+        DailyFeed dailyFeed = DailyFeed.builder()
                 .dailyMeal(dailyMealToday)
                 .name(requestDto.getName())
                 .kcal(requestDto.getKcal())
@@ -72,14 +72,14 @@ public class FeedService {
                         .build())
                 .build();
 
-        feedRepository.save(feed);
+        dailyFeedRepository.save(dailyFeed);
 
 
         // dailyMeal에 먹은만큼 칼로리, 영양소 추가
-        dailyMealToday.addKcal(feed.getKcal());
-        dailyMealToday.addNutrient(feed.getNutrient());
+        dailyMealToday.addKcal(dailyFeed.getKcal());
+        dailyMealToday.addNutrient(dailyFeed.getNutrient());
 
-        return feed.getId();
+        return dailyFeed.getId();
     }
 
     private double calculateNutritionAmount(double serving, double nutritionPercent) {
@@ -87,49 +87,49 @@ public class FeedService {
     }
 
     /**
-     * PK로 오늘 섭취한 Feed 조회
+     * PK로 오늘 섭취한 DailyFeed 조회
      *
      * @param username
      * @param petId
-     * @param feedId
+     * @param dailyFeedId
      * @return
      */
-    public ReadFeedResponseDto getDailyFeed(String username, Long petId, Long feedId) {
+    public ReadDailyFeedResponseDto getDailyFeed(String username, Long petId, Long dailyFeedId) {
         Pet pet = validUserAndFindPet(username, petId);
 
-        Feed feed = feedRepository.findById(feedId).orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_FEED_NOT_FOUND));
+        DailyFeed dailyFeed = dailyFeedRepository.findById(dailyFeedId).orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_FEED_NOT_FOUND));
 
-        if (!feed.getDailyMeal().getPet().getId().equals(pet.getId())) {
+        if (!dailyFeed.getDailyMeal().getPet().getId().equals(pet.getId())) {
             throw new BadRequestException(ErrorCode.NOT_PET_FOOD);
         }
 
-        return ReadFeedResponseDto.from(feed);
+        return ReadDailyFeedResponseDto.from(dailyFeed);
     }
 
     /**
-     * 오늘 섭취한 Feed 제거
+     * 오늘 섭취한 DailyFeed 제거
      * @param username
      * @param petId
-     * @param feedId
+     * @param dailyFeedId
      */
     @Transactional
-    public void deleteDailyFeed(String username, Long petId, Long feedId) {
+    public void deleteDailyFeed(String username, Long petId, Long dailyFeedId) {
         Pet pet = validUserAndFindPet(username, petId);
 
-        Feed feed =
-                feedRepository.findById(feedId)
+        DailyFeed dailyFeed =
+                dailyFeedRepository.findById(dailyFeedId)
                         .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_FEED_NOT_FOUND));
 
-        if(!feed.getDailyMeal().getPet().getId().equals(pet.getId())) {
+        if(!dailyFeed.getDailyMeal().getPet().getId().equals(pet.getId())) {
             throw new BadRequestException(ErrorCode.NOT_PET_FOOD);
         }
 
         // dailyMeal에서 삭제한 dailyFeed만큼의 영양분 제거
-        DailyMeal dailyMeal = feed.getDailyMeal();
-        dailyMeal.subtractKcal(feed.getKcal());
-        dailyMeal.subtractNutrient(feed.getNutrient());
+        DailyMeal dailyMeal = dailyFeed.getDailyMeal();
+        dailyMeal.subtractKcal(dailyFeed.getKcal());
+        dailyMeal.subtractNutrient(dailyFeed.getNutrient());
 
-        feedRepository.deleteById(feedId);
+        dailyFeedRepository.deleteById(dailyFeedId);
     }
 
     private DailyMeal getDailyMealToday(Pet pet) {
