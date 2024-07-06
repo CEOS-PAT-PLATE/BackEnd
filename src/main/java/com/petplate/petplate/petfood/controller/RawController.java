@@ -2,9 +2,7 @@ package com.petplate.petplate.petfood.controller;
 
 import com.petplate.petplate.auth.interfaces.CurrentUserUsername;
 import com.petplate.petplate.common.response.BaseResponse;
-import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyRawRequestDto;
-import com.petplate.petplate.petdailymeal.dto.response.ReadDailyMealResponseDto;
 import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawResponseDto;
 import com.petplate.petplate.petdailymeal.service.DailyMealService;
 import com.petplate.petplate.petdailymeal.service.DailyRawService;
@@ -17,12 +15,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
