@@ -19,10 +19,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Slf4j
 public class SocialLoginTokenUtil {
 
-    private final RedisTemplate redisTemplate;
-    private static final String SOCIAL_LOGIN_REFRESH_TOKEN = "SocialLoginRefreshToken";
-    private static final String SOCIAL_LOGIN_ACCESS_TOKEN = "SocialLoginAccessToken";
-    private static final Long SOCIAL_LOGIN_ACCESS_TOKEN_EXPIRE = 3600L;
+
 
     private final WebClient webClient;
 
@@ -59,6 +56,7 @@ public class SocialLoginTokenUtil {
         SocialLoginReIssueResponseDto tokenReIssueResponseDto = getNewSocialLoginAccessToken(
                 findUser.getSocialLoginRefreshToken());
 
+        //System.out.println(tokenReIssueResponseDto.getAccess_token());
 
         webClient.post()
                 .uri("?grant_type=delete&client_id="+naverClientId+"&client_secret="+naverClientSecret+"&access_token="+tokenReIssueResponseDto.getAccess_token())
