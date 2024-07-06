@@ -44,6 +44,8 @@ public class OAuthAttributes {
         User user = User.builder()
                 .name(oauth2UserInfo.getName())
                 .role(Role.GENERAL)
+                .activated(false)
+                .isReceiveAd(false)
                // .phoneNumber(oauth2UserInfo.getPhoneNumber())
                 .password(UUID.randomUUID()+"password")
                 .socialType(socialType)
