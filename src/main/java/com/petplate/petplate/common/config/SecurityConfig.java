@@ -8,7 +8,7 @@ import com.petplate.petplate.auth.oauth.cookie.HttpCookieOAuth2AuthorizationRequ
 import com.petplate.petplate.auth.oauth.handler.OAuth2LoginSuccessHandler;
 import com.petplate.petplate.auth.oauth.service.CustomOAuth2LoginAuthenticationProvider;
 import com.petplate.petplate.auth.oauth.service.CustomOAuth2UserService;
-import com.petplate.petplate.auth.oauth.service.RedisSocialLoginTokenUtil;
+import com.petplate.petplate.auth.oauth.service.SocialLoginTokenUtil;
 import com.petplate.petplate.user.domain.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,10 +24,6 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authoriza
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -43,7 +39,7 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationEntryPointHandler jwtAuthenticationEntryPointHandler;
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
-    private final RedisSocialLoginTokenUtil redisSocialLoginTokenUtil;
+    private final SocialLoginTokenUtil socialLoginTokenUtil;
 
 
 
@@ -75,7 +71,8 @@ public class SecurityConfig {
                                 .successHandler(oAuth2LoginSuccessHandler)
                 );
 
-        http.authenticationProvider(new CustomOAuth2LoginAuthenticationProvider(accessTokenResponseClient(),customOAuth2UserService,redisSocialLoginTokenUtil));
+        http.authenticationProvider(new CustomOAuth2LoginAuthenticationProvider(accessTokenResponseClient(),customOAuth2UserService,
+                socialLoginTokenUtil));
 
         return http.addFilterBefore(new JwtFilter(tokenProvider,redisTemplate), UsernamePasswordAuthenticationFilter.class)
                 .build();

@@ -1,9 +1,8 @@
 package com.petplate.petplate.auth.service;
 
-import com.petplate.petplate.auth.dto.response.TokenReIssueResponseDto;
 import com.petplate.petplate.auth.jwt.TokenProvider;
 import com.petplate.petplate.auth.oauth.Dto.TokenDto;
-import com.petplate.petplate.auth.oauth.service.RedisSocialLoginTokenUtil;
+import com.petplate.petplate.auth.oauth.service.SocialLoginTokenUtil;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +20,7 @@ public class AuthService {
 
     private final TokenProvider tokenProvider;
     private final RedisTemplate redisTemplate;
-    private final RedisSocialLoginTokenUtil redisSocialLoginTokenUtil;
+    private final SocialLoginTokenUtil socialLoginTokenUtil;
 
     @Transactional
     public void logout(final String accessToken){

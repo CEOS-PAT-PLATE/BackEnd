@@ -1,26 +1,23 @@
 package com.petplate.petplate.auth.oauth.service;
 
 
-import com.petplate.petplate.auth.dto.response.TokenReIssueResponseDto;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginReIssueResponseDto;
 import com.petplate.petplate.common.response.error.ErrorCode;
-import com.petplate.petplate.common.response.error.exception.BadRequestException;
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
+import com.petplate.petplate.common.response.error.exception.NotFoundException;
+import com.petplate.petplate.user.domain.entity.User;
+import com.petplate.petplate.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class RedisSocialLoginTokenUtil {
+public class SocialLoginTokenUtil {
 
     private final RedisTemplate redisTemplate;
     private static final String SOCIAL_LOGIN_REFRESH_TOKEN = "SocialLoginRefreshToken";
@@ -35,9 +32,15 @@ public class RedisSocialLoginTokenUtil {
     @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
     private String naverClientSecret;
 
+    private final UserRepository userRepository;
 
+
+    @Transactional
     public void saveSocialLoginRefreshToken(String username,String socialLoginRefreshToken){
-        redisTemplate.opsForValue().set(SOCIAL_LOGIN_REFRESH_TOKEN+username,socialLoginRefreshToken);
+
+        User findUser = findUserByUsername(username);
+
+        findUser.changeSocialLoginRefreshToken(socialLoginRefreshToken);
     }
 
 
@@ -51,13 +54,11 @@ public class RedisSocialLoginTokenUtil {
 
     public void unlinkNaver(String username){
 
-        String  existingRefreshToken = (String) redisTemplate.opsForValue().get(SOCIAL_LOGIN_REFRESH_TOKEN+username);
+        User findUser = findUserByUsername(username);
 
+        SocialLoginReIssueResponseDto tokenReIssueResponseDto = getNewSocialLoginAccessToken(
+                findUser.getSocialLoginRefreshToken());
 
-
-        SocialLoginReIssueResponseDto tokenReIssueResponseDto = getNewSocialLoginAccessToken(existingRefreshToken);
-
-        System.out.println(tokenReIssueResponseDto.getAccess_token());
 
         webClient.post()
                 .uri("?grant_type=delete&client_id="+naverClientId+"&client_secret="+naverClientSecret+"&access_token="+tokenReIssueResponseDto.getAccess_token())
@@ -65,6 +66,10 @@ public class RedisSocialLoginTokenUtil {
                 .toBodilessEntity()
                 .block();
 
+    }
+
+    private User findUserByUsername(String username){
+        return userRepository.findByUsername(username).orElseThrow(()->new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 
 

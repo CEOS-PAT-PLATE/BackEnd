@@ -60,7 +60,9 @@ public class User extends BaseEntity {
     private SocialType socialType;
 
     @Column(nullable = false)
-    private boolean deleted=false;
+    private boolean deleted = false;
+
+    private String socialLoginRefreshToken;
 
     @Builder
     public User(Role role, String name, String username, String password,
@@ -75,5 +77,10 @@ public class User extends BaseEntity {
         this.activated = activated;
         this.level = 1;
         this.socialType = socialType;
+        socialLoginRefreshToken = null;
+    }
+
+    public void changeSocialLoginRefreshToken(final String socialLoginRefreshToken){
+        this.socialLoginRefreshToken = socialLoginRefreshToken;
     }
 }

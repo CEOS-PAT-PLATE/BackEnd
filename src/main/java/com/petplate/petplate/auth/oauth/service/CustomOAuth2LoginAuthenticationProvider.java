@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -24,7 +23,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthorizationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 @RequiredArgsConstructor
@@ -35,7 +33,7 @@ public class CustomOAuth2LoginAuthenticationProvider implements AuthenticationPr
 
     private final OAuth2UserService<OAuth2UserRequest, OAuth2User> userService;
 
-    private final RedisSocialLoginTokenUtil redisSocialLoginTokenUtil;
+    private final SocialLoginTokenUtil socialLoginTokenUtil;
 
     private static final String SOCIAL_LOGIN_REFRESH_TOKEN = "SocialLoginRefreshToken";
 
@@ -52,12 +50,13 @@ public class CustomOAuth2LoginAuthenticationProvider implements AuthenticationPr
     @Autowired
     public CustomOAuth2LoginAuthenticationProvider(
             OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient,
-            OAuth2UserService<OAuth2UserRequest, OAuth2User> userService,RedisSocialLoginTokenUtil redisSocialLoginTokenUtil) {
+            OAuth2UserService<OAuth2UserRequest, OAuth2User> userService,
+            SocialLoginTokenUtil socialLoginTokenUtil) {
         Assert.notNull(userService, "userService cannot be null");
         this.authorizationCodeAuthenticationProvider = new OAuth2AuthorizationCodeAuthenticationProvider(
                 accessTokenResponseClient);
         this.userService = userService;
-        this.redisSocialLoginTokenUtil = redisSocialLoginTokenUtil;
+        this.socialLoginTokenUtil = socialLoginTokenUtil;
 
     }
 
@@ -93,7 +92,7 @@ public class CustomOAuth2LoginAuthenticationProvider implements AuthenticationPr
 
         System.out.println(authorizationCodeAuthenticationToken.getRefreshToken().getTokenValue());
 
-        redisSocialLoginTokenUtil.saveSocialLoginRefreshToken(customOAuth2User.getUsername(), authorizationCodeAuthenticationToken.getRefreshToken().getTokenValue());
+        socialLoginTokenUtil.saveSocialLoginRefreshToken(customOAuth2User.getUsername(), authorizationCodeAuthenticationToken.getRefreshToken().getTokenValue());
 
 
         Collection<? extends GrantedAuthority> mappedAuthorities = this.authoritiesMapper
