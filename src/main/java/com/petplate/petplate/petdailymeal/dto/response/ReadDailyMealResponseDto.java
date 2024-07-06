@@ -19,13 +19,13 @@ public class ReadDailyMealResponseDto {
     private LocalDate date;
 
     private List<ReadDailyRawResponseDto> dailyRaws;
-    private List<ReadFeedResponseDto> dailyFeeds;
-    private List<ReadDailyPackagedSnackResponseDto> dailyPackagedSnacks;
+    private List<ReadFeedResponseDto> feeds;
+    private List<ReadDailyPackagedSnackResponseDto> packagedSnacks;
     private List<ReadDailyBookMarkedRawResponseDto> dailyBookMarkedRaws;
     private List<ReadDailyBookMarkedFeedResponseDto> dailyBookMarkedFeeds;
     private List<ReadDailyBookMarkedPackagedSnackResponseDto> dailyBookMarkedPackagedSnacks;
 
-    public static ReadDailyMealResponseDto of(DailyMeal dailyMeal, List<DailyRaw> dailyRaws, List<Feed> feeds, List<DailyPackagedSnack> dailyPackagedSnacks, List<DailyBookMarkedRaw> dailyBookMarkedRaws, List<DailyBookMarkedFeed> dailyBookMarkedFeeds, List<DailyBookMarkedPackagedSnack> dailyBookMarkedPackagedSnacks) {
+    public static ReadDailyMealResponseDto of(DailyMeal dailyMeal, List<DailyRaw> dailyRaws, List<Feed> feeds, List<DailyPackagedSnack> packagedSnacks, List<DailyBookMarkedRaw> dailyBookMarkedRaws, List<DailyBookMarkedFeed> dailyBookMarkedFeeds, List<DailyBookMarkedPackagedSnack> dailyBookMarkedPackagedSnacks) {
         ReadDailyMealResponseDto responseDto = new ReadDailyMealResponseDto();
         responseDto.dailyMealId = dailyMeal.getId();
         responseDto.date = dailyMeal.getCreatedAt().toLocalDate();
@@ -34,10 +34,10 @@ public class ReadDailyMealResponseDto {
         dailyRaws.forEach(dailyRaw -> responseDto.dailyRaws.add(ReadDailyRawResponseDto.from(dailyRaw)));
 
         // dailyFeed
-        feeds.forEach(dailyFeed -> responseDto.dailyFeeds.add(ReadFeedResponseDto.from(dailyFeed)));
+        feeds.forEach(feed -> responseDto.feeds.add(ReadFeedResponseDto.from(feed)));
 
         // dailyPackagedSnack
-        dailyPackagedSnacks.forEach(dailyPackagedSnack -> responseDto.dailyPackagedSnacks.add(ReadDailyPackagedSnackResponseDto.from(dailyPackagedSnack)));
+        packagedSnacks.forEach(packagedSnack -> responseDto.packagedSnacks.add(ReadDailyPackagedSnackResponseDto.from(packagedSnack)));
 
         // dailyBookMarkedRaw
         dailyBookMarkedRaws.forEach(dailyBookMarkedRaw -> responseDto.dailyBookMarkedRaws.add(ReadDailyBookMarkedRawResponseDto.from(dailyBookMarkedRaw)));

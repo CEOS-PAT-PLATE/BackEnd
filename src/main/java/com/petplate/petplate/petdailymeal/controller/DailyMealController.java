@@ -60,7 +60,7 @@ public class DailyMealController {
             return new ResponseEntity(BaseResponse.createSuccess(dailyMealWithFoods), HttpStatus.OK);
     }
 
-    @Operation(summary = "반려견의 식사 내역 중 사료만 조회", description = "특정일자의 식사 내역 중 사료(dailyFeeds)만 조회합니다. (나머진 null)")
+    @Operation(summary = "반려견의 식사 내역 중 사료만 조회", description = "특정일자의 식사 내역 중 사료(feeds)만 조회합니다. (나머진 null)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
@@ -69,11 +69,11 @@ public class DailyMealController {
     @GetMapping("/pet/{petId}/dailyMeals/feeds")
     public ResponseEntity<BaseResponse<List<ReadDailyMealResponseDto>>> readDailyMealsWithDailyFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
                                                                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-            ReadDailyMealResponseDto dailyMealWithFoods = dailyMealService.getDailyMealWithDailyFeeds(username, petId, date);
+            ReadDailyMealResponseDto dailyMealWithFoods = dailyMealService.getDailyMealWithFeeds(username, petId, date);
             return new ResponseEntity(BaseResponse.createSuccess(dailyMealWithFoods), HttpStatus.OK);
     }
 
-    @Operation(summary = "반려견의 식사 내역 중 포장 간식만 조회", description = "특정일자의 식사 내역 중 포장 간식(dailyPackagedSnacks)만 조회합니다. (나머진 null)")
+    @Operation(summary = "반려견의 식사 내역 중 포장 간식만 조회", description = "특정일자의 식사 내역 중 포장 간식(packagedSnacks)만 조회합니다. (나머진 null)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),

@@ -40,7 +40,7 @@ public class FeedService {
     static final double vitaminEIuNaturalPerGram = 1492.5373134328358; // == 10E3 / 0.67
 
     /**
-     * DailyFeed 생성
+     * Feed를 오늘 식사에 추가
      * @param username
      * @param petId
      * @param requestDto
@@ -87,17 +87,17 @@ public class FeedService {
     }
 
     /**
-     * PK로 dailyFeed 조회
+     * PK로 오늘 섭취한 Feed 조회
      *
      * @param username
      * @param petId
-     * @param dailyFeedId
+     * @param feedId
      * @return
      */
-    public ReadFeedResponseDto getDailyFeed(String username, Long petId, Long dailyFeedId) {
+    public ReadFeedResponseDto getDailyFeed(String username, Long petId, Long feedId) {
         Pet pet = validUserAndFindPet(username, petId);
 
-        Feed feed = feedRepository.findById(dailyFeedId).orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_FEED_NOT_FOUND));
+        Feed feed = feedRepository.findById(feedId).orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_FEED_NOT_FOUND));
 
         if (!feed.getDailyMeal().getPet().getId().equals(pet.getId())) {
             throw new BadRequestException(ErrorCode.NOT_PET_FOOD);
@@ -107,17 +107,17 @@ public class FeedService {
     }
 
     /**
-     * DailyFeed 제거
+     * 오늘 섭취한 Feed 제거
      * @param username
      * @param petId
-     * @param dailyFeedId
+     * @param feedId
      */
     @Transactional
-    public void deleteDailyFeed(String username, Long petId, Long dailyFeedId) {
+    public void deleteDailyFeed(String username, Long petId, Long feedId) {
         Pet pet = validUserAndFindPet(username, petId);
 
         Feed feed =
-                feedRepository.findById(dailyFeedId)
+                feedRepository.findById(feedId)
                         .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_FEED_NOT_FOUND));
 
         if(!feed.getDailyMeal().getPet().getId().equals(pet.getId())) {
@@ -129,7 +129,7 @@ public class FeedService {
         dailyMeal.subtractKcal(feed.getKcal());
         dailyMeal.subtractNutrient(feed.getNutrient());
 
-        feedRepository.deleteById(dailyFeedId);
+        feedRepository.deleteById(feedId);
     }
 
     private DailyMeal getDailyMealToday(Pet pet) {

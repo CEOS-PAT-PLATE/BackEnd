@@ -142,7 +142,7 @@ public class DailyMealService {
      * @param date
      * @return
      */
-    public ReadDailyMealResponseDto getDailyMealWithDailyFeeds(String username, Long petId, LocalDate date) {
+    public ReadDailyMealResponseDto getDailyMealWithFeeds(String username, Long petId, LocalDate date) {
         validUserAndFindPet(username, petId);
 
         LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
