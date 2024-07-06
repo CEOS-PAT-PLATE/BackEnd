@@ -97,7 +97,8 @@ public class DailyFeedService {
     public ReadDailyFeedResponseDto getDailyFeed(String username, Long petId, Long dailyFeedId) {
         Pet pet = validUserAndFindPet(username, petId);
 
-        DailyFeed dailyFeed = dailyFeedRepository.findById(dailyFeedId).orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_FEED_NOT_FOUND));
+        DailyFeed dailyFeed = dailyFeedRepository.findById(dailyFeedId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_FEED_NOT_FOUND));
 
         if (!dailyFeed.getDailyMeal().getPet().getId().equals(pet.getId())) {
             throw new BadRequestException(ErrorCode.NOT_PET_FOOD);
