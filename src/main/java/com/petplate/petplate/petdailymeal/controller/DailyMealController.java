@@ -2,12 +2,11 @@ package com.petplate.petplate.petdailymeal.controller;
 
 import com.petplate.petplate.auth.interfaces.CurrentUserUsername;
 import com.petplate.petplate.common.response.BaseResponse;
-import com.petplate.petplate.dailyMealNutrient.repository.ProperNutrientRepository;
 import com.petplate.petplate.dailyMealNutrient.service.DeficientNutrientService;
 import com.petplate.petplate.dailyMealNutrient.service.ProperNutrientService;
 import com.petplate.petplate.dailyMealNutrient.service.SufficientNutrientService;
 import com.petplate.petplate.pet.dto.response.ReadPetNutrientResponseDto;
-import com.petplate.petplate.petdailymeal.dto.response.ReadDailyMealResponseDto;
+import com.petplate.petplate.petdailymeal.dto.response.*;
 import com.petplate.petplate.petdailymeal.service.DailyMealService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -38,103 +36,105 @@ public class DailyMealController {
     private static final String BAD_REQUEST = "400";
     private static final String NOT_FOUND = "404";
 
-    @Operation(summary = "반려견의 식사 내역 조회", description = "특정일자의 식사 내역을 조회합니다. (날짜 미입력시 모든 식사 내역 조회). 반환 값으로는 식사의 PK, 식사 날짜 그리고 해당 식사에 포함된 자연식, 사료, 포장간식, 즐겨찾기한 자연식, 즐겨찾기한 사료, 즐겨찾기한 포장간식의 정보가 포함됩니다.")
+    @Operation(summary = "날짜로 반려견의 식사 내역 조회", description = "식사 내역을 조회합니다.(날짜 미입력시 모든 식사내역 반환) 반환 값으로는 식사의 PK, 식사 날짜 정보가 포함됩니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
-    // 수정
     @GetMapping("/pet/{petId}/dailyMeals")
-    public ResponseEntity<BaseResponse<List<ReadDailyMealResponseDto>>> readDailyMealsWithAllDailyFoods(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
-                                                                                                        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    public ResponseEntity<BaseResponse<List<ReadDailyMealResponseDto>>> readDailyMeals(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
+                                                                                       @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
-            List<ReadDailyMealResponseDto> dailyMealsWithFoods = dailyMealService.getDailyMealsWithAllFoods(username, petId);
-            return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMealsWithFoods));
+            List<ReadDailyMealResponseDto> dailyMeals = dailyMealService.getDailyMeals(username, petId);
+            return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMeals));
         } else {
-            List<ReadDailyMealResponseDto> responseDtos = new ArrayList<>();
-            ReadDailyMealResponseDto dailyMealWithFoods = dailyMealService.getDailyMealWithAllFoods(username, petId, date);
-            responseDtos.add(dailyMealWithFoods);
-            return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(responseDtos));
+            List<ReadDailyMealResponseDto> dailyMeals = (List)dailyMealService.getDailyMeal(username, petId, date);
+            return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMeals));
         }
     }
 
-    @Operation(summary = "반려견의 식사 내역 중 자연식만 조회", description = "특정일자의 식사 내역 중 자연식(dailyRaws)만 조회합니다. (나머진 null)")
+    @Operation(summary = "반려견의 특정 식사에서의 모든 섭취 음식들을 조회", description = "식사 내역을 조회합니다. 반환 값으로는 식사의 PK(id), 식사 날짜, 자연식, 사료, 포장간식, 즐겨찾기 자연식, 즐겨찾기 사료, 즐겨찾기 포장간식 정보가 포함됩니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
-    @GetMapping("/pet/{petId}/dailyMeals/raws")
-    public ResponseEntity<BaseResponse<ReadDailyMealResponseDto>> readDailyMealsWithDailyRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
-                                                                                              @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-        ReadDailyMealResponseDto dailyMealWithFoods = dailyMealService.getDailyMealWithDailyRaws(username, petId, date);
+    @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}")
+    public ResponseEntity<BaseResponse<ReadDailyMealFoodResponseDto>> readDailyMealWithAllFoods(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+        ReadDailyMealFoodResponseDto dailyMealWithFoods = dailyMealService.getDailyMealWithFoods(username, petId, dailyMealId);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMealWithFoods));
     }
-
-    @Operation(summary = "반려견의 식사 내역 중 사료만 조회", description = "특정일자의 식사 내역 중 사료(dailyFeeds)만 조회합니다. (나머진 null)")
+    @Operation(summary = "반려견의 식사 내역 중 자연식만 조회", description = "특정 식사 내역 중 자연식만 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
-    @GetMapping("/pet/{petId}/dailyMeals/feeds")
-    public ResponseEntity<BaseResponse<ReadDailyMealResponseDto>> readDailyMealsWithDailyFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
-                                                                                               @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-        ReadDailyMealResponseDto dailyMealWithFoods = dailyMealService.getDailyMealWithDailyFeeds(username, petId, date);
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMealWithFoods));
+    @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/raws")
+    public ResponseEntity<BaseResponse<List<ReadDailyRawResponseDto>>> readDailyRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+        List<ReadDailyRawResponseDto> dailyRaws = dailyMealService.getDailyRaws(username, petId, dailyMealId);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyRaws));
     }
 
-    @Operation(summary = "반려견의 식사 내역 중 포장 간식만 조회", description = "특정일자의 식사 내역 중 포장 간식(dailyPackagedSnacks)만 조회합니다. (나머진 null)")
+    @Operation(summary = "반려견의 식사 내역 중 사료만 조회", description = "특정 식사 내역 중 사료만 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
-    @GetMapping("/pet/{petId}/dailyMeals/packagedSnacks")
-    public ResponseEntity<BaseResponse<ReadDailyMealResponseDto>> readDailyMealsWithDailyPackagedSnacks(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
-                                                                                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-        ReadDailyMealResponseDto dailyMealWithFoods = dailyMealService.getDailyMealWithDailyPackagedSnacks(username, petId, date);
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMealWithFoods));
+    @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/feeds")
+    public ResponseEntity<BaseResponse<List<ReadDailyFeedResponseDto>>> readDailyFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+        List<ReadDailyFeedResponseDto> dailyFeeds = dailyMealService.getDailyFeeds(username, petId, dailyMealId);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyFeeds));
     }
 
-    @Operation(summary = "반려견의 식사 내역 중 즐겨찾기 자연식만 조회", description = "특정일자의 식사 내역 중 즐겨찾기 자연식(dailyBookMarkedRaws)만 조회합니다. (나머진 null)")
+    @Operation(summary = "반려견의 식사 내역 중 포장 간식만 조회", description = "특정 식사 내역 중 포장 간식(dailyPackagedSnacks)만 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
-    @GetMapping("/pet/{petId}/dailyMeals/bookmark/raws")
-    public ResponseEntity<BaseResponse<ReadDailyMealResponseDto>> readDailyMealsWithDailyBookMarkedRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
-                                                                                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-        ReadDailyMealResponseDto dailyMealWithFoods = dailyMealService.getDailyMealWithDailyBookMarkedRaws(username, petId, date);
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMealWithFoods));
+    @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/packagedSnacks")
+    public ResponseEntity<BaseResponse<List<ReadDailyPackagedSnackResponseDto>>> readDailyPackagedSnacks(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+        List<ReadDailyPackagedSnackResponseDto> dailyPackagedSnacks = dailyMealService.getDailyPackagedSnacks(username, petId, dailyMealId);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyPackagedSnacks));
     }
 
-    @Operation(summary = "반려견의 식사 내역 중 즐겨찾기 사료만 조회", description = "특정일자의 식사 내역 중 즐겨찾기 사료(dailyBookMarkedFeeds)만 조회합니다. (나머진 null)")
+    @Operation(summary = "반려견의 식사 내역 중 즐겨찾기 자연식만 조회", description = "특정 식사 내역 중 즐겨찾기 자연식(dailyBookMarkedRaws)만 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
-    @GetMapping("/pet/{petId}/dailyMeals/bookmark/feeds")
-    public ResponseEntity<BaseResponse<ReadDailyMealResponseDto>> readDailyMealsWithDailyBookMarkedFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
-                                                                                                         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-        ReadDailyMealResponseDto dailyMealWithFoods = dailyMealService.getDailyMealWithDailyBookMarkedFeeds(username, petId, date);
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMealWithFoods));
+    @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/bookmark/raws")
+    public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedRawResponseDto>>> readDailyBookMarkedRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+        List<ReadDailyBookMarkedRawResponseDto> dailyBookMarkedRaws = dailyMealService.getDailyBookMarkedRaws(username, petId, dailyMealId);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyBookMarkedRaws));
     }
 
-    @Operation(summary = "반려견의 식사 내역 중 즐겨찾기 포장간식만 조회", description = "특정일자의 식사 내역 중 즐겨찾기 포장간식(dailyBookMarkedPackagedSnacks)만 조회합니다. (나머진 null)")
+    @Operation(summary = "반려견의 식사 내역 중 즐겨찾기 사료만 조회", description = "특정 식사 내역 중 즐겨찾기 사료(dailyBookMarkedFeeds)만 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
-    @GetMapping("/pet/{petId}/dailyMeals/bookmark/packagedSnacks")
-    public ResponseEntity<BaseResponse<ReadDailyMealResponseDto>> readDailyMealsWithDailyBookMarkedPackagedSnacks(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
-                                                                                                                  @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-        ReadDailyMealResponseDto dailyMealWithFoods = dailyMealService.getDailyMealWithDailyBookMarkedPackagedSnacks(username, petId, date);
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMealWithFoods));
+    @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/bookmark/feeds")
+    public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedFeedResponseDto>>> readDailyBookMarkedFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+        List<ReadDailyBookMarkedFeedResponseDto> dailyBookMarkedFeeds = dailyMealService.getDailyBookMarkedFeeds(username, petId, dailyMealId);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyBookMarkedFeeds));
+    }
+
+    @Operation(summary = "반려견의 식사 내역 중 즐겨찾기 포장간식만 조회", description = "특정 식사 내역 중 즐겨찾기 포장간식(dailyBookMarkedPackagedSnacks)만 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
+            @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
+    })
+    @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/bookmark/packagedSnacks")
+    public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedPackagedSnackResponseDto>>> readDailyBookMarkedPackagedSnacks(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+        List<ReadDailyBookMarkedPackagedSnackResponseDto> dailyBookMarkedPackagedSnacks = dailyMealService.getDailyBookMarkedPackagedSnacks(username, petId, dailyMealId);
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyBookMarkedPackagedSnacks));
     }
 
     @Operation(summary = "반려견의 오늘 식사 내역에 대한 영양분석을 진행(부족영양소, 과잉영양소, 적정영양소)")
@@ -143,7 +143,7 @@ public class DailyMealController {
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우, 이미 오늘 영양소 분석을 진행 한 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
-    @PostMapping("/pet/{petId}/dailyMeals/nutrient")
+    @PostMapping("/pet/{petId}/dailyMeals/nutrients")
     public ResponseEntity<BaseResponse> createDailyMealNutrients(@CurrentUserUsername String username, @PathVariable Long petId) {
         // 부족 영양소
         deficientNutrientService.createDeficientNutrientToday(username, petId);
@@ -164,7 +164,7 @@ public class DailyMealController {
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
-    @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/nutrient/deficient")
+    @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/nutrients/deficient")
     public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readDeficientNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
         List<ReadPetNutrientResponseDto> deficientNutrients = deficientNutrientService.getDeficientNutrients(username, petId, dailyMealId);
 
@@ -177,7 +177,7 @@ public class DailyMealController {
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
-    @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/nutrient/sufficient")
+    @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/nutrients/sufficient")
     public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readSufficientNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
         List<ReadPetNutrientResponseDto> sufficientNutrients = sufficientNutrientService.getSufficientNutrients(username, petId, dailyMealId);
 
@@ -190,7 +190,7 @@ public class DailyMealController {
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
-    @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/nutrient/proper")
+    @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/nutrients/proper")
     public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readProperNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
         List<ReadPetNutrientResponseDto> properNutrients = properNutrientService.getProperNutrients(username, petId, dailyMealId);
 

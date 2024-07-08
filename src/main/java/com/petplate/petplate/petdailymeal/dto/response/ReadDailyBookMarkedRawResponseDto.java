@@ -3,14 +3,12 @@ package com.petplate.petplate.petdailymeal.dto.response;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyBookMarkedRaw;
 import com.petplate.petplate.petfood.domain.entity.BookMarkedRaw;
 import com.petplate.petplate.petfood.dto.response.ReadBookMarkedRawResponseDto;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class ReadDailyBookMarkedRawResponseDto {
     private Long dailyBookMarkedRawId;
     private String name;
