@@ -119,6 +119,49 @@ public enum StandardNutrient {
         return deficientNutrients;
     }
 
+    // 적정인 영양소 반환
+    public static List<StandardNutrient> findProperNutrients(Nutrient nutrient, double weight, Activity activity, Neutering neutering) {
+        List<StandardNutrient> properNutrients = new ArrayList<>();
+
+        double carbonHydrateIntake = nutrient.getCarbonHydrate() / calculateProperCarbonHydrateAmount(weight, activity, neutering);
+        double fatIntake = nutrient.getFat() / calculateProperNutrientAmount(FAT, weight);
+        double proteinIntake = nutrient.getProtein() / calculateProperNutrientAmount(PROTEIN, weight);
+        double calciumIntake = nutrient.getCalcium() / calculateProperNutrientAmount(CALCIUM, weight);
+        double phosphorusIntake = nutrient.getPhosphorus() / calculateProperNutrientAmount(PHOSPHORUS, weight);
+        double vitaminAIntake = nutrient.getVitamin().getVitaminA() / calculateProperNutrientAmount(VITAMIN_A, weight);
+        double vitaminDIntake = nutrient.getVitamin().getVitaminD() / calculateProperNutrientAmount(VITAMIN_D, weight);
+        double vitaminEIntake = nutrient.getVitamin().getVitaminE() / calculateProperNutrientAmount(VITAMIN_E, weight);
+
+        if (CARBON_HYDRATE.getMaxIntakeRange() >= carbonHydrateIntake && carbonHydrateIntake >= 1) {
+            properNutrients.add(CARBON_HYDRATE);
+        }
+        if (FAT.getMaxIntakeRange() >= fatIntake && fatIntake >= 1) {
+            properNutrients.add(FAT);
+        }
+        if (PROTEIN.getMaxIntakeRange() >= proteinIntake && proteinIntake >= 1) {
+            properNutrients.add(PROTEIN);
+        }
+        if (CALCIUM.getMaxIntakeRange() >= calciumIntake && calciumIntake >= 1) {
+            properNutrients.add(CALCIUM);
+        }
+        if (PHOSPHORUS.getMaxIntakeRange() >= phosphorusIntake &&
+                phosphorusIntake >= 1) {
+            properNutrients.add(PHOSPHORUS);
+        }
+        if (VITAMIN_A.getMaxIntakeRange() >= vitaminAIntake && vitaminAIntake >= 1) {
+            properNutrients.add(VITAMIN_A);
+        }
+        if (VITAMIN_D.getMaxIntakeRange() >= vitaminDIntake && vitaminDIntake >= 1) {
+            properNutrients.add(VITAMIN_D);
+        }
+        if (VITAMIN_E.getMaxIntakeRange() >= vitaminEIntake && vitaminEIntake >= 1) {
+            properNutrients.add(VITAMIN_E);
+        }
+
+        return properNutrients;
+    }
+
+
     //가장 적은 영양소 비율로 판단하기
     public static StandardNutrient findMostDeficientNutrient(Nutrient nutrient, double weight, Activity activity, Neutering neutering) {
 
