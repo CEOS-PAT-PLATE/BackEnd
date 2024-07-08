@@ -4,10 +4,14 @@ import com.petplate.petplate.common.EmbeddedType.Nutrient;
 import com.petplate.petplate.common.EmbeddedType.Vitamin;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
+import com.petplate.petplate.dailyMealNutrient.service.DeficientNutrientService;
+import com.petplate.petplate.dailyMealNutrient.service.ProperNutrientService;
+import com.petplate.petplate.dailyMealNutrient.service.SufficientNutrientService;
 import com.petplate.petplate.pet.domain.Activity;
 import com.petplate.petplate.pet.domain.Neutering;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.dto.request.CreatePetRequestDto;
+import com.petplate.petplate.pet.dto.response.ReadPetNutrientResponseDto;
 import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.pet.service.PetService;
 import com.petplate.petplate.petdailymeal.domain.entity.*;
@@ -61,15 +65,21 @@ class DailyMealServiceTest {
     private DailyFeedRepository dailyFeedRepository;
     @Autowired
     private DailyBookMarkedFeedRepository dailyBookMarkedFeedRepository;
+    @Autowired
+    private DailyRawRepository dailyRawRepository;
+    @Autowired
+    private DailyBookMarkedRawRepository dailyBookMarkedRawRepository;
+    @Autowired
+    DeficientNutrientService deficientNutrientService;
+    @Autowired
+    ProperNutrientService properNutrientService;
+    @Autowired
+    SufficientNutrientService sufficientNutrientService;
 
     private String user1Username;
     private Long pet1Id;
     private Long pet2Id;
     private Long dailyMealId;
-    @Autowired
-    private DailyRawRepository dailyRawRepository;
-    @Autowired
-    private DailyBookMarkedRawRepository dailyBookMarkedRawRepository;
 
 
     @BeforeEach
@@ -416,5 +426,30 @@ class DailyMealServiceTest {
         Assertions.assertTrue(dailyMealWithFoods.getDailyBookMarkedPackagedSnacks().isEmpty());
 
         Assertions.assertThrows(NotFoundException.class, () -> dailyMealService.getDailyMealWithFoods(user1Username, pet2Id, -12345L));
+    }
+
+    @Test
+    @DisplayName("영양분석")
+    public void dailyMealNutrient() throws Exception{
+        //given
+
+        //when
+        deficientNutrientService.createDeficientNutrientToday(user1Username, pet1Id);
+        sufficientNutrientService.createSufficientNutrientsToday(user1Username, pet1Id);
+        properNutrientService.createProperNutrientsToday(user1Username, pet1Id);
+
+        // then
+        List<ReadPetNutrientResponseDto> deficientNutrients = deficientNutrientService.getDeficientNutrients(user1Username, pet1Id, dailyMealId);
+        System.out.println("deficientNutrients = " + deficientNutrients);
+
+        List<ReadPetNutrientResponseDto> sufficientNutrients = sufficientNutrientService.getSufficientNutrients(user1Username, pet1Id, dailyMealId);
+        System.out.println("sufficientNutrients = " + sufficientNutrients);
+
+        List<ReadPetNutrientResponseDto> properNutrients = properNutrientService.getProperNutrients(user1Username, pet1Id, dailyMealId);
+        System.out.println("properNutrients = " + properNutrients);
+
+        Assertions.assertThrows(NotFoundException.class, () -> deficientNutrientService.createDeficientNutrientToday(user1Username, pet2Id));
+        Assertions.assertThrows(NotFoundException.class, () -> properNutrientService.createProperNutrientsToday(user1Username, pet2Id));
+        Assertions.assertThrows(NotFoundException.class, () -> sufficientNutrientService.createSufficientNutrientsToday(user1Username, pet2Id));
     }
 }
