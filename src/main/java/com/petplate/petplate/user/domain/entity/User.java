@@ -15,11 +15,15 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "Users")
+@SQLDelete(sql="UPDATE users set deleted = true where user_id = ?")
+@Where(clause = "deleted = false")
 public class User extends BaseEntity {
 
     @Id
@@ -55,6 +59,11 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
+    @Column(nullable = false)
+    private boolean deleted = false;
+
+    private String socialLoginRefreshToken;
+
     @Builder
     public User(Role role, String name, String username, String password,
             String phoneNumber,
@@ -68,5 +77,10 @@ public class User extends BaseEntity {
         this.activated = activated;
         this.level = 1;
         this.socialType = socialType;
+        socialLoginRefreshToken = null;
+    }
+
+    public void changeSocialLoginRefreshToken(final String socialLoginRefreshToken){
+        this.socialLoginRefreshToken = socialLoginRefreshToken;
     }
 }
