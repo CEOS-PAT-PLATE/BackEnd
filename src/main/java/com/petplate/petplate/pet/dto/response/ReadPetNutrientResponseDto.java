@@ -1,6 +1,7 @@
 package com.petplate.petplate.pet.dto.response;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 public class ReadPetNutrientResponseDto {
@@ -38,9 +39,9 @@ public class ReadPetNutrientResponseDto {
                 ", 섭취량=" + amount +
                 ", 적정 섭취량=" + properAmount +
                 ", 최대 허용 섭취량=" + maximumAmount +
-                ", 최대 허용 섭취량 비율 / 적정 섭취량 =" + maximumAmountRatioPerProperAmount +
+                ", 최대 허용 섭취량 / 적정 섭취량 =" + maximumAmountRatioPerProperAmount +
                 ", 섭취량 / 적정 섭취량=" + amountRatioPerProperAmount +
                 ", 섭취량 / 최대 허용 섭취량=" + AmountRatioPerMaximumAmount +
-                '}';
+                "}\n";
     }
 }
