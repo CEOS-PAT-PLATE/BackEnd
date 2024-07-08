@@ -1,14 +1,12 @@
 package com.petplate.petplate.petdailymeal.dto.response;
 
 import com.petplate.petplate.petdailymeal.domain.entity.DailyBookMarkedPackagedSnack;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class ReadDailyBookMarkedPackagedSnackResponseDto {
     private Long dailyBookMarkedPackagedSnackId;
     private String name;
