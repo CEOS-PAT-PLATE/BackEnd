@@ -49,7 +49,7 @@ public class DailyMealController {
             List<ReadDailyMealResponseDto> dailyMeals = dailyMealService.getDailyMeals(username, petId);
             return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMeals));
         } else {
-            List<ReadDailyMealResponseDto> dailyMeals = (List)dailyMealService.getDailyMeal(username, petId, date);
+            List<ReadDailyMealResponseDto> dailyMeals = (List) dailyMealService.getDailyMeal(username, petId, date);
             return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMeals));
         }
     }
@@ -65,6 +65,7 @@ public class DailyMealController {
         ReadDailyMealFoodResponseDto dailyMealWithFoods = dailyMealService.getDailyMealWithFoods(username, petId, dailyMealId);
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMealWithFoods));
     }
+
     @Operation(summary = "반려견의 식사 내역 중 자연식만 조회", description = "특정 식사 내역 중 자연식만 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
@@ -137,7 +138,8 @@ public class DailyMealController {
         return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyBookMarkedPackagedSnacks));
     }
 
-    @Operation(summary = "반려견의 오늘 식사 내역에 대한 영양분석을 진행(부족영양소, 과잉영양소, 적정영양소)")
+    @Operation(summary = "반려견의 오늘 식사 내역에 대한 영양분석을 진행(부족영양소, 과잉영양소, 적정영양소)",
+            description = "반려견의 식사 내역 중 (부족, 과잉, 적정) 영양소 조회를 하기 위해선 반드시 먼저 실행되어야 함.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = CREATED, description = "영양 분석 성공(오늘 식사에 대한 부족/과잉/적정 영양소 내용을 성공적 저장)"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우, 이미 오늘 영양소 분석을 진행 한 경우"),
