@@ -69,7 +69,7 @@ public class DailyMealController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/raws")
     public ResponseEntity<BaseResponse<List<ReadDailyRawResponseDto>>> readDailyRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
@@ -81,7 +81,7 @@ public class DailyMealController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/feeds")
     public ResponseEntity<BaseResponse<List<ReadDailyFeedResponseDto>>> readDailyFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
@@ -93,7 +93,7 @@ public class DailyMealController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/packagedSnacks")
     public ResponseEntity<BaseResponse<List<ReadDailyPackagedSnackResponseDto>>> readDailyPackagedSnacks(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
@@ -105,7 +105,7 @@ public class DailyMealController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/bookmark/raws")
     public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedRawResponseDto>>> readDailyBookMarkedRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
@@ -117,7 +117,7 @@ public class DailyMealController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/bookmark/feeds")
     public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedFeedResponseDto>>> readDailyBookMarkedFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
@@ -129,7 +129,7 @@ public class DailyMealController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "식사내역 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/bookmark/packagedSnacks")
     public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedPackagedSnackResponseDto>>> readDailyBookMarkedPackagedSnacks(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
@@ -141,7 +141,7 @@ public class DailyMealController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = CREATED, description = "영양 분석 성공(오늘 식사에 대한 부족/과잉/적정 영양소 내용을 성공적 저장)"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우, 이미 오늘 영양소 분석을 진행 한 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 오늘 식사내역이 존재하지 않는 경우"),
     })
     @PostMapping("/pet/{petId}/dailyMeals/nutrients")
     public ResponseEntity<BaseResponse> createDailyMealNutrients(@CurrentUserUsername String username, @PathVariable Long petId) {
@@ -162,7 +162,7 @@ public class DailyMealController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "영양소 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/nutrients/deficient")
     public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readDeficientNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
@@ -175,7 +175,7 @@ public class DailyMealController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "영양소 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/nutrients/sufficient")
     public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readSufficientNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
@@ -188,7 +188,7 @@ public class DailyMealController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "영양소 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/nutrients/proper")
     public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readProperNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
