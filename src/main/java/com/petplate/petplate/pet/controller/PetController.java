@@ -127,7 +127,7 @@ public class PetController {
         }
     }
 
-    @Operation(summary = "반려견이 하루 섭취한 적정 영양소 대비 영양소 비율을 조회. (날짜 미입력시 오늘 정보 조회)",
+    /*@Operation(summary = "반려견이 하루 섭취한 적정 영양소 대비 영양소 비율을 조회. (날짜 미입력시 오늘 정보 조회)",
             description = "반려견이 섭취한 영양소를 적정 섭취량에 대한 비율로 반환함\n" +
                     "예) 체중에 대해서 계산한 단백질 적정량이 100g인데 총 200g을 섭취한 경우 protein = 2가 반환")
     @ApiResponses(value = {
@@ -145,9 +145,9 @@ public class PetController {
             List<ReadPetNutrientRatioResponseDto> petNutrientRatio = petService.getPetNutrientRatio(username, petId, date);
             return new ResponseEntity(BaseResponse.createSuccess(petNutrientRatio), HttpStatus.OK);
         }
-    }
+    }*/
 
-    @Operation(summary = "반려견이 하루동안 과잉 섭취한 영양소 조회.")
+   /* @Operation(summary = "반려견이 하루동안 과잉 섭취한 영양소 조회.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "반려견 성공적 정보 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
@@ -171,7 +171,7 @@ public class PetController {
                                                                   @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         List<ReadPetNutrientResponseDto> deficientNutrient = petService.getDeficientNutrient(username, petId, date);
         return new ResponseEntity(BaseResponse.createSuccess(deficientNutrient), HttpStatus.OK);
-    }
+    }*/
 
     @Operation(summary = "반려견이 하루동안 섭취한 칼로리 조회. (날짜 미입력시 오늘 정보 조회)")
     @ApiResponses(value = {
