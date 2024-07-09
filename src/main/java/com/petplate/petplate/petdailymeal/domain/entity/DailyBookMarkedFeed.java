@@ -37,4 +37,8 @@ public class DailyBookMarkedFeed {
         this.bookMarkedFeed = bookMarkedFeed;
         this.dailyMeal = dailyMeal;
     }
+
+    public void updateBookMarkedFeed(BookMarkedFeed bookMarkedFeed) {
+        this.bookMarkedFeed = bookMarkedFeed;
+    }
 }
