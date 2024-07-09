@@ -44,7 +44,7 @@ public class BookMarkedRawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "해당 username을 가지는 유저가 존재하지 않는 경우, 존재하지 않는 rawId")
     })
     @PostMapping("/bookmark/raws")
-    public ResponseEntity<BaseResponse<Long>> createBookMarkedRaws(@CurrentUserUsername String username, @Valid CreateBookMarkedRawRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createBookMarkedRaws(@CurrentUserUsername String username, @RequestBody @Valid CreateBookMarkedRawRequestDto requestDto) {
         Long bookMarkedRawId = bookMarkedRawService.createBookMarkedRaw(username, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -98,7 +98,7 @@ public class BookMarkedRawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 존재하지 않는 bookMarkedRawId"),
     })
     @PostMapping("/pet/{petId}/bookmark/raws")
-    public ResponseEntity<BaseResponse<Long>> createDailyBookMarkRaw(@CurrentUserUsername String username, @PathVariable Long petId, @Valid CreateDailyBookMarkedRawRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createDailyBookMarkRaw(@CurrentUserUsername String username, @PathVariable Long petId, @RequestBody @Valid CreateDailyBookMarkedRawRequestDto requestDto) {
         Long id = dailyBookMarkedRawService.createDailyBookMarkedRaw(username, petId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)

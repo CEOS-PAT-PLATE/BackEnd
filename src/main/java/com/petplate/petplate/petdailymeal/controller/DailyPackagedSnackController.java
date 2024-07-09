@@ -34,7 +34,7 @@ public class DailyPackagedSnackController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId")
     })
     @PostMapping("pet/{petId}/packagedSnacks")
-    public ResponseEntity<BaseResponse<Long>> createDailyFeed(@CurrentUserUsername String username, @PathVariable Long petId, @Valid CreateDailyPackagedSnackRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createDailyFeed(@CurrentUserUsername String username, @PathVariable Long petId, @Valid @RequestBody CreateDailyPackagedSnackRequestDto requestDto) {
         Long id = dailyPackagedSnackService.createDailyPackagedSnack(username, petId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)

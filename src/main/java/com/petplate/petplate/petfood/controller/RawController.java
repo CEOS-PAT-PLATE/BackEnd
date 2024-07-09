@@ -41,7 +41,7 @@ public class RawController {
             @ApiResponse(responseCode = BAD_REQUEST, description = "동명의 자연식이 존재")
     })
     @PostMapping("/raws")
-    public ResponseEntity<BaseResponse<Long>> createRaw(@Valid CreateRawRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createRaw(@RequestBody @Valid CreateRawRequestDto requestDto) {
         Long rawId = rawService.createRaw(requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)

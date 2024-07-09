@@ -108,7 +108,7 @@ public class PetController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId"),
     })
     @PostMapping("/pets/{petId}/images")
-    public ResponseEntity<BaseResponse> modifyPetProfileImage(@CurrentUserUsername String username, @PathVariable Long petId, @Valid ModifyPetProfileImgRequestDto requestDto) {
+    public ResponseEntity<BaseResponse> modifyPetProfileImage(@CurrentUserUsername String username, @PathVariable Long petId, @Valid @RequestBody ModifyPetProfileImgRequestDto requestDto) {
         petService.updateProfileImg(username, petId, requestDto);
 
         return ResponseEntity.status(HttpStatus.OK)

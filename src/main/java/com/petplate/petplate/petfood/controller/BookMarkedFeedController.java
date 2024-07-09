@@ -95,7 +95,7 @@ public class BookMarkedFeedController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 존재하지 않는 bookMarkedRawId"),
     })
     @PostMapping("/pet/{petId}/bookmark/feeds")
-    public ResponseEntity<BaseResponse<Long>> createDailyBookMarkRaw(@CurrentUserUsername String username, @PathVariable Long petId, @Valid CreateDailyBookMarkedFeedRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createDailyBookMarkRaw(@CurrentUserUsername String username, @PathVariable Long petId, @Valid @RequestBody CreateDailyBookMarkedFeedRequestDto requestDto) {
         Long id = dailyBookMarkedFeedService.createDailyBookMarkedFeed(username, petId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
