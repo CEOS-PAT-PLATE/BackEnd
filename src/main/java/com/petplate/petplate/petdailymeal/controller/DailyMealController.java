@@ -47,10 +47,12 @@ public class DailyMealController {
                                                                                        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
             List<ReadDailyMealResponseDto> dailyMeals = dailyMealService.getDailyMeals(username, petId);
-            return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMeals));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(BaseResponse.createSuccess(dailyMeals));
         } else {
             List<ReadDailyMealResponseDto> dailyMeals = (List) dailyMealService.getDailyMeal(username, petId, date);
-            return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMeals));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(BaseResponse.createSuccess(dailyMeals));
         }
     }
 
@@ -63,7 +65,8 @@ public class DailyMealController {
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}")
     public ResponseEntity<BaseResponse<ReadDailyMealFoodResponseDto>> readDailyMealWithAllFoods(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
         ReadDailyMealFoodResponseDto dailyMealWithFoods = dailyMealService.getDailyMealWithFoods(username, petId, dailyMealId);
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyMealWithFoods));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(dailyMealWithFoods));
     }
 
     @Operation(summary = "반려견의 식사 내역 중 자연식만 조회", description = "특정 식사 내역 중 자연식만 조회합니다.")
@@ -75,7 +78,8 @@ public class DailyMealController {
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/raws")
     public ResponseEntity<BaseResponse<List<ReadDailyRawResponseDto>>> readDailyRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
         List<ReadDailyRawResponseDto> dailyRaws = dailyMealService.getDailyRaws(username, petId, dailyMealId);
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyRaws));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(dailyRaws));
     }
 
     @Operation(summary = "반려견의 식사 내역 중 사료만 조회", description = "특정 식사 내역 중 사료만 조회합니다.")
@@ -87,7 +91,8 @@ public class DailyMealController {
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/feeds")
     public ResponseEntity<BaseResponse<List<ReadDailyFeedResponseDto>>> readDailyFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
         List<ReadDailyFeedResponseDto> dailyFeeds = dailyMealService.getDailyFeeds(username, petId, dailyMealId);
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyFeeds));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(dailyFeeds));
     }
 
     @Operation(summary = "반려견의 식사 내역 중 포장 간식만 조회", description = "특정 식사 내역 중 포장 간식(dailyPackagedSnacks)만 조회합니다.")
@@ -99,7 +104,8 @@ public class DailyMealController {
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/packagedSnacks")
     public ResponseEntity<BaseResponse<List<ReadDailyPackagedSnackResponseDto>>> readDailyPackagedSnacks(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
         List<ReadDailyPackagedSnackResponseDto> dailyPackagedSnacks = dailyMealService.getDailyPackagedSnacks(username, petId, dailyMealId);
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyPackagedSnacks));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(dailyPackagedSnacks));
     }
 
     @Operation(summary = "반려견의 식사 내역 중 즐겨찾기 자연식만 조회", description = "특정 식사 내역 중 즐겨찾기 자연식(dailyBookMarkedRaws)만 조회합니다.")
@@ -111,7 +117,8 @@ public class DailyMealController {
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/bookmark/raws")
     public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedRawResponseDto>>> readDailyBookMarkedRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
         List<ReadDailyBookMarkedRawResponseDto> dailyBookMarkedRaws = dailyMealService.getDailyBookMarkedRaws(username, petId, dailyMealId);
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyBookMarkedRaws));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(dailyBookMarkedRaws));
     }
 
     @Operation(summary = "반려견의 식사 내역 중 즐겨찾기 사료만 조회", description = "특정 식사 내역 중 즐겨찾기 사료(dailyBookMarkedFeeds)만 조회합니다.")
@@ -123,7 +130,8 @@ public class DailyMealController {
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/bookmark/feeds")
     public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedFeedResponseDto>>> readDailyBookMarkedFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
         List<ReadDailyBookMarkedFeedResponseDto> dailyBookMarkedFeeds = dailyMealService.getDailyBookMarkedFeeds(username, petId, dailyMealId);
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyBookMarkedFeeds));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(dailyBookMarkedFeeds));
     }
 
     @Operation(summary = "반려견의 식사 내역 중 즐겨찾기 포장간식만 조회", description = "특정 식사 내역 중 즐겨찾기 포장간식(dailyBookMarkedPackagedSnacks)만 조회합니다.")
@@ -135,7 +143,8 @@ public class DailyMealController {
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/bookmark/packagedSnacks")
     public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedPackagedSnackResponseDto>>> readDailyBookMarkedPackagedSnacks(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
         List<ReadDailyBookMarkedPackagedSnackResponseDto> dailyBookMarkedPackagedSnacks = dailyMealService.getDailyBookMarkedPackagedSnacks(username, petId, dailyMealId);
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(dailyBookMarkedPackagedSnacks));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(dailyBookMarkedPackagedSnacks));
     }
 
     @Operation(summary = "반려견의 오늘 식사 내역에 대한 영양분석을 진행(부족영양소, 과잉영양소, 적정영양소)",
@@ -157,7 +166,8 @@ public class DailyMealController {
         properNutrientService.createProperNutrientsToday(username, petId);
 
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponse.createSuccess(null));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(BaseResponse.createSuccess(null));
     }
 
     @Operation(summary = "반려견의 식사 내역 중 부족 영양소를 조회")
@@ -170,7 +180,8 @@ public class DailyMealController {
     public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readDeficientNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
         List<ReadPetNutrientResponseDto> deficientNutrients = deficientNutrientService.getDeficientNutrients(username, petId, dailyMealId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(deficientNutrients));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(deficientNutrients));
     }
 
     @Operation(summary = "반려견의 식사 내역 중 과잉 영양소를 조회")
@@ -183,7 +194,8 @@ public class DailyMealController {
     public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readSufficientNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
         List<ReadPetNutrientResponseDto> sufficientNutrients = sufficientNutrientService.getSufficientNutrients(username, petId, dailyMealId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(sufficientNutrients));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(sufficientNutrients));
     }
 
     @Operation(summary = "반려견의 식사 내역 중 적정 영양소를 조회")
@@ -196,6 +208,7 @@ public class DailyMealController {
     public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readProperNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
         List<ReadPetNutrientResponseDto> properNutrients = properNutrientService.getProperNutrients(username, petId, dailyMealId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.createSuccess(properNutrients));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(properNutrients));
     }
 }
