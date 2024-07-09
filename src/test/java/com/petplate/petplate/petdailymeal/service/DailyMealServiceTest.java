@@ -450,6 +450,10 @@ class DailyMealServiceTest {
 
         Assertions.assertThrows(NotFoundException.class, () -> deficientNutrientService.createDeficientNutrientToday(user1Username, pet2Id));
         Assertions.assertThrows(NotFoundException.class, () -> properNutrientService.createProperNutrientsToday(user1Username, pet2Id));
-        Assertions.assertThrows(NotFoundException.class, () -> sufficientNutrientService.createSufficientNutrientsToday(user1Username, pet2Id));
+        System.out.println(Assertions.assertThrows(NotFoundException.class, () -> sufficientNutrientService.createSufficientNutrientsToday(user1Username, pet2Id)).getMessage());
+
+        Assertions.assertThrows(BadRequestException.class, () -> deficientNutrientService.createDeficientNutrientToday(user1Username, pet1Id));
+        Assertions.assertThrows(BadRequestException.class, () -> sufficientNutrientService.createSufficientNutrientsToday(user1Username, pet1Id));
+        System.out.println(Assertions.assertThrows(BadRequestException.class, () -> properNutrientService.createProperNutrientsToday(user1Username, pet1Id)).getMessage());
     }
 }
