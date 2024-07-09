@@ -80,7 +80,7 @@ public class BookMarkedFeedController {
             @ApiResponse(responseCode = BAD_REQUEST, description = "본인의 즐겨찾기가 아닌 즐겨찾기를 제거하려는 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 bookMarkedFeedId"),
     })
-    @DeleteMapping("/bookmark/raws/{bookMarkedFeedId}")
+    @DeleteMapping("/bookmark/feeds/{bookMarkedFeedId}")
     public ResponseEntity<BaseResponse> deleteBookMarkedRaw(@CurrentUserUsername String username, @PathVariable Long bookMarkedFeedId) {
         bookMarkedFeedService.deleteBookMarkedFeed(username, bookMarkedFeedId);
 
@@ -94,7 +94,7 @@ public class BookMarkedFeedController {
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 존재하지 않는 bookMarkedRawId"),
     })
-    @PostMapping("/pet/{petId}/bookmark/raws")
+    @PostMapping("/pet/{petId}/bookmark/feeds")
     public ResponseEntity<BaseResponse<Long>> createDailyBookMarkRaw(@CurrentUserUsername String username, @PathVariable Long petId, @Valid CreateDailyBookMarkedFeedRequestDto requestDto) {
         Long id = dailyBookMarkedFeedService.createDailyBookMarkedFeed(username, petId, requestDto);
 
@@ -108,7 +108,7 @@ public class BookMarkedFeedController {
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 존재하지 않는 dailyBookMarkedRawId"),
     })
-    @DeleteMapping("/pet/{petId}/bookmark/raws/{dailyBookMarkedFeedId}")
+    @DeleteMapping("/pet/{petId}/bookmark/feeds/{dailyBookMarkedFeedId}")
     public ResponseEntity<BaseResponse> deleteDailyBookMarkedRaw(@CurrentUserUsername String username, @PathVariable Long petId, @PathVariable Long dailyBookMarkedFeedId) {
         dailyBookMarkedFeedService.deleteDailyBookMarkedFeed(username, petId, dailyBookMarkedFeedId);
 
