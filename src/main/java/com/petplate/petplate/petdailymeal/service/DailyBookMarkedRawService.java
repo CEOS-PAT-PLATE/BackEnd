@@ -37,6 +37,13 @@ public class DailyBookMarkedRawService {
     private final BookMarkedRawRepository bookMarkedRawRepository;
     private final PetRepository petRepository;
 
+    /**
+     * 오늘 식사에 즐겨찾기 자연식을 추가함
+     * @param username
+     * @param petId
+     * @param requestDto
+     * @return
+     */
     @Transactional
     public Long createDailyBookMarkedRaw(String username, Long petId, CreateDailyBookMarkedRawRequestDto requestDto) {
         Pet pet = validUserAndFindPet(username, petId);
@@ -60,10 +67,11 @@ public class DailyBookMarkedRawService {
         return dailyBookMarkedRaw.getId();
     }
 
-    public List<ReadDailyBookMarkedRawResponseDto> getBookMarkedRaws(String username, Long petId, LocalDate date) {
+    public List<ReadDailyBookMarkedRawResponseDto> getBookMarkedRaws(String username, Long petId, Long dailyMealId) {
         Pet pet = validUserAndFindPet(username, petId);
 
-        DailyMeal dailyMeal = findDailyMeal(petId, date);
+        DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId)
+                .orElseThrow(()->new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
 
         if (!Objects.equals(dailyMeal.getPet().getId(), pet.getId())) {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
@@ -129,19 +137,6 @@ public class DailyBookMarkedRawService {
                                 pet,
                                 0)
                 ));
-    }
-
-    private DailyMeal findDailyMealToday(Long petId) {
-        return findDailyMeal(petId, LocalDate.now());
-    }
-
-    private DailyMeal findDailyMeal(Long petId, LocalDate date) {
-        LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
-        LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
-
-        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
-        return dailyMeal;
     }
 
     private Pet validUserAndFindPet(String username, Long petId) {
