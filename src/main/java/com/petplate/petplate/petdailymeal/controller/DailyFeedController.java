@@ -34,7 +34,7 @@ public class DailyFeedController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId")
     })
     @PostMapping("pet/{petId}/feeds")
-    public ResponseEntity<BaseResponse<Long>> createDailyFeed(@CurrentUserUsername String username, @PathVariable Long petId, @Valid CreateDailyFeedRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createDailyFeed(@CurrentUserUsername String username, @PathVariable Long petId, @Valid @RequestBody CreateDailyFeedRequestDto requestDto) {
         Long id = dailyFeedService.createDailyFeed(username, petId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)

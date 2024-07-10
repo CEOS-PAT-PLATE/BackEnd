@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class CreateDailyBookMarkedRawRequestDto {
-    @NotNull(message = "즐겨찾기한 자연식이 입력되지 않았습니다")
-    private Long bookMarkedRawId;
+public class CreateDailyBookMarkedFeedRequestDto {
+    @NotNull(message = "즐겨찾기한 사료가 입력되지 않았습니다")
+    private Long bookMarkedFeedId;
 }

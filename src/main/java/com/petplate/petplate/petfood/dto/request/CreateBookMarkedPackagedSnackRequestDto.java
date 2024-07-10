@@ -1,8 +1,8 @@
-package com.petplate.petplate.petdailymeal.dto.request;
+package com.petplate.petplate.petfood.dto.request;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class CreateDailyPackagedSnackRequestDto {
+public class CreateBookMarkedPackagedSnackRequestDto {
     @Min(1)
-    @NotNull(message = "사료 총량(g)을 입력해주세요")
+    @NotNull(message = "포장간식 총량(g)을 입력해주세요")
     private double serving;
-    @NotNull(message = "사료 이름을 입력해주세요")
+    @NotBlank(message = "포장간식 이름을 입력해주세요")
     private String name;
 
     @Min(0)

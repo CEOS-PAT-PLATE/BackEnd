@@ -38,4 +38,8 @@ public class DailyBookMarkedPackagedSnack {
         this.bookMarkedPackagedSnack = bookMarkedPackagedSnack;
         this.dailyMeal = dailyMeal;
     }
+
+    public void updateBookMarkedPackagedSnack(BookMarkedPackagedSnack bookMarkedPackagedSnack) {
+        this.bookMarkedPackagedSnack = bookMarkedPackagedSnack;
+    }
 }

@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface DailyBookMarkedFeedRepository extends JpaRepository<DailyBookMarkedFeed, Long> {
     List<DailyBookMarkedFeed> findByDailyMealId(Long dailyMealId);
+    List<DailyBookMarkedFeed> findByBookMarkedFeedId(Long bookMarkedFeedId);
 }

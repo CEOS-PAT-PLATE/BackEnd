@@ -60,11 +60,11 @@ public class PetService {
     @Transactional
     public Pet createPet(String username, @Valid CreatePetRequestDto requestDto) {
         // 해당 username을 가지는 유저가 존재하지 않는 경우
-        User owner = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
+        User owner = userRepository.findByUsername(username).orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
         // 멤버십이 존재하지 않으면서 두마리 이상의 반려견을 추가하려는 경우 => 예외 발생
         if (!userMemberShipRepository.existsByUserUsername(username) && petRepository.existsByOwnerUsername(username)) {
-            throw new BadRequestException(ErrorCode.BAD_REQUEST);
+            throw new BadRequestException(ErrorCode.NO_MEMBERSHIP_EXISTS);
         }
 
         Pet pet = Pet.builder()
@@ -147,7 +147,7 @@ public class PetService {
         ProfileImg profileImg = ProfileImg.getProfileImg(requestDto.getName());
 
         if (profileImg == null) {
-            throw new BadRequestException(ErrorCode.BAD_REQUEST);
+            throw new NotFoundException(ErrorCode.IMAGE_NOT_FOUND);
         }
 
         pet.updateProfileImg(profileImg);

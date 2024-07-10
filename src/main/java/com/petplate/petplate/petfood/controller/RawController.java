@@ -41,10 +41,11 @@ public class RawController {
             @ApiResponse(responseCode = BAD_REQUEST, description = "동명의 자연식이 존재")
     })
     @PostMapping("/raws")
-    public ResponseEntity<BaseResponse<Long>> createRaw(@Valid CreateRawRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createRaw(@RequestBody @Valid CreateRawRequestDto requestDto) {
         Long rawId = rawService.createRaw(requestDto);
 
-        return new ResponseEntity<>(BaseResponse.createSuccess(rawId), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(BaseResponse.createSuccess(rawId));
     }
 
     @Operation(summary = "rawId로 자연식 조회")
@@ -56,7 +57,8 @@ public class RawController {
     public ResponseEntity<BaseResponse<ReadRawResponseDto>> readRaw(@PathVariable Long rawId) {
         ReadRawResponseDto response = rawService.getRaw(rawId);
 
-        return new ResponseEntity<>(BaseResponse.createSuccess(response), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(response));
     }
 
     @Operation(summary = "keyword가 포함된 자연식 조회")
@@ -67,22 +69,24 @@ public class RawController {
     public ResponseEntity<BaseResponse<List<ReadRawResponseDto>>> readRawByKeyword(@RequestParam String keyword) {
         List<ReadRawResponseDto> responses = rawService.getRawByKeyword(keyword);
 
-        return new ResponseEntity<>(BaseResponse.createSuccess(responses), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(responses));
     }
 
-    @Operation(summary = "rawId로 자연식 제거")
+    @Operation(summary = "자연식 제거")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = OK, description = "자연식 성공적 조회"),
+            @ApiResponse(responseCode = OK, description = "자연식 성공적 제거"),
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않은 자연식")
     })
     @DeleteMapping("/raws")
     public ResponseEntity<BaseResponse> deleteRaw(@RequestParam Long rawId) {
         rawService.deleteRawById(rawId);
 
-        return new ResponseEntity<>(BaseResponse.createSuccess(null), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(null));
     }
 
-    @Operation(summary = "섭취 자연식 저장")
+    @Operation(summary = "오늘 식사내역에 자연식을 저장")
     @ApiResponses(value = {
             @ApiResponse(responseCode = CREATED, description = "섭취 자연식 성공적 저장"),
             @ApiResponse(responseCode = NOT_FOUND, description = "자연식 ID(rawId)가 제대로 입력되지 않음")
@@ -91,7 +95,8 @@ public class RawController {
     public ResponseEntity<BaseResponse<Long>> createDailyRaw(@CurrentUserUsername String username, @PathVariable Long petId, @Valid @RequestBody CreateDailyRawRequestDto requestDto) {
         Long dailyRawId = dailyRawService.createDailyRaw(username, petId, requestDto);
 
-        return new ResponseEntity(BaseResponse.createSuccess(dailyRawId), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(BaseResponse.createSuccess(dailyRawId));
     }
 
     @Operation(summary = "최근 2일 동안 섭취한 자연식들 조회")
@@ -105,10 +110,11 @@ public class RawController {
         int days = 2;
         List<ReadDailyRawResponseDto> recentDailyRaws = dailyRawService.getRecentDailyRaws(username, petId, days);
 
-        return new ResponseEntity<>(BaseResponse.createSuccess(recentDailyRaws), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(recentDailyRaws));
     }
 
-    @Operation(summary = "특정 섭취 자연식 조회", description = "자연식의 섭취 내역을 조회합니다")
+    @Operation(summary = "섭취했던 자연식 단건 조회", description = "자연식의 섭취 내역을 조회합니다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "섭취 자연식 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "유저의 반려견이 아님"),
@@ -118,10 +124,11 @@ public class RawController {
     public ResponseEntity<BaseResponse<ReadDailyRawResponseDto>> getDailyRaw(@CurrentUserUsername String username, @PathVariable Long petId, @PathVariable Long dailyRawId) {
         ReadDailyRawResponseDto dailyRaw = dailyRawService.getDailyRaw(username, petId, dailyRawId);
 
-        return new ResponseEntity<>(BaseResponse.createSuccess(dailyRaw), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(dailyRaw));
     }
 
-    @Operation(summary = "특정 섭취 자연식 제거", description = "자연식의 섭취 내역을 제거합니다")
+    @Operation(summary = "섭취했던 자연식 제거", description = "자연식의 섭취 내역을 제거합니다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "섭취 자연식 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "유저의 반려견이 아님"),
@@ -131,6 +138,7 @@ public class RawController {
     public ResponseEntity<BaseResponse> deleteDailyRaw(@CurrentUserUsername String username, @PathVariable Long petId, @PathVariable Long dailyRawId) {
         dailyRawService.deleteDailyRaw(username, petId, dailyRawId);
 
-        return new ResponseEntity<>(BaseResponse.createSuccess(null), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccess(null));
     }
 }

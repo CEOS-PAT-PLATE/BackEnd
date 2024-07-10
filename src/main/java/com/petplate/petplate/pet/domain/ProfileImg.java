@@ -20,6 +20,11 @@ public enum ProfileImg {
     }
 
     public static ProfileImg getProfileImg(String name) {
-        return ProfileImg.valueOf(name);
+        try {
+            ProfileImg profileImg = ProfileImg.valueOf(name);
+            return profileImg;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
