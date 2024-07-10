@@ -101,7 +101,7 @@ public class DailyBookMarkedFeedService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
 
         if (!Objects.equals(dailyMeal.getPet().getId(), pet.getId())) {
-            throw new BadRequestException(ErrorCode.BAD_REQUEST);
+            throw new BadRequestException(ErrorCode.NOT_PET_DAILY_MEAL);
         }
 
         List<ReadDailyBookMarkedFeedResponseDto> responses = new ArrayList<>();
