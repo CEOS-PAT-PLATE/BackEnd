@@ -75,7 +75,7 @@ public class RawController {
 
     @Operation(summary = "자연식 제거")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = OK, description = "자연식 성공적 조회"),
+            @ApiResponse(responseCode = OK, description = "자연식 성공적 제거"),
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않은 자연식")
     })
     @DeleteMapping("/raws")
