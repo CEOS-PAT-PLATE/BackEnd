@@ -68,7 +68,7 @@ public class DrugRecommendController {
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/nutrients/deficient")
     @Operation(summary = "pet 의 부족 영양소 기반 추천 영양제",description = "pet 의 부족 영양분 기반으로 영양제를 추천합니다")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "영양소 성공적 조회"),
+            @ApiResponse(responseCode = "200", description = "추천 영양제 성공적 조회"),
             @ApiResponse(responseCode = "400", description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = "404", description = "잘못된 petId, 잘못된 dailyMealId"),
     })
