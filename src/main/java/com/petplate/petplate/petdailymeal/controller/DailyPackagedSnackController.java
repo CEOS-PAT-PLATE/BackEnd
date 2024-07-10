@@ -56,7 +56,7 @@ public class DailyPackagedSnackController {
                 .body(BaseResponse.createSuccess(dailyPackagedSnack));
     }
 
-     @Operation(summary = "섭취 포장 간식 제거")
+    @Operation(summary = "섭취 포장 간식 제거")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "포장 간식 성공적 제거"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "본인의 반려견이 아닌 경우, 해당 반려견의 포장 간식이 아닌 경우"),
