@@ -21,6 +21,7 @@ public enum ErrorCode {
     NUTRIENT_ARLEADY_EXIST("이미 영양소가 존재합니다."),
     ACCESS_TOKEN_NOT_MATCH("엑세스 토큰을 확인해주세요"),
     REFRESH_TOKEN_NOT_MATCH("리프레시 토큰을 확인해주세요"),
+    NO_MEMBERSHIP_EXISTS("멤버쉽이 존재하지 않습니다."),
 
 
 
@@ -51,6 +52,8 @@ public enum ErrorCode {
     DAILY_FEED_NOT_FOUND("존재하지 않는 사료 식사 내역입니다."),
     DAILY_PACKAGED_SNACK_NOT_FOUND("존재하지 않는 포장 간식 식사 내역입니다"),
     DAILY_BOOK_MARKED_NOT_FOUND("존재하지 않는 즐겨찾기 식사 내역입니다."),
+
+    IMAGE_NOT_FOUND("존재하지 않는 이미지입니다"),
 
     DRUG_NOT_FOUND("존재하지 않는 약입니다."),
 

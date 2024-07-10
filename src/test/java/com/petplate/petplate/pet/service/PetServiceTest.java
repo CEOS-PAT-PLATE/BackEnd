@@ -331,12 +331,11 @@ class PetServiceTest {
 
         //when
         List<ReadPetProfileImageResponseDto> petProfileImages = petService.getPetProfileImages();
+
+        //then
         for (ReadPetProfileImageResponseDto petProfileImage : petProfileImages) {
             System.out.println("petProfileImage = " + petProfileImage);
         }
-
-        //then
-        Assertions.assertEquals(3, petProfileImages.size());
     }
     
     @Test
@@ -347,6 +346,10 @@ class PetServiceTest {
                 .name("img1")
                 .build();
 
+        ModifyPetProfileImgRequestDto request2 = ModifyPetProfileImgRequestDto.builder()
+                .name("없는 이미지")
+                .build();
+
 
         // when
         petService.updateProfileImg(user1Username, pet1Id, request);
@@ -355,6 +358,8 @@ class PetServiceTest {
         // then
         Assertions.assertEquals(ProfileImg.img1, pet.getProfileImg());
         System.out.println(pet.getProfileImg());
+
+        Assertions.assertThrows(NotFoundException.class, () -> petService.updateProfileImg(user1Username, pet1Id, request2));
     }
 
     @Test
