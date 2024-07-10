@@ -102,7 +102,7 @@ public class BookMarkedFeedController {
                 .body(BaseResponse.createSuccess(id));
     }
 
-    @Operation(summary = "오늘 식사내역에서 섭취한 즐겨찾기 사료 제거", description = "오늘 식사내역에 있는 즐겨찾기 사료의 섭취 내역을 제거합니다")
+    @Operation(summary = "식사내역에서 섭취한 즐겨찾기 사료 제거", description = "식사내역에 있는 즐겨찾기 사료의 섭취 내역을 제거합니다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "즐겨찾기 자연식 성공적 제거"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
