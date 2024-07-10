@@ -109,7 +109,12 @@ public class RawService {
      * DailyRaw, BookMarkedDailyRaw의 Raw는 null로 수정됨.
      * @param rawId
      */
+    @Transactional
     public void deleteRawById(Long rawId) {
+        if (!rawRepository.existsById(rawId)) {
+            throw new NotFoundException(ErrorCode.RAW_NOT_FOUND);
+        }
+
         dailyRawRepository.findByRawId(rawId).forEach(dailyRaw->{
             dailyRaw.updateRaw(null);
         });
@@ -118,10 +123,6 @@ public class RawService {
             bookMarkedRaw.updateRaw(null);
             bookMarkedRaw.updateName("존재하지 않는 자연식입니다.");
         });
-
-        if (!rawRepository.existsById(rawId)) {
-            throw new NotFoundException(ErrorCode.RAW_NOT_FOUND);
-        }
 
         rawRepository.deleteById(rawId);
     }
