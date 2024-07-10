@@ -65,7 +65,7 @@ public class PetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "반려견 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId"),
     })
     @GetMapping("/pets/{petId}")
     public ResponseEntity<BaseResponse<ReadPetResponseDto>> readAllPets(@CurrentUserUsername String username, @PathVariable Long petId) {
@@ -79,7 +79,7 @@ public class PetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "반려견 성공적 정보 수정"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId"),
     })
     @PutMapping("/pets/{petId}")
     public ResponseEntity<BaseResponse> modifyPet(@CurrentUserUsername String username, @PathVariable Long petId, @RequestBody @Valid ModifyPetInfoRequestDto requestDto) {
@@ -105,7 +105,7 @@ public class PetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "반려견 성공적 정보 수정"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 존재하지 않는 이미지 이름 (name)"),
     })
     @PostMapping("/pets/{petId}/images")
     public ResponseEntity<BaseResponse> modifyPetProfileImage(@CurrentUserUsername String username, @PathVariable Long petId, @Valid @RequestBody ModifyPetProfileImgRequestDto requestDto) {
@@ -119,7 +119,7 @@ public class PetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "반려견 성공적 정보 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
     @GetMapping("/pets/{petId}/nutrients")
     public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readPetNutrients(@CurrentUserUsername String username, @PathVariable Long petId,
@@ -139,7 +139,7 @@ public class PetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "반려견 성공적 정보 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
     @GetMapping("/pets/{petId}/kcal")
     public ResponseEntity<BaseResponse<ReadPetKcalResponseDto>> readPetKcal(@CurrentUserUsername String username, @PathVariable Long petId,
@@ -159,7 +159,7 @@ public class PetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "반려견 성공적 정보 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId"),
     })
     @GetMapping("/pets/{petId}/kcal/proper")
     public ResponseEntity<BaseResponse<ReadPetKcalResponseDto>> readPetProperKcal(@CurrentUserUsername String username, @PathVariable Long petId) {
@@ -172,7 +172,7 @@ public class PetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "반려견 성공적 정보 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
-            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
     @GetMapping("/pets/{petId}/kcal/ratio")
     public ResponseEntity<BaseResponse<ReadPetKcalRatioResponseDto>> readPetKcalRatio(@CurrentUserUsername String username, @PathVariable Long petId,
