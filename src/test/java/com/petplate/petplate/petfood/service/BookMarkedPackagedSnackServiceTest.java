@@ -279,5 +279,6 @@ class BookMarkedPackagedSnackServiceTest {
         bookMarkedPackagedSnackService.deleteBookMarkedPackagedSnack(user1Username, bookMarkedPackagedSnack1Id);
 
         // then
+        Assertions.assertThrows(NotFoundException.class,()->bookMarkedPackagedSnackService.deleteBookMarkedPackagedSnack(user1Username, bookMarkedPackagedSnack1Id));
     }
 }
