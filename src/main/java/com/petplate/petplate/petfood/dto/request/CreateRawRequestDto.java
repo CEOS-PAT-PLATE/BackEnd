@@ -12,7 +12,7 @@ import lombok.*;
 public class CreateRawRequestDto {
 
     @NotNull(message = "기준 제공량(g)을 입력해주세요")
-    @Min(0)
+    @Min(1)
     private double standardAmount;
 
     @NotBlank(message = "식품 이름을 입력해주세요")

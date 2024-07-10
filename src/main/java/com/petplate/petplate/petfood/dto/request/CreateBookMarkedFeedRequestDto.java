@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class CreateBookMarkedFeedRequestDto {
-    @Min(0)
+    @Min(1)
     @NotNull(message = "사료 총량(g)을 입력해주세요")
     private double serving;
     @NotBlank(message = "사료 이름을 입력해주세요")

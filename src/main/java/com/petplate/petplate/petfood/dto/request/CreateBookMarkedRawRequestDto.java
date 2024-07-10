@@ -16,6 +16,6 @@ public class CreateBookMarkedRawRequestDto {
     private Long rawId;
 
     @NotNull(message = "섭취량이 입력되지 않았습니다")
-    @Min(value = 10, message = "최소 섭취량은 10g입니다")
+    @Min(value = 1)
     private double serving;
 }
