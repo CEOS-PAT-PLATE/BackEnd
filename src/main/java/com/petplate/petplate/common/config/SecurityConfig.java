@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -59,10 +60,11 @@ public class SecurityConfig {
                 .exceptionHandling((exception)->exception.accessDeniedHandler(jwtAccessDeniedHandler))
                 .authorizeHttpRequests((requests) ->
                         requests
-                                .requestMatchers("/test/login").hasAuthority(Role.GENERAL.toString())
                                 .requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**").permitAll()// swagger 경로 접근 허용
-                                .requestMatchers("/api/v1/users/my-profile").hasAuthority(Role.GENERAL.toString())
-                                .anyRequest().permitAll()//지금은 다 permit all 로 합시다! (개발 과정 동안은)
+                                .requestMatchers("/oauth2/authorization/**").permitAll()
+                                .requestMatchers(HttpMethod.POST,"/api/v1/drugs").hasAuthority(Role.ADMIN.toString())
+                                .requestMatchers(HttpMethod.DELETE,"/api/v1/drugs/**").hasAuthority(Role.ADMIN.toString())
+                                .anyRequest().authenticated()
                 )
                 .oauth2Login(configure ->
                         configure.authorizationEndpoint(
