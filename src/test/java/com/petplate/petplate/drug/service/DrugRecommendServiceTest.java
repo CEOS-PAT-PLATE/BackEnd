@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.petplate.petplate.common.EmbeddedType.StandardNutrient;
+import com.petplate.petplate.dailyMealNutrient.service.DeficientNutrientService;
 import com.petplate.petplate.drug.domain.entity.Drug;
 import com.petplate.petplate.drug.domain.entity.DrugNutrient;
 import com.petplate.petplate.drug.dto.request.DrugFindRequestDto;
@@ -43,7 +44,7 @@ class DrugRecommendServiceTest {
     DrugNutrientRepository drugNutrientRepository;
 
     @Mock
-    PetService petService;
+    DeficientNutrientService deficientNutrientService;
 
 
     private Drug getTestDrug(){
@@ -142,12 +143,12 @@ class DrugRecommendServiceTest {
 
         List<DrugNutrient> drugNutrientList = getTestDrugNutrientList(drug);
 
-        given(petService.getDeficientNutrient(anyString(),anyLong(),eq(LocalDate.of(2023,1,1)))).willReturn(
+        given(deficientNutrientService.getDeficientNutrients(anyString(),anyLong(),eq(1L))).willReturn(
                 List.of(ReadPetNutrientResponseDto.of("탄수화물",null,null,3.5,2.6,1.3),
-                        ReadPetNutrientResponseDto.of("지방",null,null,3.6,2.6,1.3))
+                        ReadPetNutrientResponseDto.of("지방 (오메가3, 오메가6)",null,null,3.6,2.6,1.3))
         );
-        given(petService.getDeficientNutrient(anyString(),anyLong(),eq(LocalDate.of(2023,1,2)))).willReturn(
-                List.of(ReadPetNutrientResponseDto.of("비타민A",null,null,3.5,2.6,1.3)
+        given(deficientNutrientService.getDeficientNutrients(anyString(),anyLong(),eq(2L))).willReturn(
+                List.of(ReadPetNutrientResponseDto.of("비타민 A",null,null,3.5,2.6,1.3)
                       )
         );
 
@@ -159,8 +160,8 @@ class DrugRecommendServiceTest {
 
 
         //when
-        List<RecommendDrugResponseDto> drugResponseDtoList1 = drugRecommendService.findDrugByDeficientNutrientsName("any",1L,LocalDate.of(2023,1,1));
-        List<RecommendDrugResponseDto> drugResponseDtoList2 = drugRecommendService.findDrugByDeficientNutrientsName("any",1L,LocalDate.of(2023,1,2));
+        List<RecommendDrugResponseDto> drugResponseDtoList1 = drugRecommendService.findDrugByDeficientNutrientsName("any",1L,1L);
+        List<RecommendDrugResponseDto> drugResponseDtoList2 = drugRecommendService.findDrugByDeficientNutrientsName("any",1L,2L);
 
 
 

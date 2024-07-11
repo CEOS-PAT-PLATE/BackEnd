@@ -65,18 +65,17 @@ public class DrugRecommendController {
 
     }
 
-    @GetMapping("/pets/{petId}")
+    @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/nutrients/deficient")
     @Operation(summary = "pet 의 부족 영양소 기반 추천 영양제",description = "pet 의 부족 영양분 기반으로 영양제를 추천합니다")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200",description = "pet 의 부족 영양소 기반 추천 영양제 리턴 성공"),
-            @ApiResponse(responseCode = "404",description = "pet 의 ID 기반 조회 시 pet이 존재하지 않을 때"),
-            @ApiResponse(responseCode = "400",description = "조회 pet 의 owner 와 현재 login 한 유저의 아이디가 같지 않을 때")
+            @ApiResponse(responseCode = "200", description = "추천 영양제 성공적 조회"),
+            @ApiResponse(responseCode = "400", description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
+            @ApiResponse(responseCode = "404", description = "잘못된 petId, 잘못된 dailyMealId"),
     })
-    public ResponseEntity<BaseResponse<List<RecommendDrugResponseDto>>> readPetDeficientNutrients(@CurrentUserUsername String username, @PathVariable Long petId,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    public ResponseEntity<BaseResponse<List<RecommendDrugResponseDto>>> readPetDeficientNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
 
         return ResponseEntity.ok()
-                .body(BaseResponse.createSuccess(drugRecommendService.findDrugByDeficientNutrientsName(username, petId, date)));
+                .body(BaseResponse.createSuccess(drugRecommendService.findDrugByDeficientNutrientsName(username, petId, dailyMealId)));
     }
 
 

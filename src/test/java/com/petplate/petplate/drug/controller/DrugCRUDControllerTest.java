@@ -54,7 +54,7 @@ class DrugCRUDControllerTest {
 
     private Gson gson;
 
-    private static final String DRUG= "/drug";
+    private static final String DRUG= "/api/v1/drugs";
 
     @BeforeEach
     public void init() {

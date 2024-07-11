@@ -54,7 +54,7 @@ class DrugRecommendControllerTest {
 
     private Gson gson;
 
-    private static final String DRUG_RECOMMEND= "/drug/recommend";
+    private static final String DRUG_RECOMMEND= "/api/v1/drugs/recommend";
 
     @BeforeEach
     public void init() {
@@ -137,8 +137,7 @@ class DrugRecommendControllerTest {
     public void 내부적_부족_영양소_기반_영양제_추천_컨트롤러() throws Exception {
         //given
 
-        given(drugRecommendService.findDrugByDeficientNutrientsName(any(),anyLong(),eq(
-                LocalDate.of(2023,1,1)))).willReturn(List.of(
+        given(drugRecommendService.findDrugByDeficientNutrientsName(any(),anyLong(),anyLong())).willReturn(List.of(
                 RecommendDrugResponseDto.from(Drug.builder()
                         .drugImgPath("img")
                         .url("www.naver")
@@ -149,9 +148,9 @@ class DrugRecommendControllerTest {
 
         //when
         final ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get(DRUG_RECOMMEND+"/pets/{petId}",1)
-                        .param("date",LocalDate.of(2023,1,1).toString())
+                MockMvcRequestBuilders.get(DRUG_RECOMMEND+"/pet/{petId}/dailyMeals/{dailyMealId}/nutrients/deficient",1,1)
                         .contentType(MediaType.APPLICATION_JSON));
+
 
 
         //then
