@@ -83,4 +83,15 @@ public class User extends BaseEntity {
     public void changeSocialLoginRefreshToken(final String socialLoginRefreshToken){
         this.socialLoginRefreshToken = socialLoginRefreshToken;
     }
+
+    public void changeMyRole(){
+
+        if(this.role == Role.GENERAL){
+            this. role = Role.ADMIN;
+            return;
+        }
+
+        this.role = Role.GENERAL;
+
+    }
 }

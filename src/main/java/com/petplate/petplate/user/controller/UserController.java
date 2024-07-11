@@ -2,18 +2,22 @@ package com.petplate.petplate.user.controller;
 
 import com.petplate.petplate.auth.interfaces.CurrentUserUsername;
 import com.petplate.petplate.common.response.BaseResponse;
+import com.petplate.petplate.user.dto.request.SecretCodeRequestDto;
 import com.petplate.petplate.user.dto.response.MyProfileResponseDto;
 import com.petplate.petplate.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +52,20 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@CurrentUserUsername String username){
 
         userService.deleteUser(username);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/authority")
+    @Operation(summary = "회원 권환 변경",description = "회원 권한을 변경합니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",description = "회원 권한  변경 성공"),
+            @ApiResponse(responseCode = "400",description = "회원 권한 변경 비밀번호 불일치"),
+    })
+    public ResponseEntity<Void> changeRole(@CurrentUserUsername String username,final @RequestBody @Valid
+            SecretCodeRequestDto secretCodeRequestDto){
+
+        userService.changeRole(username,secretCodeRequestDto);
 
         return ResponseEntity.ok().build();
     }
