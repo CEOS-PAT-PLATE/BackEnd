@@ -34,7 +34,7 @@ public class DailyFeedController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId")
     })
     @PostMapping("pet/{petId}/feeds")
-    public ResponseEntity<BaseResponse<Long>> createDailyFeed(@CurrentUserUsername String username, @PathVariable Long petId, @Valid @RequestBody CreateDailyFeedRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createDailyFeed(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @Valid @RequestBody CreateDailyFeedRequestDto requestDto) {
         Long id = dailyFeedService.createDailyFeed(username, petId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -48,7 +48,7 @@ public class DailyFeedController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyFeedId")
     })
     @GetMapping("pet/{petId}/feeds/{dailyFeedId}")
-    public ResponseEntity<BaseResponse<ReadDailyFeedResponseDto>> readDailyFeed(@CurrentUserUsername String username, @PathVariable Long petId, @PathVariable Long dailyFeedId) {
+    public ResponseEntity<BaseResponse<ReadDailyFeedResponseDto>> readDailyFeed(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyFeedId") Long dailyFeedId) {
         ReadDailyFeedResponseDto dailyFeed = dailyFeedService.getDailyFeed(username, petId, dailyFeedId);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -62,7 +62,7 @@ public class DailyFeedController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyFeedId")
     })
     @DeleteMapping("pet/{petId}/feeds/{dailyFeedId}")
-    public ResponseEntity<BaseResponse> deleteDailyFeed(@CurrentUserUsername String username, @PathVariable Long petId, @PathVariable Long dailyFeedId) {
+    public ResponseEntity<BaseResponse> deleteDailyFeed(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyFeedId") Long dailyFeedId) {
         dailyFeedService.deleteDailyFeed(username,petId, dailyFeedId);
 
         return ResponseEntity.status(HttpStatus.OK)

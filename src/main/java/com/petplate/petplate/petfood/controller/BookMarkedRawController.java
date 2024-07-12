@@ -70,7 +70,7 @@ public class BookMarkedRawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 bookMarkedRawId"),
     })
     @GetMapping("/bookmark/raws/{bookMarkedRawId}")
-    public ResponseEntity<BaseResponse<ReadBookMarkedRawResponseDto>> readBookMarkedRaw(@CurrentUserUsername String username, @PathVariable Long bookMarkedRawId) {
+    public ResponseEntity<BaseResponse<ReadBookMarkedRawResponseDto>> readBookMarkedRaw(@CurrentUserUsername String username, @PathVariable("bookMarkedRawId") Long bookMarkedRawId) {
         ReadBookMarkedRawResponseDto bookMarkedRaw = bookMarkedRawService.getBookMarkedRaw(username, bookMarkedRawId);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -84,7 +84,7 @@ public class BookMarkedRawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 bookMarkedRawId"),
     })
     @DeleteMapping("/bookmark/raws/{bookMarkedRawId}")
-    public ResponseEntity<BaseResponse> deleteBookMarkedRaw(@CurrentUserUsername String username, @PathVariable Long bookMarkedRawId) {
+    public ResponseEntity<BaseResponse> deleteBookMarkedRaw(@CurrentUserUsername String username, @PathVariable("bookMarkedRawId") Long bookMarkedRawId) {
         bookMarkedRawService.deleteBookMarkedRaw(username, bookMarkedRawId);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -98,7 +98,7 @@ public class BookMarkedRawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 존재하지 않는 bookMarkedRawId"),
     })
     @PostMapping("/pet/{petId}/bookmark/raws")
-    public ResponseEntity<BaseResponse<Long>> createDailyBookMarkRaw(@CurrentUserUsername String username, @PathVariable Long petId, @RequestBody @Valid CreateDailyBookMarkedRawRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createDailyBookMarkRaw(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @RequestBody @Valid CreateDailyBookMarkedRawRequestDto requestDto) {
         Long id = dailyBookMarkedRawService.createDailyBookMarkedRaw(username, petId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -112,7 +112,7 @@ public class BookMarkedRawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 존재하지 않는 dailyBookMarkedRawId"),
     })
     @DeleteMapping("/pet/{petId}/bookmark/raws/{dailyBookMarkedRawId}")
-    public ResponseEntity<BaseResponse> deleteDailyBookMarkedRaw(@CurrentUserUsername String username, @PathVariable Long petId, @PathVariable Long dailyBookMarkedRawId) {
+    public ResponseEntity<BaseResponse> deleteDailyBookMarkedRaw(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyBookMarkedRawId") Long dailyBookMarkedRawId) {
         dailyBookMarkedRawService.deleteDailyBookMarkedRaw(username, petId, dailyBookMarkedRawId);
 
         return ResponseEntity.status(HttpStatus.OK)

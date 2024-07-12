@@ -82,7 +82,7 @@ public class PetController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId"),
     })
     @PutMapping("/pets/{petId}")
-    public ResponseEntity<BaseResponse> modifyPet(@CurrentUserUsername String username, @PathVariable Long petId, @RequestBody @Valid ModifyPetInfoRequestDto requestDto) {
+    public ResponseEntity<BaseResponse> modifyPet(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @RequestBody @Valid ModifyPetInfoRequestDto requestDto) {
         petService.updatePetInfo(username, petId, requestDto);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -108,7 +108,7 @@ public class PetController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 존재하지 않는 이미지 이름 (name)"),
     })
     @PostMapping("/pets/{petId}/images")
-    public ResponseEntity<BaseResponse> modifyPetProfileImage(@CurrentUserUsername String username, @PathVariable Long petId, @Valid @RequestBody ModifyPetProfileImgRequestDto requestDto) {
+    public ResponseEntity<BaseResponse> modifyPetProfileImage(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @Valid @RequestBody ModifyPetProfileImgRequestDto requestDto) {
         petService.updateProfileImg(username, petId, requestDto);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -122,7 +122,7 @@ public class PetController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
     @GetMapping("/pets/{petId}/nutrients")
-    public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readPetNutrients(@CurrentUserUsername String username, @PathVariable Long petId,
+    public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readPetNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
                                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
             List<ReadPetNutrientResponseDto> petNutrientToday = petService.getPetNutrientToday(username, petId);
@@ -142,7 +142,7 @@ public class PetController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
     @GetMapping("/pets/{petId}/kcal")
-    public ResponseEntity<BaseResponse<ReadPetKcalResponseDto>> readPetKcal(@CurrentUserUsername String username, @PathVariable Long petId,
+    public ResponseEntity<BaseResponse<ReadPetKcalResponseDto>> readPetKcal(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
                                                     @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
             ReadPetKcalResponseDto petKcalToday = petService.getPetKcalToday(username, petId);
@@ -162,7 +162,7 @@ public class PetController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId"),
     })
     @GetMapping("/pets/{petId}/kcal/proper")
-    public ResponseEntity<BaseResponse<ReadPetKcalResponseDto>> readPetProperKcal(@CurrentUserUsername String username, @PathVariable Long petId) {
+    public ResponseEntity<BaseResponse<ReadPetKcalResponseDto>> readPetProperKcal(@CurrentUserUsername String username, @PathVariable("petId") Long petId) {
         ReadPetKcalResponseDto petProperKcal = petService.getPetProperKcal(username, petId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(petProperKcal));
@@ -175,7 +175,7 @@ public class PetController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
     @GetMapping("/pets/{petId}/kcal/ratio")
-    public ResponseEntity<BaseResponse<ReadPetKcalRatioResponseDto>> readPetKcalRatio(@CurrentUserUsername String username, @PathVariable Long petId,
+    public ResponseEntity<BaseResponse<ReadPetKcalRatioResponseDto>> readPetKcalRatio(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
                                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
             ReadPetKcalRatioResponseDto petKcalRatioToday = petService.getPetKcalRatioToday(username, petId);

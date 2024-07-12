@@ -54,7 +54,7 @@ public class RawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않은 자연식")
     })
     @GetMapping("/raws/{rawId}")
-    public ResponseEntity<BaseResponse<ReadRawResponseDto>> readRaw(@PathVariable Long rawId) {
+    public ResponseEntity<BaseResponse<ReadRawResponseDto>> readRaw(@PathVariable("rawId") Long rawId) {
         ReadRawResponseDto response = rawService.getRaw(rawId);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -92,7 +92,7 @@ public class RawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "자연식 ID(rawId)가 제대로 입력되지 않음")
     })
     @PostMapping("/pets/{petId}/raws")
-    public ResponseEntity<BaseResponse<Long>> createDailyRaw(@CurrentUserUsername String username, @PathVariable Long petId, @Valid @RequestBody CreateDailyRawRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createDailyRaw(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @Valid @RequestBody CreateDailyRawRequestDto requestDto) {
         Long dailyRawId = dailyRawService.createDailyRaw(username, petId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -106,7 +106,7 @@ public class RawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않은 반려견")
     })
     @GetMapping("/pets/{petId}/raws/recent")
-    public ResponseEntity<BaseResponse<List<ReadDailyRawResponseDto>>> getRecentDailyRaws(@CurrentUserUsername String username, @PathVariable Long petId) {
+    public ResponseEntity<BaseResponse<List<ReadDailyRawResponseDto>>> getRecentDailyRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId) {
         int days = 2;
         List<ReadDailyRawResponseDto> recentDailyRaws = dailyRawService.getRecentDailyRaws(username, petId, days);
 
@@ -121,7 +121,7 @@ public class RawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않은 반려견 혹은 존재하지 않은 식사 내역")
     })
     @GetMapping("/pets/{petId}/raws/{dailyRawId}")
-    public ResponseEntity<BaseResponse<ReadDailyRawResponseDto>> getDailyRaw(@CurrentUserUsername String username, @PathVariable Long petId, @PathVariable Long dailyRawId) {
+    public ResponseEntity<BaseResponse<ReadDailyRawResponseDto>> getDailyRaw(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyRawId") Long dailyRawId) {
         ReadDailyRawResponseDto dailyRaw = dailyRawService.getDailyRaw(username, petId, dailyRawId);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -135,7 +135,7 @@ public class RawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않은 반려견 혹은 존재하지 않은 식사 내역")
     })
     @DeleteMapping("/pets/{petId}/raws/{dailyRawId}")
-    public ResponseEntity<BaseResponse> deleteDailyRaw(@CurrentUserUsername String username, @PathVariable Long petId, @PathVariable Long dailyRawId) {
+    public ResponseEntity<BaseResponse> deleteDailyRaw(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyRawId") Long dailyRawId) {
         dailyRawService.deleteDailyRaw(username, petId, dailyRawId);
 
         return ResponseEntity.status(HttpStatus.OK)
