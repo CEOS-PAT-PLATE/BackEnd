@@ -12,45 +12,73 @@ import lombok.NoArgsConstructor;
 
 @Getter
 public enum StandardNutrient {
-    CARBON_HYDRATE("탄수화물", 0.7 / 4, 1.7, "g", "탄수화물에 대한 설명"
-            , Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요"))
-            , Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    PROTEIN("단백질", 4.95, 2.0, "g", "단백질에 대한 설명"
-            , Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요"))
-            , Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    FAT("지방", 1.51, 1.75, "g", "지방에 대한 설명",
-            Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
-            Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    CALCIUM("칼슘", 0.14, 2.0, "g", "칼슘에 대한 설명",
-            Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
-            Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    PHOSPHORUS("인", 0.11, 2.0, "g", "인에 대한 설명",
-            Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
-            Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    VITAMIN_A("비타민 A", 167.0, 5, "iu", "비타민A에 대한 설명",
-            Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
-            Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))), // 레티놀
-    VITAMIN_D("비타민 D", 15.20, 10, "iu", "비타민D에 대한 설명",
-            Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
-            Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    VITAMIN_E("비타민 E", 1.00, 10, "iu", "비타민E에 대한 설명",
-            Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
-            Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요")));
+    CARBON_HYDRATE("탄수화물", 0.7 / 4, 1.7, "g",
+            "탄수화물에 대한 설명",
+            "탄수화물이 부족한 경우에 대한 설명",
+            "탄수화물이 과잉인 경우에 대한 설명"
+            , Arrays.asList(NutrientDisease.create("감기", "추워요", "/img1.png"), NutrientDisease.create("독감", "많이 추워요", "/img1.png"))
+            , Arrays.asList(NutrientDisease.create("뼈삭음", "아파요", "/img1.png"), NutrientDisease.create("암", "많이 아파요", "/img1.png"))),
+    PROTEIN("단백질", 4.95, 2.0, "g",
+            "단백질에 대한 설명",
+            "단백질이 부족한 경우에 대한 설명",
+            "단백질이 과잉인 경우에 대한 설명"
+            , Arrays.asList(NutrientDisease.create("감기", "추워요", "/img1.png"), NutrientDisease.create("독감", "많이 추워요", "/img1.png"))
+            , Arrays.asList(NutrientDisease.create("뼈삭음", "아파요", "/img1.png"), NutrientDisease.create("암", "많이 아파요", "/img1.png"))),
+    FAT("지방", 1.51, 1.75, "g",
+            "지방에 대한 설명",
+            "지방이 부족한 경우에 대한 설명",
+            "지방이 과잉인 경우에 대한 설명",
+            Arrays.asList(NutrientDisease.create("감기", "추워요", "/img1.png"), NutrientDisease.create("독감", "많이 추워요", "/img1.png")),
+            Arrays.asList(NutrientDisease.create("뼈삭음", "아파요", "/img1.png"), NutrientDisease.create("암", "많이 아파요", "/img1.png"))),
+    CALCIUM("칼슘", 0.14, 2.0, "g",
+            "칼슘에 대한 설명",
+            "칼슘이 부족한 경우에 대한 설명",
+            "칼슘이 과잉인 경우에 대한 설명",
+            Arrays.asList(NutrientDisease.create("감기", "추워요", "/img1.png"), NutrientDisease.create("독감", "많이 추워요", "/img1.png")),
+            Arrays.asList(NutrientDisease.create("뼈삭음", "아파요", "/img1.png"), NutrientDisease.create("암", "많이 아파요", "/img1.png"))),
+    PHOSPHORUS("인", 0.11, 2.0, "g",
+            "인에 대한 설명",
+            "인이 부족한 경우에 대한 설명",
+            "인이 과잉인 경우에 대한 설명",
+            Arrays.asList(NutrientDisease.create("감기", "추워요", "/img1.png"), NutrientDisease.create("독감", "많이 추워요", "/img1.png")),
+            Arrays.asList(NutrientDisease.create("뼈삭음", "아파요", "/img1.png"), NutrientDisease.create("암", "많이 아파요", "/img1.png"))),
+    VITAMIN_A("비타민 A", 167.0, 5, "iu",
+            "비타민A에 대한 설명",
+            "비타민A이 부족한 경우에 대한 설명",
+            "비타민A이 과잉인 경우에 대한 설명",
+            Arrays.asList(NutrientDisease.create("감기", "추워요", "/img1.png"), NutrientDisease.create("독감", "많이 추워요", "/img1.png")),
+            Arrays.asList(NutrientDisease.create("뼈삭음", "아파요", "/img1.png"), NutrientDisease.create("암", "많이 아파요", "/img1.png"))), // 레티놀
+    VITAMIN_D("비타민 D", 15.20, 10, "iu",
+            "비타민D에 대한 설명",
+            "비타민D이 부족한 경우에 대한 설명",
+            "비타민D이 과잉인 경우에 대한 설명",
+            Arrays.asList(NutrientDisease.create("감기", "추워요", "/img1.png"), NutrientDisease.create("독감", "많이 추워요", "/img1.png")),
+            Arrays.asList(NutrientDisease.create("뼈삭음", "아파요", "/img1.png"), NutrientDisease.create("암", "많이 아파요", "/img1.png"))),
+    VITAMIN_E("비타민 E", 1.00, 10, "iu",
+            "비타민E에 대한 설명",
+            "비타민E이 부족한 경우에 대한 설명",
+            "비타민E이 과잉인 경우에 대한 설명",
+            Arrays.asList(NutrientDisease.create("감기", "추워요", "/img1.png"), NutrientDisease.create("독감", "많이 추워요", "/img1.png")),
+            Arrays.asList(NutrientDisease.create("뼈삭음", "아파요", "/img1.png"), NutrientDisease.create("암", "많이 아파요", "/img1.png")));
 
     private String name;
     private double properAmountUnit;
-    private double maxIntakeRange;  // 정상 허용 범위 (+)
-    private String unit;
-    private String description;
+    private double maxIntakeRange;  // 적정 섭취 영양소 대비 최대 섭취 비율 ( ex: 2인 경우 이 영양소는 적정 섭취량의 2배까지가 섭취 허용범위)
+    private String unit;  // 영양소 단위
+    private String description;  // 영양소 설명
+    private String deficientDescription; // 이 영양소가 부족한 경우에 대한 설명
+    private String sufficientDescription;  // 이 영양소가 과잉인 경우에 대한 설명
     private List<NutrientDisease> deficientCauseDisease;
     private List<NutrientDisease> sufficientCauseDisease;
 
-    StandardNutrient(String name, double properAmountUnit, double maxIntakeRange, String unit, String description, List<NutrientDisease> deficientCauseDisease, List<NutrientDisease> sufficientCauseDisease) {
+    StandardNutrient(String name, double properAmountUnit, double maxIntakeRange, String unit, String description, String deficientDescription, String sufficientDescription, List<NutrientDisease> deficientCauseDisease, List<NutrientDisease> sufficientCauseDisease) {
         this.name = name;
         this.properAmountUnit = properAmountUnit;
         this.maxIntakeRange = maxIntakeRange;
         this.unit = unit;
         this.description = description;
+        this.deficientDescription = deficientDescription;
+        this.sufficientDescription = sufficientDescription;
         this.deficientCauseDisease = deficientCauseDisease;
         this.sufficientCauseDisease = sufficientCauseDisease;
     }
@@ -244,11 +272,13 @@ public enum StandardNutrient {
     public static class NutrientDisease {
         private String name;
         private String description;
+        private String imgPath;
 
-        private static NutrientDisease create(String name, String description) {
+        private static NutrientDisease create(String name, String description, String imgPath) {
             NutrientDisease nutrientDisease = new NutrientDisease();
             nutrientDisease.name = name;
             nutrientDisease.description = description;
+            nutrientDisease.imgPath = imgPath;
 
             return nutrientDisease;
         }
