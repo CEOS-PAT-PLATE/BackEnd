@@ -18,7 +18,7 @@ public enum StandardNutrient {
     PROTEIN("단백질", 4.95, 2.0, "g", "단백질에 대한 설명"
             , Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요"))
             , Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
-    FAT("지방 (오메가3, 오메가6)", 1.51, 1.75, "g", "지방에 대한 설명",
+    FAT("지방", 1.51, 1.75, "g", "지방에 대한 설명",
             Arrays.asList(NutrientDisease.create("감기", "추워요"), NutrientDisease.create("독감", "많이 추워요")),
             Arrays.asList(NutrientDisease.create("뼈삭음", "아파요"), NutrientDisease.create("암", "많이 아파요"))),
     CALCIUM("칼슘", 0.14, 2.0, "g", "칼슘에 대한 설명",
