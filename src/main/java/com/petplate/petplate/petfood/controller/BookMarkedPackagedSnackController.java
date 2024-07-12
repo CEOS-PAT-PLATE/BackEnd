@@ -65,7 +65,7 @@ public class BookMarkedPackagedSnackController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 bookMarkedPackagedSnackId"),
     })
     @GetMapping("/bookmark/PackagedSnacks/{bookMarkedPackagedSnackId}")
-    public ResponseEntity<BaseResponse<ReadBookMarkedPackagedSnackResponseDto>> readBookMarkedPackagedSnack(@CurrentUserUsername String username, @PathVariable Long bookMarkedPackagedSnackId) {
+    public ResponseEntity<BaseResponse<ReadBookMarkedPackagedSnackResponseDto>> readBookMarkedPackagedSnack(@CurrentUserUsername String username, @PathVariable("bookMarkedPackagedSnackId") Long bookMarkedPackagedSnackId) {
         ReadBookMarkedPackagedSnackResponseDto bookMarkedPackagedSnack =
                 bookMarkedPackagedSnackService.getBookMarkedPackagedSnack(username, bookMarkedPackagedSnackId);
 
@@ -80,7 +80,7 @@ public class BookMarkedPackagedSnackController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 bookMarkedPackagedSnackId"),
     })
     @DeleteMapping("/bookmark/PackagedSnacks/{bookMarkedPackagedSnackId}")
-    public ResponseEntity<BaseResponse> deleteBookMarkedRaw(@CurrentUserUsername String username, @PathVariable Long bookMarkedPackagedSnackId) {
+    public ResponseEntity<BaseResponse> deleteBookMarkedRaw(@CurrentUserUsername String username, @PathVariable("bookMarkedPackagedSnackId") Long bookMarkedPackagedSnackId) {
         bookMarkedPackagedSnackService.deleteBookMarkedPackagedSnack(username, bookMarkedPackagedSnackId);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -94,7 +94,7 @@ public class BookMarkedPackagedSnackController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 존재하지 않는 bookMarkedRawId"),
     })
     @PostMapping("/pet/{petId}/bookmark/PackagedSnacks")
-    public ResponseEntity<BaseResponse<Long>> createDailyBookMarkRaw(@CurrentUserUsername String username, @PathVariable Long petId, @Valid @RequestBody CreateDailyBookMarkedPackagedSnackRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createDailyBookMarkRaw(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @Valid @RequestBody CreateDailyBookMarkedPackagedSnackRequestDto requestDto) {
         Long id = dailyBookMarkedPackagedSnackService.createDailyBookMarkedPackagedSnack(username, petId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -108,7 +108,7 @@ public class BookMarkedPackagedSnackController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId, 존재하지 않는 dailyBookMarkedRawId"),
     })
     @DeleteMapping("/pet/{petId}/bookmark/PackagedSnacks/{dailyBookMarkedPackagedSnackId}")
-    public ResponseEntity<BaseResponse> deleteDailyBookMarkedRaw(@CurrentUserUsername String username, @PathVariable Long petId, @PathVariable Long dailyBookMarkedPackagedSnackId) {
+    public ResponseEntity<BaseResponse> deleteDailyBookMarkedRaw(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyBookMarkedPackagedSnackId") Long dailyBookMarkedPackagedSnackId) {
         dailyBookMarkedPackagedSnackService.deleteDailyBookMarkedPackagedSnack(username, petId, dailyBookMarkedPackagedSnackId);
 
         return ResponseEntity.status(HttpStatus.OK)

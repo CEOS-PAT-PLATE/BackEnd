@@ -34,7 +34,7 @@ public class DailyPackagedSnackController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId")
     })
     @PostMapping("pet/{petId}/packagedSnacks")
-    public ResponseEntity<BaseResponse<Long>> createDailyFeed(@CurrentUserUsername String username, @PathVariable Long petId, @Valid @RequestBody CreateDailyPackagedSnackRequestDto requestDto) {
+    public ResponseEntity<BaseResponse<Long>> createDailyFeed(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @Valid @RequestBody CreateDailyPackagedSnackRequestDto requestDto) {
         Long id = dailyPackagedSnackService.createDailyPackagedSnack(username, petId, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -48,7 +48,7 @@ public class DailyPackagedSnackController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyPackagedSnackId")
     })
     @GetMapping("pet/{petId}/packagedSnacks/{dailyPackagedSnackId}")
-    public ResponseEntity<BaseResponse<ReadDailyPackagedSnackResponseDto>> readDailyFeed(@CurrentUserUsername String username, @PathVariable Long petId, @PathVariable Long dailyPackagedSnackId) {
+    public ResponseEntity<BaseResponse<ReadDailyPackagedSnackResponseDto>> readDailyFeed(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyPackagedSnackId") Long dailyPackagedSnackId) {
         ReadDailyPackagedSnackResponseDto dailyPackagedSnack =
                 dailyPackagedSnackService.getDailyPackagedSnack(username, petId, dailyPackagedSnackId);
 
@@ -63,7 +63,7 @@ public class DailyPackagedSnackController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyPackagedSnackId")
     })
     @DeleteMapping("pet/{petId}/packagedSnacks/{dailyPackagedSnackId}")
-    public ResponseEntity<BaseResponse> deleteDailyFeed(@CurrentUserUsername String username, @PathVariable Long petId, @PathVariable Long dailyPackagedSnackId) {
+    public ResponseEntity<BaseResponse> deleteDailyFeed(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyPackagedSnackId") Long dailyPackagedSnackId) {
         dailyPackagedSnackService.deleteDailyPackagedSnack(username,petId, dailyPackagedSnackId);
 
         return ResponseEntity.status(HttpStatus.OK)

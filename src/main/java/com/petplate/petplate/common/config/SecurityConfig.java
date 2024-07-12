@@ -62,7 +62,7 @@ public class SecurityConfig {
                         requests
                                 .requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**").permitAll()// swagger 경로 접근 허용
                                 .requestMatchers("/oauth2/authorization/**").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/api/v1/drugs").hasAuthority(Role.ADMIN.toString())
+                                .requestMatchers(HttpMethod.POST,"/api/v1/drugs", "/api/v1/raws").hasAuthority(Role.ADMIN.toString())
                                 .requestMatchers(HttpMethod.DELETE,"/api/v1/drugs/**").hasAuthority(Role.ADMIN.toString())
                                 .anyRequest().authenticated()
                 )
