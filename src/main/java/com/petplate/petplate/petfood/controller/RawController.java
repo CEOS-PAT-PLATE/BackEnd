@@ -4,6 +4,7 @@ import com.petplate.petplate.auth.interfaces.CurrentUserUsername;
 import com.petplate.petplate.common.response.BaseResponse;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyRawRequestDto;
 import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawResponseDto;
+import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawWithRawIdResponseDto;
 import com.petplate.petplate.petdailymeal.service.DailyMealService;
 import com.petplate.petplate.petdailymeal.service.DailyRawService;
 import com.petplate.petplate.petfood.dto.request.CreateRawRequestDto;
@@ -106,9 +107,9 @@ public class RawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않은 반려견")
     })
     @GetMapping("/pets/{petId}/raws/recent")
-    public ResponseEntity<BaseResponse<List<ReadDailyRawResponseDto>>> getRecentDailyRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId) {
+    public ResponseEntity<BaseResponse<List<ReadDailyRawWithRawIdResponseDto>>> getRecentDailyRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId) {
         int days = 2;
-        List<ReadDailyRawResponseDto> recentDailyRaws = dailyRawService.getRecentDailyRaws(username, petId, days);
+        List<ReadDailyRawWithRawIdResponseDto> recentDailyRaws = dailyRawService.getRecentDailyRaws(username, petId, days);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(recentDailyRaws));
