@@ -11,6 +11,7 @@ import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyRaw;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyRawRequestDto;
 import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawResponseDto;
+import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawWithRawIdResponseDto;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import com.petplate.petplate.petdailymeal.repository.DailyRawRepository;
 import com.petplate.petplate.petfood.domain.entity.Raw;
@@ -104,13 +105,13 @@ public class DailyRawService {
      * @param count
      * @return
      */
-    public List<ReadDailyRawResponseDto> getRecentDailyRaws(String username, Long petId, int count) {
+    public List<ReadDailyRawWithRawIdResponseDto> getRecentDailyRaws(String username, Long petId, int count) {
         validUserAndFindPet(username, petId);
 
         return dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId).stream()
                 .limit(count)
                 .flatMap(dailyMeal -> dailyRawRepository.findByDailyMealId(dailyMeal.getId()).stream())
-                .map(ReadDailyRawResponseDto::from)
+                .map(ReadDailyRawWithRawIdResponseDto::from)
                 .collect(Collectors.toList());
     }
 
