@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RawRepository extends JpaRepository<Raw, Long> {
-
     @Query("select r from Raw r where r.name like %:keyword%")
     List<Raw> findByKeyword(@Param("keyword") String keyword);
 

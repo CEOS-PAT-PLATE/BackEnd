@@ -83,7 +83,7 @@ public class RawService {
      */
     public List<ReadRawResponseDto> getRawByKeyword(String keyword) {
         List<ReadRawResponseDto> responses = new ArrayList<>();
-
+        
         rawRepository.findByKeyword(keyword)
                 .forEach(raw -> {
                     responses.add(ReadRawResponseDto.from(raw));
