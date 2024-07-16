@@ -7,11 +7,14 @@ import com.petplate.petplate.auth.oauth.CustomOAuth2User;
 import com.petplate.petplate.auth.oauth.Dto.TokenDto;
 import com.petplate.petplate.auth.oauth.cookie.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.petplate.petplate.common.utils.CookieUtils;
+import com.petplate.petplate.pet.domain.entity.Pet;
+import com.petplate.petplate.pet.repository.PetRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final static String authorization = "Authorization";
     private final static String refreshToken = "refreshToken";
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+    private final PetRepository petRepository;
+
+    private final static String petEnrollUrl = "input-data1";
+    private final static String foodEnrollUrl = "input-data2";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -47,10 +54,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             response.setHeader(authorization,tokenDto.getAccessToken());
             response.setHeader(refreshToken,tokenDto.getRefreshToken());
 
-            String redirectUrl = generateBaseUrl(request, response)+"hi";
+            String redirectUrl = generateBaseUrl(request, response)+getSubUrl(oAuth2User.getUsername());
             System.out.println(redirectUrl);
 
-            //response.sendRedirect(redirectUrl);
+            response.sendRedirect(redirectUrl);
 
 
 
@@ -80,6 +87,16 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request,
                 response);
+    }
+
+    private String getSubUrl(String username){
+
+        if(petRepository.existsByOwnerUsername(username)){
+
+            return foodEnrollUrl;
+        }
+
+        return petEnrollUrl;
     }
 
 
