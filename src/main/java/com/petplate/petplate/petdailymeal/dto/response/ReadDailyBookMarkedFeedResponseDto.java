@@ -26,17 +26,21 @@ public class ReadDailyBookMarkedFeedResponseDto {
                 = new ReadDailyBookMarkedFeedResponseDto();
 
         response.dailyBookMarkedFeedId = dailybookMarkedFeed.getId();
-        response.name = dailybookMarkedFeed.getBookMarkedFeed().getName();
-        response.serving = dailybookMarkedFeed.getBookMarkedFeed().getServing();
-        response.kcal = dailybookMarkedFeed.getBookMarkedFeed().getKcal();
-        response.carbonHydrate = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getCarbonHydrate();
-        response.protein = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getProtein();
-        response.fat = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getFat();
-        response.calcium = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getCalcium();
-        response.phosphorus = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getPhosphorus();
-        response.vitaminA = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getVitamin().getVitaminA();
-        response.vitaminD = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getVitamin().getVitaminD();
-        response.vitaminE = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getVitamin().getVitaminE();
+        if (dailybookMarkedFeed.getBookMarkedFeed() != null) {
+            response.name = dailybookMarkedFeed.getBookMarkedFeed().getName();
+            response.serving = dailybookMarkedFeed.getBookMarkedFeed().getServing();
+            response.kcal = dailybookMarkedFeed.getBookMarkedFeed().getKcal();
+            response.carbonHydrate = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getCarbonHydrate();
+            response.protein = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getProtein();
+            response.fat = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getFat();
+            response.calcium = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getCalcium();
+            response.phosphorus = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getPhosphorus();
+            response.vitaminA = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getVitamin().getVitaminA();
+            response.vitaminD = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getVitamin().getVitaminD();
+            response.vitaminE = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getVitamin().getVitaminE();
+        } else{
+            response.name = "존재하지 않는 음식입니다";
+        }
 
         return response;
     }

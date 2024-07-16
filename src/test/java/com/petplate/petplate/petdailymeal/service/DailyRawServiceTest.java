@@ -12,6 +12,7 @@ import com.petplate.petplate.pet.service.PetService;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyRawRequestDto;
 import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawResponseDto;
+import com.petplate.petplate.petdailymeal.dto.response.ReadDailyRawWithRawIdResponseDto;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import com.petplate.petplate.petdailymeal.repository.DailyRawRepository;
 import com.petplate.petplate.petfood.domain.entity.Raw;
@@ -231,8 +232,8 @@ class DailyRawServiceTest {
         dailyRawService.createDailyRaw(user1Username, pet2Id, 닭고기);
 
         // then
-        List<ReadDailyRawResponseDto> recentDailyRaws = dailyRawService.getRecentDailyRaws(user1Username, pet2Id, 3);
-        for (ReadDailyRawResponseDto recentDailyRaw : recentDailyRaws) {
+        List<ReadDailyRawWithRawIdResponseDto> recentDailyRaws = dailyRawService.getRecentDailyRaws(user1Username, pet2Id, 3);
+        for (ReadDailyRawWithRawIdResponseDto recentDailyRaw : recentDailyRaws) {
             System.out.println("recentDailyRaw = " + recentDailyRaw.getName());
         }
     }

@@ -98,7 +98,7 @@ public class DeficientNutrientService {
     }
 
     private DailyMeal findDailyMeal(Long petId, LocalDate date) {
-        LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime startDatetime = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
         LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
 
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime)

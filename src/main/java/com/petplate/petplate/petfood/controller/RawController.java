@@ -22,19 +22,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/v1")
-@RequiredArgsConstructor
-@Tag(name = "자연식 컨트롤러", description = "자연식 및 펫이 하룻 동안 섭취한 자연식에 대한 컨트롤러 입니다")
-public class RawController {
-    private final RawService rawService;
-    private final DailyMealService dailyMealService;
-    private final DailyRawService dailyRawService;
+    @RestController
+    @RequestMapping("/api/v1")
+    @RequiredArgsConstructor
+    @Tag(name = "자연식 컨트롤러", description = "자연식 및 펫이 하룻 동안 섭취한 자연식에 대한 컨트롤러 입니다")
+    public class RawController {
+        private final RawService rawService;
+        private final DailyMealService dailyMealService;
+        private final DailyRawService dailyRawService;
 
-    private static final String OK = "200";
-    private static final String CREATED = "201";
-    private static final String BAD_REQUEST = "400";
-    private static final String NOT_FOUND = "404";
+        private static final String OK = "200";
+        private static final String CREATED = "201";
+        private static final String BAD_REQUEST = "400";
+        private static final String NOT_FOUND = "404";
 
     @Operation(summary = "자연식 추가")
     @ApiResponses(value = {
@@ -67,9 +67,12 @@ public class RawController {
             @ApiResponse(responseCode = OK, description = "자연식 성공적 조회")
     })
     @GetMapping("/raws")
-    public ResponseEntity<BaseResponse<List<ReadRawResponseDto>>> readRawByKeyword(@RequestParam String keyword) {
+    public ResponseEntity<BaseResponse<List<ReadRawResponseDto>>> readRawByKeyword(@RequestParam("keyword") String keyword) {
         List<ReadRawResponseDto> responses = rawService.getRawByKeyword(keyword);
 
+        for (ReadRawResponseDto response : responses) {
+            System.out.println("response.getName() = " + response.getName());
+        }
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(responses));
     }
@@ -80,7 +83,7 @@ public class RawController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않은 자연식")
     })
     @DeleteMapping("/raws")
-    public ResponseEntity<BaseResponse> deleteRaw(@RequestParam Long rawId) {
+    public ResponseEntity<BaseResponse> deleteRaw(@RequestParam("rawId") Long rawId) {
         rawService.deleteRawById(rawId);
 
         return ResponseEntity.status(HttpStatus.OK)

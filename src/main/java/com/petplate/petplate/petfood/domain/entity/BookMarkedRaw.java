@@ -45,7 +45,7 @@ public class BookMarkedRaw extends BaseEntity{
     private Nutrient nutrient;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "raw_id", nullable = false)
+    @JoinColumn(name = "raw_id")
     private Raw raw;
 
     @ManyToOne(fetch = FetchType.LAZY)

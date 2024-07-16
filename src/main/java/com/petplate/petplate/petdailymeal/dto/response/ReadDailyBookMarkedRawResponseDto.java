@@ -29,19 +29,22 @@ public class ReadDailyBookMarkedRawResponseDto {
                 = new ReadDailyBookMarkedRawResponseDto();
 
         response.dailyBookMarkedRawId = dailybookMarkedRaw.getId();
-        response.name = dailybookMarkedRaw.getBookMarkedRaw().getRaw().getName();
-        response.description = dailybookMarkedRaw.getBookMarkedRaw().getDescription();
-        response.serving = dailybookMarkedRaw.getBookMarkedRaw().getServing();
-        response.kcal = dailybookMarkedRaw.getBookMarkedRaw().getKcal();
-        response.carbonHydrate = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getCarbonHydrate();
-        response.protein = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getProtein();
-        response.fat = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getFat();
-        response.calcium = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getCalcium();
-        response.phosphorus = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getPhosphorus();
-        response.vitaminA = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getVitamin().getVitaminA();
-        response.vitaminD = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getVitamin().getVitaminD();
-        response.vitaminE = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getVitamin().getVitaminE();
-
+        if(dailybookMarkedRaw.getBookMarkedRaw()!=null) {
+            response.name = dailybookMarkedRaw.getBookMarkedRaw().getRaw()!=null?dailybookMarkedRaw.getBookMarkedRaw().getRaw().getName():"존재하지 않는 음식입니다";
+            response.description = dailybookMarkedRaw.getBookMarkedRaw().getRaw() != null ? dailybookMarkedRaw.getBookMarkedRaw().getDescription() : null;
+            response.serving = dailybookMarkedRaw.getBookMarkedRaw().getServing();
+            response.kcal = dailybookMarkedRaw.getBookMarkedRaw().getKcal();
+            response.carbonHydrate = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getCarbonHydrate();
+            response.protein = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getProtein();
+            response.fat = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getFat();
+            response.calcium = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getCalcium();
+            response.phosphorus = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getPhosphorus();
+            response.vitaminA = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getVitamin().getVitaminA();
+            response.vitaminD = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getVitamin().getVitaminD();
+            response.vitaminE = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getVitamin().getVitaminE();
+        } else{
+            response.name = "존재하지 않는 음식입니다";
+        }
         return response;
     }
 }

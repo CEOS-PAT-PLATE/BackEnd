@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -44,13 +45,14 @@ public class DailyMealController {
     })
     @GetMapping("/pet/{petId}/dailyMeals")
     public ResponseEntity<BaseResponse<List<ReadDailyMealResponseDto>>> readDailyMeals(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
-                                                                                       @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+                                                                                       @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
             List<ReadDailyMealResponseDto> dailyMeals = dailyMealService.getDailyMeals(username, petId);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(BaseResponse.createSuccess(dailyMeals));
         } else {
-            List<ReadDailyMealResponseDto> dailyMeals = (List) dailyMealService.getDailyMeal(username, petId, date);
+            List<ReadDailyMealResponseDto> dailyMeals = new ArrayList<>();
+            dailyMeals.add(dailyMealService.getDailyMeal(username, petId, date));
             return ResponseEntity.status(HttpStatus.OK)
                     .body(BaseResponse.createSuccess(dailyMeals));
         }
@@ -63,7 +65,7 @@ public class DailyMealController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 해당 일자에 식사 내역이 없는 경우"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}")
-    public ResponseEntity<BaseResponse<ReadDailyMealFoodResponseDto>> readDailyMealWithAllFoods(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+    public ResponseEntity<BaseResponse<ReadDailyMealFoodResponseDto>> readDailyMealWithAllFoods(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyMealId") Long dailyMealId) {
         ReadDailyMealFoodResponseDto dailyMealWithFoods = dailyMealService.getDailyMealWithFoods(username, petId, dailyMealId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(dailyMealWithFoods));
@@ -76,7 +78,7 @@ public class DailyMealController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/raws")
-    public ResponseEntity<BaseResponse<List<ReadDailyRawResponseDto>>> readDailyRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+    public ResponseEntity<BaseResponse<List<ReadDailyRawResponseDto>>> readDailyRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyMealId") Long dailyMealId) {
         List<ReadDailyRawResponseDto> dailyRaws = dailyMealService.getDailyRaws(username, petId, dailyMealId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(dailyRaws));
@@ -89,7 +91,7 @@ public class DailyMealController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/feeds")
-    public ResponseEntity<BaseResponse<List<ReadDailyFeedResponseDto>>> readDailyFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+    public ResponseEntity<BaseResponse<List<ReadDailyFeedResponseDto>>> readDailyFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyMealId") Long dailyMealId) {
         List<ReadDailyFeedResponseDto> dailyFeeds = dailyMealService.getDailyFeeds(username, petId, dailyMealId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(dailyFeeds));
@@ -102,7 +104,7 @@ public class DailyMealController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/packagedSnacks")
-    public ResponseEntity<BaseResponse<List<ReadDailyPackagedSnackResponseDto>>> readDailyPackagedSnacks(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+    public ResponseEntity<BaseResponse<List<ReadDailyPackagedSnackResponseDto>>> readDailyPackagedSnacks(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyMealId") Long dailyMealId) {
         List<ReadDailyPackagedSnackResponseDto> dailyPackagedSnacks = dailyMealService.getDailyPackagedSnacks(username, petId, dailyMealId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(dailyPackagedSnacks));
@@ -115,7 +117,7 @@ public class DailyMealController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/bookmark/raws")
-    public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedRawResponseDto>>> readDailyBookMarkedRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+    public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedRawResponseDto>>> readDailyBookMarkedRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyMealId") Long dailyMealId) {
         List<ReadDailyBookMarkedRawResponseDto> dailyBookMarkedRaws = dailyMealService.getDailyBookMarkedRaws(username, petId, dailyMealId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(dailyBookMarkedRaws));
@@ -128,7 +130,7 @@ public class DailyMealController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/bookmark/feeds")
-    public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedFeedResponseDto>>> readDailyBookMarkedFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+    public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedFeedResponseDto>>> readDailyBookMarkedFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyMealId") Long dailyMealId) {
         List<ReadDailyBookMarkedFeedResponseDto> dailyBookMarkedFeeds = dailyMealService.getDailyBookMarkedFeeds(username, petId, dailyMealId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(dailyBookMarkedFeeds));
@@ -141,7 +143,7 @@ public class DailyMealController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/bookmark/packagedSnacks")
-    public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedPackagedSnackResponseDto>>> readDailyBookMarkedPackagedSnacks(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+    public ResponseEntity<BaseResponse<List<ReadDailyBookMarkedPackagedSnackResponseDto>>> readDailyBookMarkedPackagedSnacks(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyMealId") Long dailyMealId) {
         List<ReadDailyBookMarkedPackagedSnackResponseDto> dailyBookMarkedPackagedSnacks = dailyMealService.getDailyBookMarkedPackagedSnacks(username, petId, dailyMealId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(dailyBookMarkedPackagedSnacks));
@@ -155,7 +157,7 @@ public class DailyMealController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 오늘 식사내역이 존재하지 않는 경우"),
     })
     @PostMapping("/pet/{petId}/dailyMeals/nutrients")
-    public ResponseEntity<BaseResponse> createDailyMealNutrients(@CurrentUserUsername String username, @PathVariable Long petId) {
+    public ResponseEntity<BaseResponse> createDailyMealNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId) {
         // 부족 영양소
         deficientNutrientService.createDeficientNutrientToday(username, petId);
 
@@ -177,7 +179,7 @@ public class DailyMealController {
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId"),
     })
     @GetMapping("/pet/{petId}/dailyMeals/{dailyMealId}/nutrients/deficient")
-    public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readDeficientNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+    public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readDeficientNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyMealId") Long dailyMealId) {
         List<ReadPetNutrientResponseDto> deficientNutrients = deficientNutrientService.getDeficientNutrients(username, petId, dailyMealId);
 
         return ResponseEntity.status(HttpStatus.OK)

@@ -76,7 +76,7 @@ public class DailyMealService {
     public DailyMeal getDailyMealByDate(String username, Long petId, LocalDate date) {
         validUserAndFindPet(username, petId);
 
-        LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime startDatetime = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
         LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
 
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime).orElseThrow(
@@ -97,7 +97,8 @@ public class DailyMealService {
     public ReadDailyMealResponseDto getDailyMeal(String username, Long petId, LocalDate date) {
         validUserAndFindPet(username, petId);
 
-        LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
+//        LocalDateTime startDatetime = LocalDateTime.of(date.minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime startDatetime = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
         LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
 
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime).orElseThrow(

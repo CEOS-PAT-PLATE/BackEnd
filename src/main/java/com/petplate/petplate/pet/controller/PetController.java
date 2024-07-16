@@ -68,7 +68,7 @@ public class PetController {
             @ApiResponse(responseCode = NOT_FOUND, description = "존재하지 않는 petId"),
     })
     @GetMapping("/pets/{petId}")
-    public ResponseEntity<BaseResponse<ReadPetResponseDto>> readAllPets(@CurrentUserUsername String username, @PathVariable Long petId) {
+    public ResponseEntity<BaseResponse<ReadPetResponseDto>> readAllPets(@CurrentUserUsername String username, @PathVariable("petId") Long petId) {
         ReadPetResponseDto pet = petService.getPet(username, petId);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -123,7 +123,7 @@ public class PetController {
     })
     @GetMapping("/pets/{petId}/nutrients")
     public ResponseEntity<BaseResponse<List<ReadPetNutrientResponseDto>>> readPetNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
-                                                         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+                                                         @RequestParam(value = "date",required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
             List<ReadPetNutrientResponseDto> petNutrientToday = petService.getPetNutrientToday(username, petId);
             return ResponseEntity.status(HttpStatus.OK)
@@ -143,7 +143,7 @@ public class PetController {
     })
     @GetMapping("/pets/{petId}/kcal")
     public ResponseEntity<BaseResponse<ReadPetKcalResponseDto>> readPetKcal(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
-                                                    @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+                                                    @RequestParam(value = "date",required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
             ReadPetKcalResponseDto petKcalToday = petService.getPetKcalToday(username, petId);
             return ResponseEntity.status(HttpStatus.OK)
@@ -176,7 +176,7 @@ public class PetController {
     })
     @GetMapping("/pets/{petId}/kcal/ratio")
     public ResponseEntity<BaseResponse<ReadPetKcalRatioResponseDto>> readPetKcalRatio(@CurrentUserUsername String username, @PathVariable("petId") Long petId,
-                                                         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+                                                         @RequestParam(value = "date",required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         if (date == null) {
             ReadPetKcalRatioResponseDto petKcalRatioToday = petService.getPetKcalRatioToday(username, petId);
             return ResponseEntity.status(HttpStatus.OK)

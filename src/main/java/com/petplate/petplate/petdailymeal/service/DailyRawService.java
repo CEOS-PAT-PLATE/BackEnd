@@ -108,11 +108,19 @@ public class DailyRawService {
     public List<ReadDailyRawWithRawIdResponseDto> getRecentDailyRaws(String username, Long petId, int count) {
         validUserAndFindPet(username, petId);
 
-        return dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId).stream()
-                .limit(count)
-                .flatMap(dailyMeal -> dailyRawRepository.findByDailyMealId(dailyMeal.getId()).stream())
-                .map(ReadDailyRawWithRawIdResponseDto::from)
-                .collect(Collectors.toList());
+        List<ReadDailyRawWithRawIdResponseDto> responses = new ArrayList<>();
+        dailyMealRepository.findByPetIdOrderByCreatedAtDesc(petId).stream().limit(count)
+                .forEach(dailyMeal -> {
+
+                    dailyRawRepository.findByDailyMealId(dailyMeal.getId()).forEach(dailyRaw -> {
+                        // dailyRaw의 Raw가 삭제되는 등의 이유로 null인 경우 반환하지 않는다.
+                        if (dailyRaw.getRaw() != null) {
+                            responses.add(ReadDailyRawWithRawIdResponseDto.from(dailyRaw));
+                        }
+                    });
+                });
+
+        return responses;
     }
 
     /**
