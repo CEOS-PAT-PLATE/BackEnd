@@ -29,7 +29,7 @@ public class ReadDailyRawWithRawIdResponseDto {
         ReadDailyRawWithRawIdResponseDto response
                 = new ReadDailyRawWithRawIdResponseDto();
 
-        response.rawId = dailyRaw.getRaw() != null ? dailyRaw.getRaw().getId() : null;
+        response.rawId = dailyRaw.getRaw().getId();
         response.dailyRawId = dailyRaw.getId();
         response.name = dailyRaw.getRaw().getName();
         response.description = dailyRaw.getRaw().getDescription();

@@ -29,8 +29,8 @@ public class ReadBookMarkedRawResponseDto {
                 = new ReadBookMarkedRawResponseDto();
 
         response.bookMarkedRawId = bookMarkedRaw.getId();
-        response.name = bookMarkedRaw.getRaw().getName();
-        response.description = bookMarkedRaw.getRaw().getDescription();
+        response.name = bookMarkedRaw.getRaw()!=null?bookMarkedRaw.getRaw().getName():"존재하지 않는 음식입니다";
+        response.description = bookMarkedRaw.getRaw() != null ? bookMarkedRaw.getRaw().getDescription() : null;
         response.serving = bookMarkedRaw.getServing();
         response.kcal = bookMarkedRaw.getKcal();
         response.carbonHydrate = bookMarkedRaw.getNutrient().getCarbonHydrate();

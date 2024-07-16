@@ -27,8 +27,8 @@ public class ReadDailyRawResponseDto {
                 = new ReadDailyRawResponseDto();
 
         response.dailyRawId = dailyRaw.getId();
-        response.name = dailyRaw.getRaw().getName();
-        response.description = dailyRaw.getRaw().getDescription();
+        response.name = dailyRaw.getRaw()!=null?dailyRaw.getRaw().getName():"존재하지 않는 음식입니다";
+        response.description = dailyRaw.getRaw() != null ? dailyRaw.getRaw().getDescription() : null;
         response.serving = dailyRaw.getServing();
         response.kcal = dailyRaw.getKcal();
         response.carbonHydrate = dailyRaw.getNutrient().getCarbonHydrate();
