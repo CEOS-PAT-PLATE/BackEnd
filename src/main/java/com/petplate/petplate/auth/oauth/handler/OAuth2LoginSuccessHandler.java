@@ -98,7 +98,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         return petEnrollUrl;*/
 
-        return "sign-up";
+        return "/sign-up/welcome";
     }
 
 
