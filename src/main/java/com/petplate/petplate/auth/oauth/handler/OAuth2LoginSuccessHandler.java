@@ -54,7 +54,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             response.setHeader(authorization,tokenDto.getAccessToken());
             response.setHeader(refreshToken,tokenDto.getRefreshToken());
 
-            String redirectUrl = generateBaseUrl(request, response)+getSubUrl(oAuth2User.getUsername());
+            String redirectUrl = generateBaseUrl(request, response)+getSubUrl(
+                    oAuth2User.getUsername(),tokenDto.getAccessToken(),tokenDto.getRefreshToken());
             System.out.println(redirectUrl);
 
             response.sendRedirect(redirectUrl);
@@ -89,7 +90,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 response);
     }
 
-    private String getSubUrl(String username){
+    private String getSubUrl(String username,String accessToken,String refreshToken){
 
         /*if(petRepository.existsByOwnerUsername(username)){
 
@@ -98,7 +99,18 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         return petEnrollUrl;*/
 
-        return "/sign-up";
+        StringBuilder sb = new StringBuilder();
+
+        StringBuilder url = sb.append("sign-up")
+                .append("?")
+                .append("accessToken=")
+                .append(accessToken)
+                .append("&")
+                .append("refreshToken=")
+                .append(refreshToken);
+
+
+        return url.toString();
     }
 
 
