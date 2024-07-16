@@ -91,12 +91,14 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private String getSubUrl(String username){
 
-        if(petRepository.existsByOwnerUsername(username)){
+        /*if(petRepository.existsByOwnerUsername(username)){
 
             return foodEnrollUrl;
         }
 
-        return petEnrollUrl;
+        return petEnrollUrl;*/
+
+        return "sign-up/welcome";
     }
 
 
