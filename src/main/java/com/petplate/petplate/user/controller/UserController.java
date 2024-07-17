@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @PatchMapping("/authority")
-    @Operation(summary = "회원 권환 변경",description = "회원 권한을 변경합니다")
+    @Operation(summary = "회원 권한 변경",description = "회원 권한을 변경합니다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",description = "회원 권한  변경 성공"),
             @ApiResponse(responseCode = "400",description = "회원 권한 변경 비밀번호 불일치"),

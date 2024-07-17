@@ -110,6 +110,35 @@ public class TokenProvider implements InitializingBean {
                 .build();
     }
 
+    public TokenDto createTokenByUserProperty(String username,String authorities) {
+
+        long now = (new Date()).getTime();
+
+
+        String accessToken = Jwts.builder()
+                .setHeaderParam("typ","JWT")
+                .setExpiration(new Date(now + validationTime))//토큰 만료시간 payload 에 exp 의 형태로
+                .setSubject(username) //토큰 sub (토큰 제목)
+                .claim(AUTHORIZATION_KEY, authorities)// auth 라는 key 로 authroities 즉 General or ADMIN 이 들어감
+                .signWith(this.key, SignatureAlgorithm.HS512)
+                .compact();
+
+
+        String refreshToken = Jwts.builder()
+                .setHeaderParam("type","JWT")
+                .setExpiration(new Date(now + refreshTokenValidationTime))
+                .signWith(this.key, SignatureAlgorithm.HS512)
+                .compact();
+
+        return TokenDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .accessTokenValidationTime(validationTime)
+                .refreshTokenValidationTime(refreshTokenValidationTime)
+                .type("Bearer ")
+                .build();
+    }
+
     // 토큰을 통하여 Authentication 객체 생성
     public Authentication getAuthentication(String token) {
 
