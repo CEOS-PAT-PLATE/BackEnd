@@ -9,6 +9,7 @@ import com.petplate.petplate.auth.oauth.cookie.HttpCookieOAuth2AuthorizationRequ
 import com.petplate.petplate.common.utils.CookieUtils;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.repository.PetRepository;
+import com.petplate.petplate.user.repository.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +35,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final static String refreshToken = "refreshToken";
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
     private final PetRepository petRepository;
+    private final UserRepository userRepository;
 
     private final static String petEnrollUrl = "input-data1";
     private final static String foodEnrollUrl = "input-data2";
@@ -51,11 +53,15 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             redisTemplate.opsForValue().set(oAuth2User.getUsername(),tokenDto.getRefreshToken(),tokenDto.getRefreshTokenValidationTime(), TimeUnit.MILLISECONDS);
             // Dto 객체를 JSON으로 변환하여 응답으로 전송
 
+
+            boolean enrollPet = petRepository.existsByOwnerUsername(oAuth2User.getUsername());
+
+
             response.setHeader(authorization,tokenDto.getAccessToken());
             response.setHeader(refreshToken,tokenDto.getRefreshToken());
 
             String redirectUrl = generateBaseUrl(request, response)+getSubUrl(
-                    oAuth2User.getUsername(),tokenDto.getAccessToken(),tokenDto.getRefreshToken());
+                    oAuth2User.getUsername(),tokenDto.getAccessToken(),tokenDto.getRefreshToken(),enrollPet);
             System.out.println(redirectUrl);
 
             response.sendRedirect(redirectUrl);
@@ -90,7 +96,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 response);
     }
 
-    private String getSubUrl(String username,String accessToken,String refreshToken){
+    private String getSubUrl(String username,String accessToken,String refreshToken,boolean enrollPet){
 
         /*if(petRepository.existsByOwnerUsername(username)){
 
@@ -107,7 +113,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .append(accessToken)
                 .append("&")
                 .append("refreshToken=")
-                .append(refreshToken);
+                .append(refreshToken)
+                .append("&")
+                .append("enrollPet=")
+                .append(enrollPet);
 
 
         return url.toString();
