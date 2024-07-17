@@ -72,7 +72,9 @@ public enum ErrorCode {
      * 500 Internal Server Error
      */
     DATA_NOT_READY("데이터가 준비되지 않았습니다"),
-    SOCIAL_ACCESS_ERROR("내부 엑세스 토큰으로부터 사용자 정보를 가져오지 못했습니다");
+    SOCIAL_ACCESS_ERROR("내부 엑세스 토큰으로부터 사용자 정보를 가져오지 못했습니다"),
+    SOCIAL_REFRESH_TOKEN_ERROR("리프레시 토큰 기반으로 사용자 정보 연결 해제 실패"),
+    SOCIAL_UNLINK_FAIL("리프레시 토큰 기반 연동 해제 실패");
 
 
 

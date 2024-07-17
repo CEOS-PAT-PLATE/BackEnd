@@ -5,6 +5,8 @@ package com.petplate.petplate.auth.oauth.service;
 
 import com.petplate.petplate.auth.jwt.TokenProvider;
 import com.petplate.petplate.auth.oauth.CustomOAuth2User;
+import com.petplate.petplate.auth.oauth.Dto.SocialLoginCheckDeleteResponseDto;
+import com.petplate.petplate.auth.oauth.Dto.SocialLoginCheckValidateAccessToken;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginProfileResponseDto;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginReIssueResponseDto;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginTokenRequestResponseDto;
@@ -119,13 +121,38 @@ public class SocialLoginTokenUtil {
         SocialLoginReIssueResponseDto tokenReIssueResponseDto = getNewSocialLoginAccessToken(
                 findUser.getSocialLoginRefreshToken());
 
-        System.out.println(tokenReIssueResponseDto.getAccess_token());
+        checkValidateAccessToken(tokenReIssueResponseDto.getAccess_token());
 
-        webClient.post()
+        SocialLoginCheckDeleteResponseDto socialLoginCheckDeleteResponseDto = webClient.get()
                 .uri("?grant_type=delete&client_id="+naverClientId+"&client_secret="+naverClientSecret+"&access_token="+tokenReIssueResponseDto.getAccess_token())
                 .retrieve()
-                .toBodilessEntity()
+                .bodyToMono(SocialLoginCheckDeleteResponseDto.class)
                 .block();
+
+        log.info("checkDelete {} {}",socialLoginCheckDeleteResponseDto.getAccess_token(),socialLoginCheckDeleteResponseDto.getResult());
+
+        if(!socialLoginCheckDeleteResponseDto.getResult().equals(success)){
+            throw new InternalServerErrorException(ErrorCode.SOCIAL_UNLINK_FAIL);
+        }
+
+
+    }
+
+    private void checkValidateAccessToken(String newAccessToken){
+
+        SocialLoginCheckValidateAccessToken socialLoginCheckValidateAccessToken = webClient.get()
+                .uri("https://openapi.naver.com/v1/nid/verify")
+                .header("Authorization","Bearer "+newAccessToken)
+                .retrieve()
+                .bodyToMono(SocialLoginCheckValidateAccessToken.class)
+                .block();
+
+        log.info("new AccessToken {}",newAccessToken);
+        log.info("check message {}",socialLoginCheckValidateAccessToken.getMessage());
+
+        if(!socialLoginCheckValidateAccessToken.getMessage().equals(success)){
+            throw new InternalServerErrorException(ErrorCode.SOCIAL_REFRESH_TOKEN_ERROR);
+        }
 
     }
 
