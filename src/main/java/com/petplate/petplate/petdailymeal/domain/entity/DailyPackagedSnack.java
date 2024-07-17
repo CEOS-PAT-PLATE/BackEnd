@@ -22,7 +22,7 @@ public class DailyPackagedSnack {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "daily_feed_id")
+    @Column(name = "daily_packaged_snack_id")
     private Long id;
 
     @Column(nullable = false)
