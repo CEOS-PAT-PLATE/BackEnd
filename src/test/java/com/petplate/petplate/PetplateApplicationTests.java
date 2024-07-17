@@ -8,6 +8,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +41,21 @@ class PetplateApplicationTests {
         //가장 많은 영양소 이름
         StandardNutrient sufficientNutrient = StandardNutrient.findMostSufficientNutrient(nutrient, 5, Activity.ACTIVE);
         System.out.println(sufficientNutrient.getName());*/
+
+        LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0));
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(now.getHour(), now.getMinute(), now.getSecond()));
+
+        System.out.println("startDatetime = " + startDatetime);
+        System.out.println("endDatetime = " + endDatetime);
+
+        LocalDateTime endDatetime1 = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
+        System.out.println("endDatetime1 = " + endDatetime1);
+
+        LocalDateTime startOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
+        System.out.println("startOfDay = " + startOfDay);
+        LocalDateTime endOfDay = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        System.out.println("endOfDay = " + endOfDay);
     }
 
 }

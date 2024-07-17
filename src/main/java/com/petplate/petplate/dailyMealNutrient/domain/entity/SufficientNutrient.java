@@ -12,6 +12,7 @@ import lombok.*;
 public class SufficientNutrient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "sufficient_nutrient_id")
     private Long id;
 
     @Column(nullable = false)
@@ -28,6 +29,7 @@ public class SufficientNutrient {
     private double maximumAmount; // 최대 섭취량
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "daily_meal_id", nullable = false)
     private DailyMeal dailyMeal;
 
     @Builder
