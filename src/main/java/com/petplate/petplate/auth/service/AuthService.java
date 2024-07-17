@@ -1,10 +1,20 @@
 package com.petplate.petplate.auth.service;
 
+import com.petplate.petplate.auth.dto.response.AuthResponseWithTokenAndRedirectUserInfo;
+import com.petplate.petplate.auth.dto.response.UserEnrollResponseDto;
 import com.petplate.petplate.auth.jwt.TokenProvider;
+import com.petplate.petplate.auth.oauth.Dto.SocialLoginProfileResponseDto;
+import com.petplate.petplate.auth.oauth.Dto.SocialLoginTokenRequestResponseDto;
 import com.petplate.petplate.auth.oauth.Dto.TokenDto;
 import com.petplate.petplate.auth.oauth.service.SocialLoginTokenUtil;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
+import com.petplate.petplate.pet.repository.PetRepository;
+import com.petplate.petplate.user.domain.Role;
+import com.petplate.petplate.user.domain.SocialType;
+import com.petplate.petplate.user.domain.entity.User;
+import com.petplate.petplate.user.repository.UserRepository;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -21,6 +31,8 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final RedisTemplate redisTemplate;
     private final SocialLoginTokenUtil socialLoginTokenUtil;
+    private final UserRepository userRepository;
+    private final PetRepository petRepository;
 
     @Transactional
     public void logout(final String accessToken){
@@ -62,9 +74,43 @@ public class AuthService {
         redisTemplate.opsForValue().set(key,tokenDto.getRefreshToken(),tokenDto.getRefreshTokenValidationTime(),TimeUnit.MILLISECONDS);
     }
 
+    @Transactional
+    public AuthResponseWithTokenAndRedirectUserInfo getTokenByCode(final String code){
+
+        SocialLoginProfileResponseDto socialLoginProfileResponseDto = socialLoginTokenUtil.getProfileByCode(code);
+
+        User createdMember = userRepository.findBySocialTypeAndUsername(SocialType.NAVER,socialLoginProfileResponseDto.getResponse().getEmail())
+                .orElseGet(()->{
+                    User savedUser = User.builder()
+                            .name(socialLoginProfileResponseDto.getResponse().getName())
+                            .role(Role.GENERAL)
+                            .socialType(SocialType.NAVER)
+                            .username(socialLoginProfileResponseDto.getResponse().getEmail())
+                            .activated(false)
+                            .isReceiveAd(false)
+                            .password(UUID.randomUUID()+"password")
+                            .phoneNumber(null)
+                            .build();
+
+                    return  userRepository.save(savedUser);
+
+                });
+
+        createdMember.changeSocialLoginRefreshToken(socialLoginProfileResponseDto.getRefreshToken());
 
 
+        return AuthResponseWithTokenAndRedirectUserInfo.builder()
+                .tokenDto(tokenProvider.createTokenByUserProperty(createdMember.getUsername(),createdMember.getRole().name()))
+                .userEnrollResponseDto(getBasicUserInfoForRedirect(createdMember.getUsername()))
+                .build();
 
+    }
 
+    public UserEnrollResponseDto getBasicUserInfoForRedirect(String username){
+
+        return UserEnrollResponseDto.builder()
+                .enrollPet(petRepository.existsByOwnerUsername(username))
+                .build();
+    }
 
 }

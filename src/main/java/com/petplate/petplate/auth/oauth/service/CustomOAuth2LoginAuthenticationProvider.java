@@ -90,7 +90,7 @@ public class CustomOAuth2LoginAuthenticationProvider implements AuthenticationPr
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) this.userService.loadUser(new OAuth2UserRequest(
                 loginAuthenticationToken.getClientRegistration(), accessToken, additionalParameters));
 
-        System.out.println(authorizationCodeAuthenticationToken.getRefreshToken().getTokenValue());
+      //  System.out.println(authorizationCodeAuthenticationToken.getRefreshToken().getTokenValue());
 
         socialLoginTokenUtil.saveSocialLoginRefreshToken(customOAuth2User.getUsername(), authorizationCodeAuthenticationToken.getRefreshToken().getTokenValue());
 
