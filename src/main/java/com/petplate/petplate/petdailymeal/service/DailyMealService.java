@@ -41,7 +41,7 @@ public class DailyMealService {
     @Transactional
     public DailyMeal createDailyMeal(String username, Long petId) {
         Pet pet = validUserAndFindPet(username, petId);
-        LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0, 0, 0));
+        LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0));
         LocalDateTime endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
 
         // 이미 그날의 하루식사가 생성되어 있는 경우 -> 이미 존재하는 엔티티를 반환
