@@ -98,9 +98,11 @@ public class AuthService {
 
         createdMember.changeSocialLoginRefreshToken(socialLoginProfileResponseDto.getRefreshToken());
 
+        TokenDto tokenDto = tokenProvider.createTokenByUserProperty(createdMember.getUsername(),createdMember.getRole().name());
+        saveRefreshTokenAtRedis(createdMember.getUsername(),tokenDto);
 
         return AuthResponseWithTokenAndRedirectUserInfo.builder()
-                .tokenDto(tokenProvider.createTokenByUserProperty(createdMember.getUsername(),createdMember.getRole().name()))
+                .tokenDto(tokenDto)
                 .userEnrollResponseDto(getBasicUserInfoForRedirect(createdMember.getUsername()))
                 .build();
 
