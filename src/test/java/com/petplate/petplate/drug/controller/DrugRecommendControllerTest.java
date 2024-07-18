@@ -19,6 +19,7 @@ import com.petplate.petplate.drug.dto.request.DrugFindRequestDto;
 import com.petplate.petplate.drug.dto.request.DrugSaveRequestDto;
 import com.petplate.petplate.drug.dto.response.DrugResponseDto;
 import com.petplate.petplate.drug.dto.response.RecommendDrugResponseDto;
+import com.petplate.petplate.drug.dto.response.RecommendDrugResponseDtoWithNutrientName;
 import com.petplate.petplate.drug.service.DrugCRUDService;
 import com.petplate.petplate.drug.service.DrugRecommendService;
 import java.time.LocalDate;
@@ -106,19 +107,18 @@ class DrugRecommendControllerTest {
     public void 영양제_추천_다중_영양소() throws Exception {
         //given
 
-        given(drugRecommendService.findDrugByVariousNutrientName(any(DrugFindRequestDto.class))).willReturn(List.of(
+        given(drugRecommendService.findDrugByVariousNutrientName(any(DrugFindRequestDto.class))).willReturn(List.of(RecommendDrugResponseDtoWithNutrientName.of("단백질",List.of(
                 RecommendDrugResponseDto.from(Drug.builder()
-                                .drugImgPath("img")
-                                .url("www.naver")
-                                .vendor("vendor")
-                                .englishName("english")
-                                .name("한글").build()
-                        )));
+                        .drugImgPath("img")
+                        .url("www.naver")
+                        .vendor("vendor")
+                        .englishName("english")
+                        .name("한글").build())))));
 
         //when
         final ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(DRUG_RECOMMEND+"/proper2")
-                        .content(gson.toJson(DrugFindRequestDto.builder().nutrients(List.of("탄수화물")).build()))
+                        .content(gson.toJson(DrugFindRequestDto.builder().nutrients(List.of("단백질")).build()))
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -127,7 +127,7 @@ class DrugRecommendControllerTest {
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(jsonPath("$.data[0].name").value("한글"));
+                .andExpect(jsonPath("$.data[0].nutrientName").value("단백질"));
 
 
     }
@@ -135,16 +135,19 @@ class DrugRecommendControllerTest {
     @Test
     @DisplayName("내부적 부족 영양소 바탕으로 영양제 추천 컨트롤러")
     public void 내부적_부족_영양소_기반_영양제_추천_컨트롤러() throws Exception {
+
+
         //given
 
-        given(drugRecommendService.findDrugByDeficientNutrientsName(any(),anyLong(),anyLong())).willReturn(List.of(
-                RecommendDrugResponseDto.from(Drug.builder()
-                        .drugImgPath("img")
-                        .url("www.naver")
-                        .vendor("vendor")
-                        .englishName("english")
-                        .name("한글").build()
-                )));
+        given(drugRecommendService.findDrugByDeficientNutrientsName(any(),anyLong(),anyLong())).willReturn(
+                 List.of(RecommendDrugResponseDtoWithNutrientName.of("단백질",List.of(
+                        RecommendDrugResponseDto.from(Drug.builder()
+                                .drugImgPath("img")
+                                .url("www.naver")
+                                .vendor("vendor")
+                                .englishName("english")
+                                .name("한글").build()
+                        )))));
 
         //when
         final ResultActions resultActions = mockMvc.perform(
@@ -157,7 +160,7 @@ class DrugRecommendControllerTest {
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(jsonPath("$.data[0].name").value("한글"));
+                .andExpect(jsonPath("$.data[0].nutrientName").value("단백질"));
 
 
     }

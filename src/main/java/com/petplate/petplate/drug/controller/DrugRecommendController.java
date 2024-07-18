@@ -5,6 +5,7 @@ import com.petplate.petplate.common.response.BaseResponse;
 import com.petplate.petplate.drug.dto.request.DrugFindRequestDto;
 import com.petplate.petplate.drug.dto.response.DrugResponseDto;
 import com.petplate.petplate.drug.dto.response.RecommendDrugResponseDto;
+import com.petplate.petplate.drug.dto.response.RecommendDrugResponseDtoWithNutrientName;
 import com.petplate.petplate.drug.service.DrugRecommendService;
 import com.petplate.petplate.pet.dto.response.ReadPetNutrientResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,7 +59,7 @@ public class DrugRecommendController {
             @ApiResponse(responseCode = "200",description = "다중 영양소 기반 추천 영양제 성공"),
             @ApiResponse(responseCode = "404",description = "영양소 이름을 잘못 입력했을 때")
     })
-    public ResponseEntity<BaseResponse<List<RecommendDrugResponseDto>>> showProperNutrients2(@RequestBody @Valid
+    public ResponseEntity<BaseResponse<List<RecommendDrugResponseDtoWithNutrientName>>> showProperNutrients2(@RequestBody @Valid
             final DrugFindRequestDto drugFindRequestDto){
 
         return ResponseEntity.ok(BaseResponse.createSuccess(drugRecommendService.findDrugByVariousNutrientName(drugFindRequestDto)));
@@ -72,7 +73,7 @@ public class DrugRecommendController {
             @ApiResponse(responseCode = "400", description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = "404", description = "잘못된 petId, 잘못된 dailyMealId"),
     })
-    public ResponseEntity<BaseResponse<List<RecommendDrugResponseDto>>> readPetDeficientNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+    public ResponseEntity<BaseResponse<List<RecommendDrugResponseDtoWithNutrientName>>> readPetDeficientNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
 
         return ResponseEntity.ok()
                 .body(BaseResponse.createSuccess(drugRecommendService.findDrugByDeficientNutrientsName(username, petId, dailyMealId)));

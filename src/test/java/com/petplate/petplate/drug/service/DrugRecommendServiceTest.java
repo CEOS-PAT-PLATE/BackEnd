@@ -10,6 +10,7 @@ import com.petplate.petplate.drug.domain.entity.DrugNutrient;
 import com.petplate.petplate.drug.dto.request.DrugFindRequestDto;
 import com.petplate.petplate.drug.dto.response.DrugResponseDto;
 import com.petplate.petplate.drug.dto.response.RecommendDrugResponseDto;
+import com.petplate.petplate.drug.dto.response.RecommendDrugResponseDtoWithNutrientName;
 import com.petplate.petplate.drug.repository.DrugNutrientRepository;
 import com.petplate.petplate.drug.repository.DrugRepository;
 import com.petplate.petplate.pet.dto.response.ReadPetNutrientResponseDto;
@@ -117,12 +118,17 @@ class DrugRecommendServiceTest {
 
         List<DrugNutrient> drugNutrientList = getTestDrugNutrientList(drug);
 
-        given(drugRepository.findUserProperDrugList(eq(List.of(StandardNutrient.CARBON_HYDRATE,StandardNutrient.PROTEIN)))
+        given(drugRepository.findUserProperDrugList(eq(List.of(StandardNutrient.CARBON_HYDRATE)))
+        ).willReturn(List.of(drug));
+
+        given(drugRepository.findUserProperDrugList(eq(List.of(StandardNutrient.PROTEIN)))
         ).willReturn(List.of(drug));
 
 
+
+
         //when
-        List<RecommendDrugResponseDto> drugResponseDtoList = drugRecommendService.findDrugByVariousNutrientName(
+        List<RecommendDrugResponseDtoWithNutrientName> drugResponseDtoList = drugRecommendService.findDrugByVariousNutrientName(
                 DrugFindRequestDto.builder()
                         .nutrients(List.of("탄수화물","단백질"))
                         .build());
@@ -131,7 +137,7 @@ class DrugRecommendServiceTest {
 
 
         //then
-        assertThat(drugResponseDtoList.size()).isEqualTo(1);
+        assertThat(drugResponseDtoList.size()).isEqualTo(2);
 
     }
 
@@ -145,32 +151,39 @@ class DrugRecommendServiceTest {
 
         given(deficientNutrientService.getDeficientNutrients(anyString(),anyLong(),eq(1L))).willReturn(
                 List.of(ReadPetNutrientResponseDto.of("탄수화물",null,null,3.5,2.6,1.3),
-                        ReadPetNutrientResponseDto.of("지방 (오메가3, 오메가6)",null,null,3.6,2.6,1.3))
+                        ReadPetNutrientResponseDto.of("지방",null,null,3.6,2.6,1.3))
         );
         given(deficientNutrientService.getDeficientNutrients(anyString(),anyLong(),eq(2L))).willReturn(
                 List.of(ReadPetNutrientResponseDto.of("비타민 A",null,null,3.5,2.6,1.3)
                       )
         );
 
-        given(drugRepository.findUserProperDrugList(eq(List.of(StandardNutrient.CARBON_HYDRATE,StandardNutrient.FAT)))
+        given(drugRepository.findUserProperDrugList(eq(List.of(StandardNutrient.CARBON_HYDRATE)))
         ).willReturn(List.of(drug));
+
+        given(drugRepository.findUserProperDrugList(eq(List.of(StandardNutrient.FAT)))
+        ).willReturn(List.of(drug));
+
         given(drugRepository.findUserProperDrugList(eq(List.of(StandardNutrient.VITAMIN_A)))
         ).willReturn(List.of());
 
 
 
         //when
-        List<RecommendDrugResponseDto> drugResponseDtoList1 = drugRecommendService.findDrugByDeficientNutrientsName("any",1L,1L);
-        List<RecommendDrugResponseDto> drugResponseDtoList2 = drugRecommendService.findDrugByDeficientNutrientsName("any",1L,2L);
-
-
+        List<RecommendDrugResponseDtoWithNutrientName> recommendDrugResponseDtoWithNutrientNames1 = drugRecommendService.findDrugByDeficientNutrientsName("any",1L,1L);
+        List<RecommendDrugResponseDtoWithNutrientName> recommendDrugResponseDtoWithNutrientNames2 = drugRecommendService.findDrugByDeficientNutrientsName("any",1L,2L);
 
 
 
 
         //then
-        assertThat(drugResponseDtoList1.size()).isEqualTo(1);
-        assertThat(drugResponseDtoList2.size()).isEqualTo(0);
+        assertThat(recommendDrugResponseDtoWithNutrientNames1.size()).isEqualTo(2);
+        assertThat(recommendDrugResponseDtoWithNutrientNames2.size()).isEqualTo(1);
+        assertThat(recommendDrugResponseDtoWithNutrientNames1.get(0).getNutrientName()).isEqualTo("탄수화물");
+        assertThat(recommendDrugResponseDtoWithNutrientNames1.get(0).getDrugResponseDtoList().size()).isEqualTo(1);
+        assertThat(recommendDrugResponseDtoWithNutrientNames1.get(1).getNutrientName()).isEqualTo("지방");
+        assertThat(recommendDrugResponseDtoWithNutrientNames2.get(0).getNutrientName()).isEqualTo("비타민 A");
+        assertThat(recommendDrugResponseDtoWithNutrientNames2.get(0).getDrugResponseDtoList().size()).isEqualTo(0);
 
     }
 

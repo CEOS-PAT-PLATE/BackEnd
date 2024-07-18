@@ -8,11 +8,13 @@ import com.petplate.petplate.drug.domain.entity.Drug;
 import com.petplate.petplate.drug.dto.request.DrugFindRequestDto;
 import com.petplate.petplate.drug.dto.response.DrugResponseDto;
 import com.petplate.petplate.drug.dto.response.RecommendDrugResponseDto;
+import com.petplate.petplate.drug.dto.response.RecommendDrugResponseDtoWithNutrientName;
 import com.petplate.petplate.drug.repository.DrugNutrientRepository;
 import com.petplate.petplate.drug.repository.DrugRepository;
 import com.petplate.petplate.pet.dto.response.ReadPetNutrientResponseDto;
 import com.petplate.petplate.pet.service.PetService;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,21 +46,29 @@ public class DrugRecommendService {
                 .collect(Collectors.toList());
     }
 
-    public List<RecommendDrugResponseDto> findDrugByVariousNutrientName(final DrugFindRequestDto drugFindRequestDto){
+    public List<RecommendDrugResponseDtoWithNutrientName> findDrugByVariousNutrientName(final DrugFindRequestDto drugFindRequestDto){
 
         List<StandardNutrient> standardNutrientList = drugFindRequestDto.getNutrients().stream().map(this::toStandardNutrient).collect(
                 Collectors.toList());
 
 
-        List<RecommendDrugResponseDto> suitableDrugResponseDtoList = drugRepository.findUserProperDrugList(standardNutrientList).stream()
-                .map(drug->RecommendDrugResponseDto.from(drug))
-                .collect(Collectors.toList());
+        List<RecommendDrugResponseDtoWithNutrientName> drugResponseDtoWithNutrientNames = new ArrayList<>();
 
-        return suitableDrugResponseDtoList;
+        standardNutrientList.forEach(standardNutrient -> {
+
+            List<RecommendDrugResponseDto> drugResponseDtoList = drugRepository.findUserProperDrugList(List.of(standardNutrient))
+                    .stream().map(RecommendDrugResponseDto::from).collect(Collectors.toList());
+
+
+            drugResponseDtoWithNutrientNames.add(RecommendDrugResponseDtoWithNutrientName.of(standardNutrient.getName(),drugResponseDtoList));
+
+        });
+
+        return drugResponseDtoWithNutrientNames;
 
     }
 
-    public List<RecommendDrugResponseDto> findDrugByDeficientNutrientsName(String username,Long petId,
+    public List<RecommendDrugResponseDtoWithNutrientName> findDrugByDeficientNutrientsName(String username,Long petId,
             Long dailyMealId){
 
         List<ReadPetNutrientResponseDto> ReadPetNutrientResponseDtoList = deficientNutrientService.getDeficientNutrients(username, petId, dailyMealId);
@@ -67,11 +77,19 @@ public class DrugRecommendService {
                 .collect(Collectors.toList());
 
 
-        List<RecommendDrugResponseDto> suitableDrugResponseDtoList = drugRepository.findUserProperDrugList(standardNutrientList).stream()
-                .map(drug->RecommendDrugResponseDto.from(drug))
-                .collect(Collectors.toList());
+        List<RecommendDrugResponseDtoWithNutrientName> drugResponseDtoWithNutrientNames = new ArrayList<>();
 
-        return suitableDrugResponseDtoList;
+                    standardNutrientList.forEach(standardNutrient -> {
+
+                        List<RecommendDrugResponseDto> drugResponseDtoList = drugRepository.findUserProperDrugList(List.of(standardNutrient))
+                                .stream().map(RecommendDrugResponseDto::from).collect(Collectors.toList());
+
+
+                        drugResponseDtoWithNutrientNames.add(RecommendDrugResponseDtoWithNutrientName.of(standardNutrient.getName(),drugResponseDtoList));
+
+        });
+
+        return drugResponseDtoWithNutrientNames;
 
     }
 
