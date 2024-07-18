@@ -38,7 +38,7 @@ public class DailyPackagedSnack {
     private Nutrient nutrient;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "daily_meal_id",nullable = false)
+    @JoinColumn(name = "daily_meal_id", nullable = false)
     private DailyMeal dailyMeal;
 
     @Builder

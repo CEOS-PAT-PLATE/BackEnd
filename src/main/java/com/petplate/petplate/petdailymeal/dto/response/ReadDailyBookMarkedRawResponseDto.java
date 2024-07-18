@@ -29,8 +29,8 @@ public class ReadDailyBookMarkedRawResponseDto {
                 = new ReadDailyBookMarkedRawResponseDto();
 
         response.dailyBookMarkedRawId = dailybookMarkedRaw.getId();
-        if(dailybookMarkedRaw.getBookMarkedRaw()!=null) {
-            response.name = dailybookMarkedRaw.getBookMarkedRaw().getRaw()!=null?dailybookMarkedRaw.getBookMarkedRaw().getRaw().getName():"존재하지 않는 음식입니다";
+        if (dailybookMarkedRaw.getBookMarkedRaw() != null) {
+            response.name = dailybookMarkedRaw.getBookMarkedRaw().getRaw() != null ? dailybookMarkedRaw.getBookMarkedRaw().getRaw().getName() : "존재하지 않는 음식입니다";
             response.description = dailybookMarkedRaw.getBookMarkedRaw().getRaw() != null ? dailybookMarkedRaw.getBookMarkedRaw().getDescription() : null;
             response.serving = dailybookMarkedRaw.getBookMarkedRaw().getServing();
             response.kcal = dailybookMarkedRaw.getBookMarkedRaw().getKcal();
@@ -42,7 +42,7 @@ public class ReadDailyBookMarkedRawResponseDto {
             response.vitaminA = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getVitamin().getVitaminA();
             response.vitaminD = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getVitamin().getVitaminD();
             response.vitaminE = dailybookMarkedRaw.getBookMarkedRaw().getNutrient().getVitamin().getVitaminE();
-        } else{
+        } else {
             response.name = "존재하지 않는 음식입니다";
         }
         return response;

@@ -64,7 +64,7 @@ public class DailyPackagedSnackController {
     })
     @DeleteMapping("pet/{petId}/packagedSnacks/{dailyPackagedSnackId}")
     public ResponseEntity<BaseResponse> deleteDailyFeed(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyPackagedSnackId") Long dailyPackagedSnackId) {
-        dailyPackagedSnackService.deleteDailyPackagedSnack(username,petId, dailyPackagedSnackId);
+        dailyPackagedSnackService.deleteDailyPackagedSnack(username, petId, dailyPackagedSnackId);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(null));

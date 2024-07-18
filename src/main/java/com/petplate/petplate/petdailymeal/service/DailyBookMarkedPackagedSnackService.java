@@ -124,6 +124,7 @@ public class DailyBookMarkedPackagedSnackService {
 
     /**
      * 특정 dailyMeal의 모든 dailyBookMarkedPackagedSnack 제거
+     *
      * @param username
      * @param petId
      * @param dailyMealId
@@ -142,7 +143,7 @@ public class DailyBookMarkedPackagedSnackService {
         List<DailyBookMarkedPackagedSnack> dailyBookMarkedPackagedSnacks = dailyBookMarkedPackagedSnackRepository.findByDailyMealId(dailyMealId);
 
         // 삭제한 만큼 dailyMeal에서 영양소 제거
-        dailyBookMarkedPackagedSnacks.forEach(dailyBookMarkedPackagedSnack->{
+        dailyBookMarkedPackagedSnacks.forEach(dailyBookMarkedPackagedSnack -> {
             dailyMeal.subtractKcal(dailyBookMarkedPackagedSnack.getBookMarkedPackagedSnack().getKcal());
             dailyMeal.subtractNutrient(dailyBookMarkedPackagedSnack.getBookMarkedPackagedSnack().getNutrient());
         });

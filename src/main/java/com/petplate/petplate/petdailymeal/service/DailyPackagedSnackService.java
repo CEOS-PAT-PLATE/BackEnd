@@ -42,6 +42,7 @@ public class DailyPackagedSnackService {
 
     /**
      * dailyPackagedSnack을 오늘 식사에 추가
+     *
      * @param username
      * @param petId
      * @param requestDto
@@ -110,6 +111,7 @@ public class DailyPackagedSnackService {
 
     /**
      * 오늘 섭취한 DailyPackagedSnack 제거
+     *
      * @param username
      * @param petId
      * @param dailyPackagedSnackId
@@ -122,7 +124,7 @@ public class DailyPackagedSnackService {
                 dailyPackagedSnackRepository.findById(dailyPackagedSnackId)
                         .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_PACKAGED_SNACK_NOT_FOUND));
 
-        if(!dailyPackagedSnack.getDailyMeal().getPet().getId().equals(pet.getId())) {
+        if (!dailyPackagedSnack.getDailyMeal().getPet().getId().equals(pet.getId())) {
             throw new BadRequestException(ErrorCode.NOT_PET_FOOD);
         }
 
@@ -136,6 +138,7 @@ public class DailyPackagedSnackService {
 
     /**
      * 특정 dailyMeal의 모든 dailyPackagedSnack 제거
+     *
      * @param username
      * @param petId
      * @param dailyMealId
@@ -154,7 +157,7 @@ public class DailyPackagedSnackService {
         List<DailyPackagedSnack> dailyPackagedSnacks = dailyPackagedSnackRepository.findByDailyMealId(dailyMealId);
 
         // 삭제한 만큼 dailyMeal에서 영양소 제거
-        dailyPackagedSnacks.forEach(dailyPackagedSnack ->{
+        dailyPackagedSnacks.forEach(dailyPackagedSnack -> {
             dailyMeal.subtractKcal(dailyPackagedSnack.getKcal());
             dailyMeal.subtractNutrient(dailyPackagedSnack.getNutrient());
         });

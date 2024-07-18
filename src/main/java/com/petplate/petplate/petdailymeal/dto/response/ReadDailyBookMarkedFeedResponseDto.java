@@ -38,7 +38,7 @@ public class ReadDailyBookMarkedFeedResponseDto {
             response.vitaminA = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getVitamin().getVitaminA();
             response.vitaminD = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getVitamin().getVitaminD();
             response.vitaminE = dailybookMarkedFeed.getBookMarkedFeed().getNutrient().getVitamin().getVitaminE();
-        } else{
+        } else {
             response.name = "존재하지 않는 음식입니다";
         }
 
