@@ -105,7 +105,7 @@ public class BookMarkedRawController {
                 .body(BaseResponse.createSuccess(id));
     }
 
-    @Operation(summary = "오늘 식사내역에서 섭취한 즐겨찾기 자연식 제거", description = "오늘 식사내역에 있는 즐겨찾기 자연식의 섭취 내역을 제거합니다")
+    @Operation(summary = "식사내역에서 섭취한 즐겨찾기 자연식 제거", description = "식사내역에서 즐겨찾기 자연식의 섭취 내역을 제거합니다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "즐겨찾기 자연식 성공적 제거"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
@@ -117,5 +117,19 @@ public class BookMarkedRawController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(null));
+    }
+
+    @Operation(summary = "특정 식사에서 섭취한 즐겨찾기 자연식들 제거")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = OK, description = "즐겨찾기 자연식 성공적 제거"),
+            @ApiResponse(responseCode = BAD_REQUEST, description = "본인의 반려견이 아닌 경우, 해당 반려견의 식사 내역이 아닌 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId")
+    })
+    @DeleteMapping("/pet/{petId}/dailyMeals/{dailyMealId}/bookmark/raws")
+    public ResponseEntity<BaseResponse> deleteDailyBookMarkedRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyMealId") Long dailyMealId) {
+        dailyBookMarkedRawService.deleteDailyBookMarkedRaws(username, petId, dailyMealId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccessWithNoContent());
     }
 }
