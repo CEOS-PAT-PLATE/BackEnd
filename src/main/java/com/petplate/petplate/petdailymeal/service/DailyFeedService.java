@@ -9,6 +9,7 @@ import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyFeed;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
+import com.petplate.petplate.petdailymeal.domain.entity.DailyPackagedSnack;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyFeedRequestDto;
 import com.petplate.petplate.petdailymeal.dto.response.ReadDailyFeedResponseDto;
 import com.petplate.petplate.petdailymeal.repository.DailyFeedRepository;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -131,6 +133,35 @@ public class DailyFeedService {
         dailyMeal.subtractNutrient(dailyFeed.getNutrient());
 
         dailyFeedRepository.deleteById(dailyFeedId);
+    }
+
+    /**
+     * 특정 dailyMeal의 모든 dailyFeed 제거
+     * @param username
+     * @param petId
+     * @param dailyMealId
+     */
+    @Transactional
+    public void deleteDailyFeeds(String username, Long petId, Long dailyMealId) {
+        Pet pet = validUserAndFindPet(username, petId);
+
+        DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId).orElseThrow(() ->
+                new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
+        );
+        if (!dailyMeal.getPet().getId().equals(pet.getId())) {
+            throw new BadRequestException(ErrorCode.NOT_PET_DAILY_MEAL);
+        }
+
+        List<DailyFeed> dailyFeeds = dailyFeedRepository.findByDailyMealId(dailyMealId);
+
+        // 삭제한 만큼 dailyMeal에서 영양소 제거
+        dailyFeeds.forEach(dailyFeed ->{
+            dailyMeal.subtractKcal(dailyFeed.getKcal());
+            dailyMeal.subtractNutrient(dailyFeed.getNutrient());
+        });
+
+        // 전체 삭제
+        dailyFeedRepository.deleteAll(dailyFeeds);
     }
 
     private DailyMeal getDailyMealToday(Pet pet) {

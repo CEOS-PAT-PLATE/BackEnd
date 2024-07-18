@@ -103,7 +103,7 @@ import java.util.List;
                 .body(BaseResponse.createSuccess(dailyRawId));
     }
 
-    @Operation(summary = "최근 2일 동안 섭취한 자연식들 조회")
+    @Operation(summary = "가장 최근 두번의 식사에서 섭취한 자연식들 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "섭취 자연식 성공적 조회"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "유저의 반려견이 아님"),
@@ -144,5 +144,19 @@ import java.util.List;
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(null));
+    }
+
+    @Operation(summary = "특정 식사에서 섭취한 자연식들 제거")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = OK, description = "자연식 성공적 제거"),
+            @ApiResponse(responseCode = BAD_REQUEST, description = "본인의 반려견이 아닌 경우, 해당 반려견의 식사 내역이 아닌 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId")
+    })
+    @DeleteMapping("/pet/{petId}/dailyMeals/{dailyMealId}/raws")
+    public ResponseEntity<BaseResponse> deleteDailyRaws(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyMealId") Long dailyMealId) {
+        dailyRawService.deleteDailyRaws(username, petId, dailyMealId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccessWithNoContent());
     }
 }

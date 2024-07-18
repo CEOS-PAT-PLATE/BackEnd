@@ -8,6 +8,7 @@ import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyBookMarkedPackagedSnack;
+import com.petplate.petplate.petdailymeal.domain.entity.DailyBookMarkedRaw;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyBookMarkedPackagedSnackRequestDto;
 import com.petplate.petplate.petdailymeal.dto.response.ReadDailyBookMarkedPackagedSnackResponseDto;
@@ -119,6 +120,35 @@ public class DailyBookMarkedPackagedSnackService {
         dailyMeal.subtractNutrient(bookMarkedPackagedSnack.getNutrient());
 
         dailyBookMarkedPackagedSnackRepository.delete(dailyBookMarkedPackagedSnack);
+    }
+
+    /**
+     * 특정 dailyMeal의 모든 dailyBookMarkedPackagedSnack 제거
+     * @param username
+     * @param petId
+     * @param dailyMealId
+     */
+    @Transactional
+    public void deleteDailyBookMarkedPackagedSnacks(String username, Long petId, Long dailyMealId) {
+        Pet pet = validUserAndFindPet(username, petId);
+
+        DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId).orElseThrow(() ->
+                new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
+        );
+        if (!dailyMeal.getPet().getId().equals(pet.getId())) {
+            throw new BadRequestException(ErrorCode.NOT_PET_DAILY_MEAL);
+        }
+
+        List<DailyBookMarkedPackagedSnack> dailyBookMarkedPackagedSnacks = dailyBookMarkedPackagedSnackRepository.findByDailyMealId(dailyMealId);
+
+        // 삭제한 만큼 dailyMeal에서 영양소 제거
+        dailyBookMarkedPackagedSnacks.forEach(dailyBookMarkedPackagedSnack->{
+            dailyMeal.subtractKcal(dailyBookMarkedPackagedSnack.getBookMarkedPackagedSnack().getKcal());
+            dailyMeal.subtractNutrient(dailyBookMarkedPackagedSnack.getBookMarkedPackagedSnack().getNutrient());
+        });
+
+        // 전체 삭제
+        dailyBookMarkedPackagedSnackRepository.deleteAll(dailyBookMarkedPackagedSnacks);
     }
 
     private Pet validUserAndFindPet(String username, Long petId) {

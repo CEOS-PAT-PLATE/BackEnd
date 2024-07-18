@@ -55,7 +55,7 @@ public class DailyFeedController {
                 .body(BaseResponse.createSuccess(dailyFeed));
     }
 
-     @Operation(summary = "섭취 사료 제거")
+    @Operation(summary = "섭취 사료 제거")
     @ApiResponses(value = {
             @ApiResponse(responseCode = OK, description = "사료 성공적 제거"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "본인의 반려견이 아닌 경우, 해당 반려견의 사료가 아닌 경우"),
@@ -63,9 +63,23 @@ public class DailyFeedController {
     })
     @DeleteMapping("pet/{petId}/feeds/{dailyFeedId}")
     public ResponseEntity<BaseResponse> deleteDailyFeed(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyFeedId") Long dailyFeedId) {
-        dailyFeedService.deleteDailyFeed(username,petId, dailyFeedId);
+        dailyFeedService.deleteDailyFeed(username, petId, dailyFeedId);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.createSuccess(null));
+                .body(BaseResponse.createSuccessWithNoContent());
+    }
+
+    @Operation(summary = "특정 식사에서 섭취한 사료들 제거")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = OK, description = "사료 성공적 제거"),
+            @ApiResponse(responseCode = BAD_REQUEST, description = "본인의 반려견이 아닌 경우, 해당 반려견의 식사 내역이 아닌 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId")
+    })
+    @DeleteMapping("/pet/{petId}/dailyMeals/{dailyMealId}/feeds")
+    public ResponseEntity<BaseResponse> deleteDailyFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyMealId") Long dailyMealId) {
+        dailyFeedService.deleteDailyFeeds(username, petId, dailyMealId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccessWithNoContent());
     }
 }
