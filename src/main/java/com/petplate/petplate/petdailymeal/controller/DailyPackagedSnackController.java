@@ -69,4 +69,18 @@ public class DailyPackagedSnackController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(null));
     }
+
+    @Operation(summary = "특정 식사에서 섭취한 포장 간식들 제거")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = OK, description = "포장 간식 성공적 제거"),
+            @ApiResponse(responseCode = BAD_REQUEST, description = "본인의 반려견이 아닌 경우, 해당 반려견의 식사 내역이 아닌 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId")
+    })
+    @DeleteMapping("/pet/{petId}/dailyMeals/{dailyMealId}/packagedSnacks")
+    public ResponseEntity<BaseResponse> deleteDailyPackagedSnacks(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyMealId") Long dailyMealId) {
+        dailyPackagedSnackService.deleteDailyPackagedSnacks(username, petId, dailyMealId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccessWithNoContent());
+    }
 }

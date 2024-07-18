@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -131,6 +132,35 @@ public class DailyPackagedSnackService {
         dailyMeal.subtractNutrient(dailyPackagedSnack.getNutrient());
 
         dailyPackagedSnackRepository.deleteById(dailyPackagedSnackId);
+    }
+
+    /**
+     * 특정 dailyMeal의 모든 dailyPackagedSnack 제거
+     * @param username
+     * @param petId
+     * @param dailyMealId
+     */
+    @Transactional
+    public void deleteDailyPackagedSnacks(String username, Long petId, Long dailyMealId) {
+        Pet pet = validUserAndFindPet(username, petId);
+
+        DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId).orElseThrow(() ->
+                new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
+        );
+        if (!dailyMeal.getPet().getId().equals(pet.getId())) {
+            throw new BadRequestException(ErrorCode.NOT_PET_DAILY_MEAL);
+        }
+
+        List<DailyPackagedSnack> dailyPackagedSnacks = dailyPackagedSnackRepository.findByDailyMealId(dailyMealId);
+
+        // 삭제한 만큼 dailyMeal에서 영양소 제거
+        dailyPackagedSnacks.forEach(dailyPackagedSnack ->{
+            dailyMeal.subtractKcal(dailyPackagedSnack.getKcal());
+            dailyMeal.subtractNutrient(dailyPackagedSnack.getNutrient());
+        });
+
+        // 전체 삭제
+        dailyPackagedSnackRepository.deleteAll(dailyPackagedSnacks);
     }
 
     private DailyMeal getDailyMealToday(Pet pet) {
