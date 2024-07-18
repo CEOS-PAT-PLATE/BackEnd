@@ -18,7 +18,7 @@ public enum ErrorCode {
     NOT_USER_BOOK_MARK("유저의 즐겨찾기가 아닙니다."),
     NOT_PET_FOOD("해당 반려견의 음식이 아닙니다"),
     NOT_PET_DAILY_MEAL("해당 반려견의 식사 내역이 아닙니다"),
-    NUTRIENT_ARLEADY_EXIST("이미 영양소가 존재합니다."),
+    NUTRIENT_ALREADY_EXIST("이미 오늘의 영양소 분석을 진행하였습니다"),
     ACCESS_TOKEN_NOT_MATCH("엑세스 토큰을 확인해주세요"),
     REFRESH_TOKEN_NOT_MATCH("리프레시 토큰을 확인해주세요"),
     NO_MEMBERSHIP_EXISTS("멤버쉽이 존재하지 않습니다."),
