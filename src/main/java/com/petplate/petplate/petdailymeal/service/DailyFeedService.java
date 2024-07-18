@@ -43,6 +43,7 @@ public class DailyFeedService {
 
     /**
      * dailyFeed를 오늘 식사에 추가
+     *
      * @param username
      * @param petId
      * @param requestDto
@@ -111,6 +112,7 @@ public class DailyFeedService {
 
     /**
      * 오늘 섭취한 DailyFeed 제거
+     *
      * @param username
      * @param petId
      * @param dailyFeedId
@@ -123,7 +125,7 @@ public class DailyFeedService {
                 dailyFeedRepository.findById(dailyFeedId)
                         .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_FEED_NOT_FOUND));
 
-        if(!dailyFeed.getDailyMeal().getPet().getId().equals(pet.getId())) {
+        if (!dailyFeed.getDailyMeal().getPet().getId().equals(pet.getId())) {
             throw new BadRequestException(ErrorCode.NOT_PET_FOOD);
         }
 
@@ -137,6 +139,7 @@ public class DailyFeedService {
 
     /**
      * 특정 dailyMeal의 모든 dailyFeed 제거
+     *
      * @param username
      * @param petId
      * @param dailyMealId
@@ -155,7 +158,7 @@ public class DailyFeedService {
         List<DailyFeed> dailyFeeds = dailyFeedRepository.findByDailyMealId(dailyMealId);
 
         // 삭제한 만큼 dailyMeal에서 영양소 제거
-        dailyFeeds.forEach(dailyFeed ->{
+        dailyFeeds.forEach(dailyFeed -> {
             dailyMeal.subtractKcal(dailyFeed.getKcal());
             dailyMeal.subtractNutrient(dailyFeed.getNutrient());
         });

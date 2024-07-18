@@ -18,7 +18,7 @@ public class DailyRaw {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "daily_meal_id",nullable = false)
+    @JoinColumn(name = "daily_meal_id", nullable = false)
     private DailyMeal dailyMeal;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -48,11 +48,11 @@ public class DailyRaw {
         Vitamin vitamin = new Vitamin(rawNutrient.getVitamin().getVitaminA() * ratio,
                 rawNutrient.getVitamin().getVitaminD() * ratio,
                 rawNutrient.getVitamin().getVitaminE() * ratio);
-        this.nutrient = new Nutrient(rawNutrient.getCarbonHydrate()*ratio,
-                rawNutrient.getProtein()*ratio,
-                rawNutrient.getFat()*ratio,
-                rawNutrient.getCalcium()*ratio,
-                rawNutrient.getPhosphorus()*ratio,
+        this.nutrient = new Nutrient(rawNutrient.getCarbonHydrate() * ratio,
+                rawNutrient.getProtein() * ratio,
+                rawNutrient.getFat() * ratio,
+                rawNutrient.getCalcium() * ratio,
+                rawNutrient.getPhosphorus() * ratio,
                 vitamin);
     }
 

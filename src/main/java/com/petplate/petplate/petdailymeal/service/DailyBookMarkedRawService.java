@@ -40,6 +40,7 @@ public class DailyBookMarkedRawService {
 
     /**
      * 오늘 식사에 즐겨찾기 자연식을 추가함
+     *
      * @param username
      * @param petId
      * @param requestDto
@@ -72,7 +73,7 @@ public class DailyBookMarkedRawService {
         Pet pet = validUserAndFindPet(username, petId);
 
         DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId)
-                .orElseThrow(()->new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
 
         if (!Objects.equals(dailyMeal.getPet().getId(), pet.getId())) {
             throw new BadRequestException(ErrorCode.BAD_REQUEST);
@@ -118,6 +119,7 @@ public class DailyBookMarkedRawService {
 
     /**
      * 특정 dailyMeal의 모든 dailyBookMarkedRaw 제거
+     *
      * @param username
      * @param petId
      * @param dailyMealId
@@ -136,7 +138,7 @@ public class DailyBookMarkedRawService {
         List<DailyBookMarkedRaw> dailyBookMarkedRaws = dailyBookMarkedRawRepository.findByDailyMealId(dailyMealId);
 
         // 삭제한 만큼 dailyMeal에서 영양소 제거
-        dailyBookMarkedRaws.forEach(dailyBookMarkedRaw->{
+        dailyBookMarkedRaws.forEach(dailyBookMarkedRaw -> {
             dailyMeal.subtractKcal(dailyBookMarkedRaw.getBookMarkedRaw().getKcal());
             dailyMeal.subtractNutrient(dailyBookMarkedRaw.getBookMarkedRaw().getNutrient());
         });

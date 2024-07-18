@@ -169,6 +169,7 @@ public class DailyRawService {
 
     /**
      * 특정 dailyMeal의 모든 dailyRaw 제거
+     *
      * @param username
      * @param petId
      * @param dailyMealId
@@ -187,7 +188,7 @@ public class DailyRawService {
         List<DailyRaw> dailyRaws = dailyRawRepository.findByDailyMealId(dailyMealId);
 
         // 삭제한 만큼 dailyMeal에서 영양소 제거
-        dailyRaws.forEach(dailyRaw->{
+        dailyRaws.forEach(dailyRaw -> {
             dailyMeal.subtractKcal(dailyRaw.getKcal());
             dailyMeal.subtractNutrient(dailyRaw.getNutrient());
         });

@@ -10,6 +10,8 @@ import java.util.Optional;
 
 public interface DailyMealRepository extends JpaRepository<DailyMeal, Long> {
     Optional<DailyMeal> findByPetIdAndCreatedAtBetween(Long petId, LocalDateTime start, LocalDateTime end);
+
     boolean existsByPetIdAndCreatedAtBetween(Long petId, LocalDateTime start, LocalDateTime end);
+
     List<DailyMeal> findByPetIdOrderByCreatedAtDesc(Long petId);
 }

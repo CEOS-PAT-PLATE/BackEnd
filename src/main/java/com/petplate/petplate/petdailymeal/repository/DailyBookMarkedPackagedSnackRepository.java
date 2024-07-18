@@ -10,5 +10,6 @@ import java.util.OptionalInt;
 
 public interface DailyBookMarkedPackagedSnackRepository extends JpaRepository<DailyBookMarkedPackagedSnack, Long> {
     List<DailyBookMarkedPackagedSnack> findByDailyMealId(Long dailyMealId);
+
     List<DailyBookMarkedPackagedSnack> findByBookMarkedPackagedSnackId(Long bookMarkedSnackId);
 }

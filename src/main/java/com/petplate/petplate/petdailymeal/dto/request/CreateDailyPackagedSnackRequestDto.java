@@ -22,28 +22,36 @@ public class CreateDailyPackagedSnackRequestDto {
     @Min(0)
     @NotNull(message = "칼로리를 입력해주세요")
     private double kcal;
-    @Min(0) @Max(100)
+    @Min(0)
+    @Max(100)
     @NotNull(message = "탄수화물(%)을 입력해주세요")
     private double carbonHydratePercent;
-    @Min(0) @Max(100)
+    @Min(0)
+    @Max(100)
     @NotNull(message = "단백질(%)을 입력해주세요")
     private double proteinPercent;
-    @Min(0) @Max(100)
+    @Min(0)
+    @Max(100)
     @NotNull(message = "지방(%)을 입력해주세요")
     private double fatPercent;
-    @Min(0) @Max(100)
+    @Min(0)
+    @Max(100)
     @NotNull(message = "칼슘(%)을 입력해주세요")
     private double calciumPercent;
-    @Min(0) @Max(100)
+    @Min(0)
+    @Max(100)
     @NotNull(message = "인(%)을 입력해주세요")
     private double phosphorusPercent;
-    @Min(0) @Max(100)
+    @Min(0)
+    @Max(100)
     @NotNull(message = "비타민 A(%)을 입력해주세요")
     private double vitaminAPercent;
-    @Min(0) @Max(100)
+    @Min(0)
+    @Max(100)
     @NotNull(message = "비타민 D(%)을 입력해주세요")
     private double vitaminDPercent;
-    @Min(0) @Max(100)
+    @Min(0)
+    @Max(100)
     @NotNull(message = "비타민 E(%)을 입력해주세요")
     private double vitaminEPercent;
 }

@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface DailyBookMarkedRawRepository extends JpaRepository<DailyBookMarkedRaw, Long> {
     List<DailyBookMarkedRaw> findByBookMarkedRawId(Long bookMarkedRawId);
+
     List<DailyBookMarkedRaw> findByDailyMealId(Long dailyMealId);
 }

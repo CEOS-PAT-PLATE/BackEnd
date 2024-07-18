@@ -38,7 +38,7 @@ public class ReadDailyBookMarkedPackagedSnackResponseDto {
             response.vitaminA = dailyBookMarkedPackagedSnack.getBookMarkedPackagedSnack().getNutrient().getVitamin().getVitaminA();
             response.vitaminD = dailyBookMarkedPackagedSnack.getBookMarkedPackagedSnack().getNutrient().getVitamin().getVitaminD();
             response.vitaminE = dailyBookMarkedPackagedSnack.getBookMarkedPackagedSnack().getNutrient().getVitamin().getVitaminE();
-        } else{
+        } else {
             response.name = "존재하지 않는 음식입니다";
         }
 

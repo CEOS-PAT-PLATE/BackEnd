@@ -29,12 +29,12 @@ public class DailyBookMarkedPackagedSnack {
     private BookMarkedPackagedSnack bookMarkedPackagedSnack;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "daily_meal_id",nullable = false)
+    @JoinColumn(name = "daily_meal_id", nullable = false)
     private DailyMeal dailyMeal;
 
     @Builder
     public DailyBookMarkedPackagedSnack(BookMarkedPackagedSnack bookMarkedPackagedSnack,
-            DailyMeal dailyMeal) {
+                                        DailyMeal dailyMeal) {
         this.bookMarkedPackagedSnack = bookMarkedPackagedSnack;
         this.dailyMeal = dailyMeal;
     }

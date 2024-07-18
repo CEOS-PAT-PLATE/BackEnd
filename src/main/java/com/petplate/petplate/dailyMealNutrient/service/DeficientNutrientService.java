@@ -37,8 +37,8 @@ public class DeficientNutrientService {
         DailyMeal dailyMealToday = findDailyMealToday(petId);
 
         // 이미 부족 영양소 생성했던 경우 생성 안함
-        if (deficientNutrientRepository.existsByDailyMealId(dailyMealToday.getId())){
-            throw new BadRequestException(ErrorCode.NUTRIENT_ARLEADY_EXIST);
+        if (deficientNutrientRepository.existsByDailyMealId(dailyMealToday.getId())) {
+            throw new BadRequestException(ErrorCode.NUTRIENT_ALREADY_EXIST);
         }
 
         double weight = pet.getWeight();
@@ -48,6 +48,9 @@ public class DeficientNutrientService {
         StandardNutrient.findDeficientNutrients(dailyMealToday.getNutrient(), weight, activity, neutering)
                 .forEach(nutrient -> {
                     double amount = dailyMealToday.getNutrient().getNutrientAmountByName(nutrient.getName());
+                    if (amount < 0.01) {
+                        amount = 0;
+                    }
                     double properAmount = StandardNutrient.calculateProperNutrientAmount(nutrient, weight);
                     double maximumAmount = StandardNutrient.calculateProperMaximumNutrientAmount(nutrient, weight);
 
