@@ -167,6 +167,35 @@ public class DailyRawService {
         dailyRawRepository.delete(dailyRaw);
     }
 
+    /**
+     * 특정 dailyMeal의 모든 dailyRaw 제거
+     * @param username
+     * @param petId
+     * @param dailyMealId
+     */
+    @Transactional
+    public void deleteDailyRaws(String username, Long petId, Long dailyMealId) {
+        Pet pet = validUserAndFindPet(username, petId);
+
+        DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId).orElseThrow(() ->
+                new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
+        );
+        if (!dailyMeal.getPet().getId().equals(pet.getId())) {
+            throw new BadRequestException(ErrorCode.NOT_PET_DAILY_MEAL);
+        }
+
+        List<DailyRaw> dailyRaws = dailyRawRepository.findByDailyMealId(dailyMealId);
+
+        // 삭제한 만큼 dailyMeal에서 영양소 제거
+        dailyRaws.forEach(dailyRaw->{
+            dailyMeal.subtractKcal(dailyRaw.getKcal());
+            dailyMeal.subtractNutrient(dailyRaw.getNutrient());
+        });
+
+        // 전체 삭제
+        dailyRawRepository.deleteAll(dailyRaws);
+    }
+
     private DailyMeal getDailyMealToday(Pet pet) {
         LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0));
         LocalDateTime endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
