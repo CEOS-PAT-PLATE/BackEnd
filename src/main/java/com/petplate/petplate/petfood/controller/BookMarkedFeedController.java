@@ -3,7 +3,6 @@ package com.petplate.petplate.petfood.controller;
 import com.petplate.petplate.auth.interfaces.CurrentUserUsername;
 import com.petplate.petplate.common.response.BaseResponse;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyBookMarkedFeedRequestDto;
-import com.petplate.petplate.petdailymeal.dto.request.CreateDailyBookMarkedRawRequestDto;
 import com.petplate.petplate.petdailymeal.service.DailyBookMarkedFeedService;
 import com.petplate.petplate.petfood.dto.request.CreateBookMarkedFeedRequestDto;
 import com.petplate.petplate.petfood.dto.response.ReadBookMarkedFeedResponseDto;
@@ -114,5 +113,19 @@ public class BookMarkedFeedController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.createSuccess(null));
+    }
+
+    @Operation(summary = "특정 식사에서 섭취한 즐겨찾기 사료들 제거")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = OK, description = "즐겨찾기 사료 성공적 제거"),
+            @ApiResponse(responseCode = BAD_REQUEST, description = "본인의 반려견이 아닌 경우, 해당 반려견의 식사 내역이 아닌 경우"),
+            @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 잘못된 dailyMealId")
+    })
+    @DeleteMapping("/pet/{petId}/dailyMeals/{dailyMealId}/bookmark/feeds")
+    public ResponseEntity<BaseResponse> deleteDailyBookMarkedFeeds(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyMealId") Long dailyMealId) {
+        dailyBookMarkedFeedService.deleteDailyBookMarkedFeeds(username, petId, dailyMealId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.createSuccessWithNoContent());
     }
 }

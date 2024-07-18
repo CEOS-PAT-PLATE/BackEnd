@@ -8,18 +8,13 @@ import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyBookMarkedFeed;
-import com.petplate.petplate.petdailymeal.domain.entity.DailyBookMarkedRaw;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.dto.request.CreateDailyBookMarkedFeedRequestDto;
 import com.petplate.petplate.petdailymeal.dto.response.ReadDailyBookMarkedFeedResponseDto;
-import com.petplate.petplate.petdailymeal.dto.response.ReadDailyBookMarkedRawResponseDto;
 import com.petplate.petplate.petdailymeal.repository.DailyBookMarkedFeedRepository;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import com.petplate.petplate.petfood.domain.entity.BookMarkedFeed;
-import com.petplate.petplate.petfood.domain.entity.BookMarkedRaw;
-import com.petplate.petplate.petfood.dto.request.CreateBookMarkedFeedRequestDto;
 import com.petplate.petplate.petfood.repository.BookMarkedFeedRepository;
-import com.petplate.petplate.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -124,6 +119,35 @@ public class DailyBookMarkedFeedService {
         dailyMeal.subtractNutrient(bookMarkedFeed.getNutrient());
 
         dailyBookMarkedFeedRepository.delete(dailyBookMarkedFeed);
+    }
+
+    /**
+     * 특정 dailyMeal의 모든 dailyBookMarkedFeed 제거
+     * @param username
+     * @param petId
+     * @param dailyMealId
+     */
+    @Transactional
+    public void deleteDailyBookMarkedFeeds(String username, Long petId, Long dailyMealId) {
+        Pet pet = validUserAndFindPet(username, petId);
+
+        DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId).orElseThrow(() ->
+                new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
+        );
+        if (!dailyMeal.getPet().getId().equals(pet.getId())) {
+            throw new BadRequestException(ErrorCode.NOT_PET_DAILY_MEAL);
+        }
+
+        List<DailyBookMarkedFeed> dailyBookMarkedFeeds = dailyBookMarkedFeedRepository.findByDailyMealId(dailyMealId);
+
+        // 삭제한 만큼 dailyMeal에서 영양소 제거
+        dailyBookMarkedFeeds.forEach(dailyBookMarkedFeed ->{
+            dailyMeal.subtractKcal(dailyBookMarkedFeed.getBookMarkedFeed().getKcal());
+            dailyMeal.subtractNutrient(dailyBookMarkedFeed.getBookMarkedFeed().getNutrient());
+        });
+
+        // 전체 삭제
+        dailyBookMarkedFeedRepository.deleteAll(dailyBookMarkedFeeds);
     }
 
     private Pet validUserAndFindPet(String username, Long petId) {
