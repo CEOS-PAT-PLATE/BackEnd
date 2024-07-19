@@ -1,5 +1,6 @@
 package com.petplate.petplate.dailyMealNutrient.domain.entity;
 
+import com.petplate.petplate.common.Inheritance.BaseEntity;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @ToString(exclude = {"dailyMeal"})
-public class DeficientNutrient {
+public class DeficientNutrient extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "deficient_nutrient_id")

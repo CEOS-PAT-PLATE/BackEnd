@@ -1,13 +1,14 @@
 package com.petplate.petplate.petdailymeal.domain.entity;
 
 import com.petplate.petplate.common.EmbeddedType.Nutrient;
+import com.petplate.petplate.common.Inheritance.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class DailyFeed {
+public class DailyFeed extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

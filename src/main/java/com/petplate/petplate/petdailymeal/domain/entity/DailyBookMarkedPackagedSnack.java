@@ -1,5 +1,6 @@
 package com.petplate.petplate.petdailymeal.domain.entity;
 
+import com.petplate.petplate.common.Inheritance.BaseEntity;
 import com.petplate.petplate.petfood.domain.entity.BookMarkedPackagedSnack;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class DailyBookMarkedPackagedSnack {
+public class DailyBookMarkedPackagedSnack extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
