@@ -2,6 +2,7 @@ package com.petplate.petplate.petdailymeal.domain.entity;
 
 import com.petplate.petplate.common.EmbeddedType.Nutrient;
 import com.petplate.petplate.common.EmbeddedType.Vitamin;
+import com.petplate.petplate.common.Inheritance.BaseEntity;
 import com.petplate.petplate.petfood.domain.entity.Raw;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,8 +10,8 @@ import lombok.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@ToString
-public class DailyRaw {
+@ToString(exclude = {"raw", "dailyMeal"})
+public class DailyRaw extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
