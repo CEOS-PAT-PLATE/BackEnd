@@ -4,29 +4,22 @@ package com.petplate.petplate.auth.oauth.service;
 
 
 import com.petplate.petplate.auth.jwt.TokenProvider;
-import com.petplate.petplate.auth.oauth.CustomOAuth2User;
+import com.petplate.petplate.auth.oauth.Dto.SocialInfoWithTokenDto;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginCheckDeleteResponseDto;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginCheckValidateAccessToken;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginProfileResponseDto;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginReIssueResponseDto;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginTokenRequestResponseDto;
-import com.petplate.petplate.auth.oauth.Dto.TokenDto;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
 import com.petplate.petplate.common.response.error.exception.InternalServerErrorException;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
-import com.petplate.petplate.user.domain.Role;
-import com.petplate.petplate.user.domain.SocialType;
 import com.petplate.petplate.user.domain.entity.User;
 import com.petplate.petplate.user.repository.UserRepository;
-import java.util.Collections;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.h2.engine.UserBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -50,6 +43,8 @@ public class SocialLoginTokenUtil {
 
     private final TokenProvider tokenProvider;
 
+    private final RedisTemplate redisTemplate;
+
     private final static String success= "success";
 
 
@@ -62,13 +57,21 @@ public class SocialLoginTokenUtil {
     }
 
 
-    public SocialLoginProfileResponseDto getProfileByCode(final String code){
+    public SocialInfoWithTokenDto getSocialInfoAndTokenByCode(final String code){
 
         SocialLoginTokenRequestResponseDto socialLoginTokenRequestResponseDto = getSocialLoginTokenIssue(code);
 
-        return  getSocialLoginProfile(socialLoginTokenRequestResponseDto.getAccess_token(),
+        SocialLoginProfileResponseDto socialLoginProfileResponseDto = getSocialLoginProfile(socialLoginTokenRequestResponseDto.getAccess_token(),
                 socialLoginTokenRequestResponseDto.getRefresh_token());
 
+        SocialInfoWithTokenDto socialInfoWithTokenDto = SocialInfoWithTokenDto.builder()
+                .socialLoginAccessToken(socialLoginTokenRequestResponseDto.getAccess_token())
+                .socialLoginRefreshToken(socialLoginTokenRequestResponseDto.getRefresh_token())
+                .email(socialLoginProfileResponseDto.getResponse().getEmail())
+                .name(socialLoginProfileResponseDto.getResponse().getName())
+                .build();
+
+        return socialInfoWithTokenDto;
     }
 
 
@@ -108,7 +111,6 @@ public class SocialLoginTokenUtil {
             throw new InternalServerErrorException(ErrorCode.SOCIAL_LOGIN_CODE);
         }
 
-        socialLoginProfileResponseDto.initWithRefreshToken(refreshToken);
 
         return socialLoginProfileResponseDto;
     }
