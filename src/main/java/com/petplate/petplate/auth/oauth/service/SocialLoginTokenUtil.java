@@ -47,6 +47,8 @@ public class SocialLoginTokenUtil {
 
     private final static String success= "success";
 
+    private final static String SOCIAL_LOGIN_AT_POST_FIX= ":SOCIAL_AT";
+
 
     @Transactional
     public void saveSocialLoginRefreshToken(String username,String socialLoginRefreshToken){
@@ -56,13 +58,17 @@ public class SocialLoginTokenUtil {
         findUser.changeSocialLoginRefreshToken(socialLoginRefreshToken);
     }
 
+    public void saveSocialLoginAccessToken(String username,String socialLoginAccessToken){
+        redisTemplate.opsForValue().set(username+SOCIAL_LOGIN_AT_POST_FIX,socialLoginAccessToken);
+    }
+
 
     public SocialInfoWithTokenDto getSocialInfoAndTokenByCode(final String code){
 
         SocialLoginTokenRequestResponseDto socialLoginTokenRequestResponseDto = getSocialLoginTokenIssue(code);
 
-        SocialLoginProfileResponseDto socialLoginProfileResponseDto = getSocialLoginProfile(socialLoginTokenRequestResponseDto.getAccess_token(),
-                socialLoginTokenRequestResponseDto.getRefresh_token());
+        SocialLoginProfileResponseDto socialLoginProfileResponseDto =
+                getSocialLoginProfile(socialLoginTokenRequestResponseDto.getAccess_token());
 
         SocialInfoWithTokenDto socialInfoWithTokenDto = SocialInfoWithTokenDto.builder()
                 .socialLoginAccessToken(socialLoginTokenRequestResponseDto.getAccess_token())
@@ -98,7 +104,7 @@ public class SocialLoginTokenUtil {
         return socialLoginTokenRequestResponseDto;
     }
 
-    private SocialLoginProfileResponseDto getSocialLoginProfile(String accessToken,String refreshToken) {
+    private SocialLoginProfileResponseDto getSocialLoginProfile(String accessToken) {
 
         SocialLoginProfileResponseDto socialLoginProfileResponseDto =  webClient.get()
                 .uri("https://openapi.naver.com/v1/nid/me")
@@ -120,13 +126,27 @@ public class SocialLoginTokenUtil {
 
         User findUser = findUserByUsername(username);
 
-        SocialLoginReIssueResponseDto tokenReIssueResponseDto = getNewSocialLoginAccessToken(
-                findUser.getSocialLoginRefreshToken());
+        String oldAccessToken = (String) redisTemplate.opsForValue().get(username+SOCIAL_LOGIN_AT_POST_FIX);
 
-        checkValidateAccessToken(tokenReIssueResponseDto.getAccess_token());
+        String sendToken = null;
+
+        if(oldAccessToken !=null && checkValidateAccessToken(oldAccessToken)){
+            sendToken = oldAccessToken;
+        }
+        else{
+            SocialLoginReIssueResponseDto tokenReIssueResponseDto = getNewSocialLoginAccessToken(
+                    findUser.getSocialLoginRefreshToken());
+
+            if(!checkValidateAccessToken(tokenReIssueResponseDto.getAccess_token())){
+                throw new InternalServerErrorException(ErrorCode.SOCIAL_REFRESH_TOKEN_ERROR);
+            }
+
+            sendToken = tokenReIssueResponseDto.getAccess_token();
+        }
+
 
         SocialLoginCheckDeleteResponseDto socialLoginCheckDeleteResponseDto = webClient.get()
-                .uri("?grant_type=delete&client_id="+naverClientId+"&client_secret="+naverClientSecret+"&access_token="+tokenReIssueResponseDto.getAccess_token())
+                .uri("?grant_type=delete&client_id="+naverClientId+"&client_secret="+naverClientSecret+"&access_token="+sendToken)
                 .retrieve()
                 .bodyToMono(SocialLoginCheckDeleteResponseDto.class)
                 .block();
@@ -140,21 +160,23 @@ public class SocialLoginTokenUtil {
 
     }
 
-    private void checkValidateAccessToken(String newAccessToken){
+    private boolean checkValidateAccessToken(String accessToken){
 
         SocialLoginCheckValidateAccessToken socialLoginCheckValidateAccessToken = webClient.get()
                 .uri("https://openapi.naver.com/v1/nid/verify")
-                .header("Authorization","Bearer "+newAccessToken)
+                .header("Authorization","Bearer "+accessToken)
                 .retrieve()
                 .bodyToMono(SocialLoginCheckValidateAccessToken.class)
                 .block();
 
-        log.info("new AccessToken {}",newAccessToken);
+        log.info("new AccessToken {}",accessToken);
         log.info("check message {}",socialLoginCheckValidateAccessToken.getMessage());
 
         if(!socialLoginCheckValidateAccessToken.getMessage().equals(success)){
-            throw new InternalServerErrorException(ErrorCode.SOCIAL_REFRESH_TOKEN_ERROR);
+            return false;
         }
+
+        return true;
 
     }
 
