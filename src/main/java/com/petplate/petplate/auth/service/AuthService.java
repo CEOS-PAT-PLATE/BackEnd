@@ -98,7 +98,7 @@ public class AuthService {
                 });
 
         createdMember.changeSocialLoginRefreshToken(socialInfoWithTokenDto.getSocialLoginRefreshToken());
-        redisTemplate.opsForValue().set(createdMember.getUsername()+"SOCIAL_AT",socialInfoWithTokenDto.getSocialLoginAccessToken());
+        socialLoginTokenUtil.saveSocialLoginAccessToken(createdMember.getUsername(),socialInfoWithTokenDto.getSocialLoginAccessToken());
 
         TokenDto tokenDto = tokenProvider.createTokenByUserProperty(createdMember.getUsername(),createdMember.getRole().name());
         saveRefreshTokenAtRedis(createdMember.getUsername(),tokenDto);
