@@ -28,10 +28,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private static final String NAVER="naver";
 
-    private final RedisTemplate<String,String> redisTemplate;
     private static final String SOCIAL_LOGIN_ACCESS_TOKEN = "SocialLoginAccessToken";
 
     private static final Long SOCIAL_LOGIN_ACCESS_TOKEN_EXPIRE = 3600L;
+
+    private final SocialLoginTokenUtil socialLoginTokenUtil;
 
 
 
@@ -65,6 +66,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String socialLoginAccessToken = userRequest.getAccessToken().getTokenValue();
         System.out.println("socialLoginAccessToken"+socialLoginAccessToken);
         */
+
+        socialLoginTokenUtil.saveSocialLoginAccessToken(createdMember.getUsername(), userRequest.getAccessToken().getTokenValue());
 
 
 
