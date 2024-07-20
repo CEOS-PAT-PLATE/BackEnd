@@ -41,7 +41,7 @@ public class BookMarkedRawService {
 
         // 즐겨찾기에 새로 추가하고자 하는 것과 식품, 섭취량에 대해 동일한 내용이 존재한다면 오류가 발생함
         bookMarkedRawRepository.findByUserIdAndRawIdAndServing(user.getId(), requestDto.getRawId(), requestDto.getServing()).ifPresent(bookMarkedRaw -> {
-                throw new BadRequestException(ErrorCode.BOOK_MARK_ALREADY_EXISTS);
+            throw new BadRequestException(ErrorCode.BOOK_MARK_ALREADY_EXISTS);
         });
 
         BookMarkedRaw bookMarkedRaw = BookMarkedRaw.builder().raw(raw)
