@@ -87,4 +87,9 @@ public class DailyMeal extends BaseEntity {
     public void subtractKcal(double kcal) {
         this.kcal = this.kcal - kcal;
     }
+
+    // 영양소 업데이트
+    public void updateNutrient(Nutrient nutrient) {
+        this.nutrient = nutrient;
+    }
 }

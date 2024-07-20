@@ -25,6 +25,7 @@ import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import com.petplate.petplate.user.domain.entity.User;
 import com.petplate.petplate.user.repository.UserMemberShipRepository;
 import com.petplate.petplate.user.repository.UserRepository;
+import com.petplate.petplate.utils.PetUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -103,7 +104,7 @@ public class PetService {
      * @return id, name, age, weight, activity, isNeutering, profileImgPath
      */
     public ReadPetResponseDto getPet(String username, Long petId) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
 
         ReadPetResponseDto response = ReadPetResponseDto.from(pet);
 
@@ -129,7 +130,7 @@ public class PetService {
 
     @Transactional
     public void updatePetInfo(String username, Long petId, @Valid ModifyPetInfoRequestDto requestDto) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
 
         pet.updateInfo(requestDto.getName(), requestDto.getAge(), requestDto.getWeight(), requestDto.getActivity(), requestDto.getNeutering());
     }
@@ -143,7 +144,7 @@ public class PetService {
      */
     @Transactional
     public void updateProfileImg(String username, Long petId, @Valid ModifyPetProfileImgRequestDto requestDto) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
         ProfileImg profileImg = ProfileImg.getProfileImg(requestDto.getName());
 
         if (profileImg == null) {
@@ -155,7 +156,7 @@ public class PetService {
 
     @Transactional
     public void createPetAllergy(String username, Long petId, @Valid CreatePetAllergyRequestDto request) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
         Allergy allergy = allergyRepository.findById(request.getAllergyId())
                 .orElseThrow(() -> new BadRequestException(ErrorCode.BAD_REQUEST));
 
@@ -175,7 +176,7 @@ public class PetService {
 
     @Transactional
     public void createPetDisease(String username, Long petId, @Valid CreatePetDiseaseRequestDto request) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
         Disease disease = diseaseRepository.findById(request.getDiseaseId())
                 .orElseThrow(() -> new BadRequestException(ErrorCode.BAD_REQUEST));
 
@@ -204,7 +205,7 @@ public class PetService {
     public List<ReadPetAllergyResponseDto> getAllAllergies(String username, Long petId) {
         List<ReadPetAllergyResponseDto> responses = new ArrayList<>();
 
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
         petAllergyRepository.findByPetId(petId).forEach(petAllergy -> {
             responses.add(ReadPetAllergyResponseDto.from(petAllergy.getAllergy()));
         });
@@ -222,7 +223,7 @@ public class PetService {
     public List<ReadPetDiseaseResponseDto> getAllDiseases(String username, Long petId) {
         List<ReadPetDiseaseResponseDto> responses = new ArrayList<>();
 
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
         petDiseaseRepository.findByPetId(petId).forEach(petDisease -> {
             responses.add(ReadPetDiseaseResponseDto.from(petDisease.getDisease()));
         });
@@ -238,7 +239,7 @@ public class PetService {
      * @return 영양소의 이름, 단위, 설명, 섭취량, 최소 적정 섭취량, 최대 적정 섭취량, 최소 섭취량 대비 섭취량 비율, 최소 섭취량 대비 최대 섭취량 비율
      */
     public List<ReadPetNutrientResponseDto> getPetNutrientToday(String username, Long petId) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
         DailyMeal dailyMeal = findDailyMealToday(petId);
 
         Nutrient nutrient = dailyMeal.getNutrient();
@@ -260,7 +261,7 @@ public class PetService {
      * @return 영양소의 이름, 단위, 설명, 섭취량, 최소 적정 섭취량, 최대 적정 섭취량, 최소 섭취량 대비 섭취량 비율, 최소 섭취량 대비 최대 섭취량 비율
      */
     public List<ReadPetNutrientResponseDto> getPetNutrient(String username, Long petId, LocalDate date) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
 
         DailyMeal dailyMeal = findDailyMeal(petId, date);
 
@@ -363,7 +364,7 @@ public class PetService {
      * @return 영양소 비율
      */
     public List<ReadPetNutrientRatioResponseDto> getPetNutrientRatioToday(String username, Long petId) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
         DailyMeal dailyMeal = findDailyMealToday(petId);
 
         List<ReadPetNutrientRatioResponseDto> responses = new ArrayList<>();
@@ -389,7 +390,7 @@ public class PetService {
      * @return 영양소 비율
      */
     public List<ReadPetNutrientRatioResponseDto> getPetNutrientRatio(String username, Long petId, LocalDate date) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
 
         DailyMeal dailyMeal = findDailyMeal(petId, date);
 
@@ -415,7 +416,7 @@ public class PetService {
      * @return 영양소의 이름, 단위, 설명, 섭취량, 적정 섭취량, 최대 섭취 허용량, 적정 섭취량 대비 최대 섭취 허용량 비율, 최소 섭취량 대비 섭취량 비율, 최대 섭취량 대비 섭취량 비율
      */
     public List<ReadPetNutrientResponseDto> getSufficientNutrient(String username, Long petId, LocalDate date) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
         double weight = pet.getWeight();
         Activity activity = pet.getActivity();
         Neutering neutering = pet.getNeutering();
@@ -450,7 +451,7 @@ public class PetService {
      * @return 영양소의 이름, 단위, 설명, 섭취량, 적정 섭취량, 최대 섭취 허용량, 적정 섭취량 대비 최대 섭취 허용량 비율, 최소 섭취량 대비 섭취량 비율, 최대 섭취량 대비 섭취량 비율
      */
     public List<ReadPetNutrientResponseDto> getDeficientNutrient(String username, Long petId, LocalDate date) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
         double weight = pet.getWeight();
         Activity activity = pet.getActivity();
         Neutering neutering = pet.getNeutering();
@@ -484,7 +485,7 @@ public class PetService {
      * @return 섭취 칼로리
      */
     public ReadPetKcalResponseDto getPetKcalToday(String username, Long petId) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
 
         DailyMeal dailyMeal = findDailyMealToday(petId);
 
@@ -500,7 +501,7 @@ public class PetService {
      * @return 섭취 칼로리
      */
     public ReadPetKcalResponseDto getPetKcal(String username, Long petId, LocalDate date) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
 
         DailyMeal dailyMeal = findDailyMeal(petId, date);
 
@@ -515,7 +516,7 @@ public class PetService {
      * @return 적정 칼로리
      */
     public ReadPetKcalResponseDto getPetProperKcal(String username, Long petId) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
 
         double properKcal = pet.getProperKcal();
 
@@ -530,7 +531,7 @@ public class PetService {
      * @return 적정 섭취 칼로리 대비 섭취 칼로리 비율
      */
     public ReadPetKcalRatioResponseDto getPetKcalRatioToday(String username, Long petId) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
         DailyMeal dailyMeal = findDailyMealToday(petId);
 
         double properKcal = pet.getProperKcal();
@@ -549,7 +550,7 @@ public class PetService {
      * @return 적정 섭취 칼로리 대비 섭취 칼로리 비율
      */
     public ReadPetKcalRatioResponseDto getPetKcalRatio(String username, Long petId, LocalDate date) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
         DailyMeal dailyMeal = findDailyMeal(petId, date);
 
         double properKcal = pet.getProperKcal();
