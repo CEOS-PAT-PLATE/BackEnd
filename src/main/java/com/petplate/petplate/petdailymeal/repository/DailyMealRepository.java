@@ -1,6 +1,7 @@
 package com.petplate.petplate.petdailymeal.repository;
 
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
@@ -14,4 +15,7 @@ public interface DailyMealRepository extends JpaRepository<DailyMeal, Long> {
     boolean existsByPetIdAndCreatedAtBetween(Long petId, LocalDateTime start, LocalDateTime end);
 
     List<DailyMeal> findByPetIdOrderByCreatedAtDesc(Long petId);
+
+    @EntityGraph(attributePaths = {"pet"})
+    Optional<DailyMeal> findById(Long dailyMealId);
 }
