@@ -13,6 +13,7 @@ import com.petplate.petplate.pet.dto.response.ReadPetNutrientResponseDto;
 import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
+import com.petplate.petplate.utils.PetUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,7 @@ public class SufficientNutrientService {
 
     @Transactional
     public void createSufficientNutrientsToday(String username, Long petId) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
         DailyMeal dailyMealToday = findDailyMealToday(petId);
 
         // 이미 과잉 영양소 생성했던 경우 생성 안함
@@ -75,7 +76,7 @@ public class SufficientNutrientService {
     }
 
     public List<ReadPetNutrientResponseDto> getSufficientNutrients(String username, Long petId, Long dailyMealId) {
-        validUserAndFindPet(username, petId);
+        PetUtil.validUserAndFindPet(username, petId, petRepository);
         if (!dailyMealRepository.existsById(dailyMealId)) {
             throw new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND);
         }
@@ -107,18 +108,6 @@ public class SufficientNutrientService {
         DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
         return dailyMeal;
-    }
-
-    private Pet validUserAndFindPet(String username, Long petId) {
-        Pet pet = petRepository.findById(petId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
-
-        // 조회하려는 반려견이 본인의 반려견이 아닌 경우 예외 발생
-        if (!pet.getOwner().getUsername().equals(username)) {
-            throw new BadRequestException(ErrorCode.NOT_USER_PET);
-        }
-
-        return pet;
     }
 }
 

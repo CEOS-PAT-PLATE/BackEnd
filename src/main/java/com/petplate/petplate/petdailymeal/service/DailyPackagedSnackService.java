@@ -13,13 +13,12 @@ import com.petplate.petplate.petdailymeal.dto.request.CreateDailyPackagedSnackRe
 import com.petplate.petplate.petdailymeal.dto.response.ReadDailyPackagedSnackResponseDto;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import com.petplate.petplate.petdailymeal.repository.DailyPackagedSnackRepository;
+import com.petplate.petplate.utils.DailyMealUtil;
+import com.petplate.petplate.utils.PetUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -50,8 +49,8 @@ public class DailyPackagedSnackService {
      */
     @Transactional
     public Long createDailyPackagedSnack(String username, Long petId, CreateDailyPackagedSnackRequestDto requestDto) {
-        Pet pet = validUserAndFindPet(username, petId);
-        DailyMeal dailyMealToday = getDailyMealToday(pet);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
+        DailyMeal dailyMealToday = DailyMealUtil.getDailyMealToday(pet,dailyMealRepository);
 
         double serving = requestDto.getServing();
 
@@ -97,7 +96,7 @@ public class DailyPackagedSnackService {
      * @return
      */
     public ReadDailyPackagedSnackResponseDto getDailyPackagedSnack(String username, Long petId, Long dailyPackagedSnackId) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
 
         DailyPackagedSnack dailyPackagedSnack = dailyPackagedSnackRepository.findById(dailyPackagedSnackId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_PACKAGED_SNACK_NOT_FOUND));
@@ -118,7 +117,7 @@ public class DailyPackagedSnackService {
      */
     @Transactional
     public void deleteDailyPackagedSnack(String username, Long petId, Long dailyPackagedSnackId) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
 
         DailyPackagedSnack dailyPackagedSnack =
                 dailyPackagedSnackRepository.findById(dailyPackagedSnackId)
@@ -133,6 +132,9 @@ public class DailyPackagedSnackService {
         dailyMeal.subtractKcal(dailyPackagedSnack.getKcal());
         dailyMeal.subtractNutrient(dailyPackagedSnack.getNutrient());
 
+        // 영양소 보정
+        DailyMealUtil.compensatingNutrient(dailyMeal);
+
         dailyPackagedSnackRepository.deleteById(dailyPackagedSnackId);
     }
 
@@ -145,7 +147,7 @@ public class DailyPackagedSnackService {
      */
     @Transactional
     public void deleteDailyPackagedSnacks(String username, Long petId, Long dailyMealId) {
-        Pet pet = validUserAndFindPet(username, petId);
+        Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
 
         DailyMeal dailyMeal = dailyMealRepository.findById(dailyMealId).orElseThrow(() ->
                 new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND)
@@ -162,43 +164,10 @@ public class DailyPackagedSnackService {
             dailyMeal.subtractNutrient(dailyPackagedSnack.getNutrient());
         });
 
+        // 영양소 보정
+        DailyMealUtil.compensatingNutrient(dailyMeal);
+
         // 전체 삭제
         dailyPackagedSnackRepository.deleteAll(dailyPackagedSnacks);
-    }
-
-    private DailyMeal getDailyMealToday(Pet pet) {
-        LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0));
-        LocalDateTime endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
-
-        return dailyMealRepository.findByPetIdAndCreatedAtBetween(pet.getId(), startDatetime, endDatetime)
-                .orElseGet(() -> dailyMealRepository.save(  // 없다면 새로운 엔티티를 생성한 후 반환
-                        new DailyMeal(
-                                Nutrient.builder()
-                                        .carbonHydrate(0)
-                                        .protein(0)
-                                        .fat(0)
-                                        .phosphorus(0)
-                                        .calcium(0)
-                                        .vitamin(Vitamin.builder()
-                                                .vitaminA(0)
-                                                .vitaminD(0)
-                                                .vitaminE(0)
-                                                .build())
-                                        .build(),
-                                pet,
-                                0)
-                ));
-    }
-
-    private Pet validUserAndFindPet(String username, Long petId) {
-        Pet pet = petRepository.findById(petId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.PET_NOT_FOUND));
-
-        // 조회하려는 반려견이 본인의 반려견이 아닌 경우 예외 발생
-        if (!pet.getOwner().getUsername().equals(username)) {
-            throw new BadRequestException(ErrorCode.NOT_USER_PET);
-        }
-
-        return pet;
     }
 }
