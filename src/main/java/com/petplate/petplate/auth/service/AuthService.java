@@ -3,6 +3,7 @@ package com.petplate.petplate.auth.service;
 import com.petplate.petplate.auth.dto.response.AuthResponseWithTokenAndRedirectUserInfo;
 import com.petplate.petplate.auth.dto.response.UserEnrollResponseDto;
 import com.petplate.petplate.auth.jwt.TokenProvider;
+import com.petplate.petplate.auth.oauth.Dto.SocialInfoWithTokenDto;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginProfileResponseDto;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginTokenRequestResponseDto;
 import com.petplate.petplate.auth.oauth.Dto.TokenDto;
@@ -77,15 +78,15 @@ public class AuthService {
     @Transactional
     public AuthResponseWithTokenAndRedirectUserInfo getTokenByCode(final String code){
 
-        SocialLoginProfileResponseDto socialLoginProfileResponseDto = socialLoginTokenUtil.getProfileByCode(code);
+        SocialInfoWithTokenDto socialInfoWithTokenDto = socialLoginTokenUtil.getSocialInfoAndTokenByCode(code);
 
-        User createdMember = userRepository.findBySocialTypeAndUsername(SocialType.NAVER,socialLoginProfileResponseDto.getResponse().getEmail())
+        User createdMember = userRepository.findBySocialTypeAndUsername(SocialType.NAVER,socialInfoWithTokenDto.getEmail())
                 .orElseGet(()->{
                     User savedUser = User.builder()
-                            .name(socialLoginProfileResponseDto.getResponse().getName())
+                            .name(socialInfoWithTokenDto.getName())
                             .role(Role.GENERAL)
                             .socialType(SocialType.NAVER)
-                            .username(socialLoginProfileResponseDto.getResponse().getEmail())
+                            .username(socialInfoWithTokenDto.getEmail())
                             .activated(false)
                             .isReceiveAd(false)
                             .password(UUID.randomUUID()+"password")
@@ -96,7 +97,8 @@ public class AuthService {
 
                 });
 
-        createdMember.changeSocialLoginRefreshToken(socialLoginProfileResponseDto.getRefreshToken());
+        createdMember.changeSocialLoginRefreshToken(socialInfoWithTokenDto.getSocialLoginRefreshToken());
+        socialLoginTokenUtil.saveSocialLoginAccessToken(createdMember.getUsername(),socialInfoWithTokenDto.getSocialLoginAccessToken());
 
         TokenDto tokenDto = tokenProvider.createTokenByUserProperty(createdMember.getUsername(),createdMember.getRole().name());
         saveRefreshTokenAtRedis(createdMember.getUsername(),tokenDto);

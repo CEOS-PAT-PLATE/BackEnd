@@ -4,29 +4,22 @@ package com.petplate.petplate.auth.oauth.service;
 
 
 import com.petplate.petplate.auth.jwt.TokenProvider;
-import com.petplate.petplate.auth.oauth.CustomOAuth2User;
+import com.petplate.petplate.auth.oauth.Dto.SocialInfoWithTokenDto;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginCheckDeleteResponseDto;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginCheckValidateAccessToken;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginProfileResponseDto;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginReIssueResponseDto;
 import com.petplate.petplate.auth.oauth.Dto.SocialLoginTokenRequestResponseDto;
-import com.petplate.petplate.auth.oauth.Dto.TokenDto;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
 import com.petplate.petplate.common.response.error.exception.InternalServerErrorException;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
-import com.petplate.petplate.user.domain.Role;
-import com.petplate.petplate.user.domain.SocialType;
 import com.petplate.petplate.user.domain.entity.User;
 import com.petplate.petplate.user.repository.UserRepository;
-import java.util.Collections;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.h2.engine.UserBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -50,7 +43,11 @@ public class SocialLoginTokenUtil {
 
     private final TokenProvider tokenProvider;
 
+    private final RedisTemplate redisTemplate;
+
     private final static String success= "success";
+
+    private final static String SOCIAL_LOGIN_AT_POST_FIX= ":SOCIAL_AT";
 
 
     @Transactional
@@ -61,14 +58,26 @@ public class SocialLoginTokenUtil {
         findUser.changeSocialLoginRefreshToken(socialLoginRefreshToken);
     }
 
+    public void saveSocialLoginAccessToken(String username,String socialLoginAccessToken){
+        redisTemplate.opsForValue().set(username+SOCIAL_LOGIN_AT_POST_FIX,socialLoginAccessToken);
+    }
 
-    public SocialLoginProfileResponseDto getProfileByCode(final String code){
+
+    public SocialInfoWithTokenDto getSocialInfoAndTokenByCode(final String code){
 
         SocialLoginTokenRequestResponseDto socialLoginTokenRequestResponseDto = getSocialLoginTokenIssue(code);
 
-        return  getSocialLoginProfile(socialLoginTokenRequestResponseDto.getAccess_token(),
-                socialLoginTokenRequestResponseDto.getRefresh_token());
+        SocialLoginProfileResponseDto socialLoginProfileResponseDto =
+                getSocialLoginProfile(socialLoginTokenRequestResponseDto.getAccess_token());
 
+        SocialInfoWithTokenDto socialInfoWithTokenDto = SocialInfoWithTokenDto.builder()
+                .socialLoginAccessToken(socialLoginTokenRequestResponseDto.getAccess_token())
+                .socialLoginRefreshToken(socialLoginTokenRequestResponseDto.getRefresh_token())
+                .email(socialLoginProfileResponseDto.getResponse().getEmail())
+                .name(socialLoginProfileResponseDto.getResponse().getName())
+                .build();
+
+        return socialInfoWithTokenDto;
     }
 
 
@@ -95,7 +104,7 @@ public class SocialLoginTokenUtil {
         return socialLoginTokenRequestResponseDto;
     }
 
-    private SocialLoginProfileResponseDto getSocialLoginProfile(String accessToken,String refreshToken) {
+    private SocialLoginProfileResponseDto getSocialLoginProfile(String accessToken) {
 
         SocialLoginProfileResponseDto socialLoginProfileResponseDto =  webClient.get()
                 .uri("https://openapi.naver.com/v1/nid/me")
@@ -108,7 +117,6 @@ public class SocialLoginTokenUtil {
             throw new InternalServerErrorException(ErrorCode.SOCIAL_LOGIN_CODE);
         }
 
-        socialLoginProfileResponseDto.initWithRefreshToken(refreshToken);
 
         return socialLoginProfileResponseDto;
     }
@@ -118,13 +126,27 @@ public class SocialLoginTokenUtil {
 
         User findUser = findUserByUsername(username);
 
-        SocialLoginReIssueResponseDto tokenReIssueResponseDto = getNewSocialLoginAccessToken(
-                findUser.getSocialLoginRefreshToken());
+        String oldAccessToken = (String) redisTemplate.opsForValue().get(username+SOCIAL_LOGIN_AT_POST_FIX);
 
-        checkValidateAccessToken(tokenReIssueResponseDto.getAccess_token());
+        String sendToken = null;
+
+        if(oldAccessToken !=null && checkValidateAccessToken(oldAccessToken)){
+            sendToken = oldAccessToken;
+        }
+        else{
+            SocialLoginReIssueResponseDto tokenReIssueResponseDto = getNewSocialLoginAccessToken(
+                    findUser.getSocialLoginRefreshToken());
+
+            if(!checkValidateAccessToken(tokenReIssueResponseDto.getAccess_token())){
+                throw new InternalServerErrorException(ErrorCode.SOCIAL_REFRESH_TOKEN_ERROR);
+            }
+
+            sendToken = tokenReIssueResponseDto.getAccess_token();
+        }
+
 
         SocialLoginCheckDeleteResponseDto socialLoginCheckDeleteResponseDto = webClient.get()
-                .uri("?grant_type=delete&client_id="+naverClientId+"&client_secret="+naverClientSecret+"&access_token="+tokenReIssueResponseDto.getAccess_token())
+                .uri("?grant_type=delete&client_id="+naverClientId+"&client_secret="+naverClientSecret+"&access_token="+sendToken)
                 .retrieve()
                 .bodyToMono(SocialLoginCheckDeleteResponseDto.class)
                 .block();
@@ -138,21 +160,23 @@ public class SocialLoginTokenUtil {
 
     }
 
-    private void checkValidateAccessToken(String newAccessToken){
+    private boolean checkValidateAccessToken(String accessToken){
 
         SocialLoginCheckValidateAccessToken socialLoginCheckValidateAccessToken = webClient.get()
                 .uri("https://openapi.naver.com/v1/nid/verify")
-                .header("Authorization","Bearer "+newAccessToken)
+                .header("Authorization","Bearer "+accessToken)
                 .retrieve()
                 .bodyToMono(SocialLoginCheckValidateAccessToken.class)
                 .block();
 
-        log.info("new AccessToken {}",newAccessToken);
+        log.info("new AccessToken {}",accessToken);
         log.info("check message {}",socialLoginCheckValidateAccessToken.getMessage());
 
         if(!socialLoginCheckValidateAccessToken.getMessage().equals(success)){
-            throw new InternalServerErrorException(ErrorCode.SOCIAL_REFRESH_TOKEN_ERROR);
+            return false;
         }
+
+        return true;
 
     }
 

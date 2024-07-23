@@ -12,11 +12,7 @@ public class SocialLoginProfileResponseDto {
     private String message;
     private NaverResponse response;
 
-    private String refreshToken;
 
-    public void initWithRefreshToken(String refreshToken){
-        this.refreshToken = refreshToken;
-    }
 
 
 }
