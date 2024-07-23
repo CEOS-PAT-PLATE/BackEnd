@@ -16,6 +16,5 @@ public interface DailyMealRepository extends JpaRepository<DailyMeal, Long> {
 
     List<DailyMeal> findByPetIdOrderByCreatedAtDesc(Long petId);
 
-    @EntityGraph(attributePaths = {"pet"})
     Optional<DailyMeal> findById(Long dailyMealId);
 }
