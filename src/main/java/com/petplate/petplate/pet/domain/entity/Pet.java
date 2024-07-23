@@ -36,6 +36,7 @@ public class Pet extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Neutering neutering;
 
+    @Enumerated(EnumType.STRING)
     private ProfileImg profileImg;
 
     @ManyToOne(fetch = FetchType.LAZY)
