@@ -16,9 +16,9 @@ public class DeficientNutrient extends BaseEntity {
     @Column(name = "deficient_nutrient_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(length = 20, nullable = false)
     private String name;  // 이름
-    @Column(nullable = false)
+    @Column(length = 10, nullable = false)
     private String unit;  // 영양소 단위
     @Column(nullable = false)
     private String description;  // 영양소 설명
