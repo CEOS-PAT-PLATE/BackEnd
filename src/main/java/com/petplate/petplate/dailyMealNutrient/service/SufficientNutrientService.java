@@ -91,15 +91,24 @@ public class SufficientNutrientService {
 
         List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
         sufficientNutrientRepository.findByDailyMealId(dailyMealId).forEach(sufficientNutrient -> {
-            responses.add(
-                    ReadPetNutrientResponseDto.of(
-                            sufficientNutrient.getName(),
-                            sufficientNutrient.getUnit(),
-                            sufficientNutrient.getDescription(),
-                            sufficientNutrient.getAmount(),
-                            sufficientNutrient.getProperAmount(),
-                            sufficientNutrient.getMaximumAmount())
-            );
+
+            /**
+             * 중복 조회 로직
+             */
+            boolean isDuplicate = responses.stream()
+                    .anyMatch(response -> response.getName().equals(sufficientNutrient.getName()));
+
+            if (!isDuplicate) {
+                responses.add(
+                        ReadPetNutrientResponseDto.of(
+                                sufficientNutrient.getName(),
+                                sufficientNutrient.getUnit(),
+                                sufficientNutrient.getDescription(),
+                                sufficientNutrient.getAmount(),
+                                sufficientNutrient.getProperAmount(),
+                                sufficientNutrient.getMaximumAmount())
+                );
+            }
         });
 
         return responses;

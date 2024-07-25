@@ -92,15 +92,24 @@ public class ProperNutrientService {
 
         List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
         properNutrientRepository.findByDailyMealId(dailyMealId).forEach(properNutrient -> {
-            responses.add(
-                    ReadPetNutrientResponseDto.of(
-                            properNutrient.getName(),
-                            properNutrient.getUnit(),
-                            properNutrient.getDescription(),
-                            properNutrient.getAmount(),
-                            properNutrient.getProperAmount(),
-                            properNutrient.getMaximumAmount())
-            );
+
+            /**
+             * 중복 조회 로직
+             */
+            boolean isDuplicate = responses.stream()
+                    .anyMatch(response -> response.getName().equals(properNutrient.getName()));
+
+            if (!isDuplicate) {
+                responses.add(
+                        ReadPetNutrientResponseDto.of(
+                                properNutrient.getName(),
+                                properNutrient.getUnit(),
+                                properNutrient.getDescription(),
+                                properNutrient.getAmount(),
+                                properNutrient.getProperAmount(),
+                                properNutrient.getMaximumAmount())
+                );
+            }
         });
 
         return responses;
