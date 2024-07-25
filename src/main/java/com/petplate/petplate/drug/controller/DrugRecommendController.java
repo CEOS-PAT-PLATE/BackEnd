@@ -73,7 +73,7 @@ public class DrugRecommendController {
             @ApiResponse(responseCode = "400", description = "조회하려는 반려견이 본인의 반려견이 아닌 경우"),
             @ApiResponse(responseCode = "404", description = "잘못된 petId, 잘못된 dailyMealId"),
     })
-    public ResponseEntity<BaseResponse<List<RecommendDrugResponseDtoWithNutrientName>>> readPetDeficientNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable Long dailyMealId) {
+    public ResponseEntity<BaseResponse<List<RecommendDrugResponseDtoWithNutrientName>>> readPetDeficientNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId, @PathVariable("dailyMealId") Long dailyMealId) {
 
         return ResponseEntity.ok()
                 .body(BaseResponse.createSuccess(drugRecommendService.findDrugByDeficientNutrientsName(username, petId, dailyMealId)));
