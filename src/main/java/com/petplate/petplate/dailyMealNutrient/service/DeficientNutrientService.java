@@ -13,6 +13,7 @@ import com.petplate.petplate.pet.dto.response.ReadPetNutrientResponseDto;
 import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
+import com.petplate.petplate.utils.DailyMealUtil;
 import com.petplate.petplate.utils.PetUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,12 +36,10 @@ public class DeficientNutrientService {
     @Transactional
     public void createDeficientNutrientToday(String username, Long petId) {
         Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
-        DailyMeal dailyMealToday = findDailyMealToday(petId);
+        DailyMeal dailyMealToday = DailyMealUtil.findDailyMealToday(petId, dailyMealRepository);
 
-        // 이미 부족 영양소 생성했던 경우 생성 안함
-        if (deficientNutrientRepository.existsByDailyMealId(dailyMealToday.getId())) {
-            throw new BadRequestException(ErrorCode.NUTRIENT_ALREADY_EXIST);
-        }
+        // 이미 부족 영양소 생성했던 경우 기존의 부족 영양소들을 제거하고 새로 분석함
+        deficientNutrientRepository.deleteAll(deficientNutrientRepository.findByDailyMealId(dailyMealToday.getId()));
 
         double weight = pet.getWeight();
         Activity activity = pet.getActivity();
@@ -96,18 +95,5 @@ public class DeficientNutrientService {
         });
 
         return responses;
-    }
-
-    private DailyMeal findDailyMealToday(Long petId) {
-        return findDailyMeal(petId, LocalDate.now());
-    }
-
-    private DailyMeal findDailyMeal(Long petId, LocalDate date) {
-        LocalDateTime startDatetime = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
-        LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
-
-        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
-        return dailyMeal;
     }
 }
