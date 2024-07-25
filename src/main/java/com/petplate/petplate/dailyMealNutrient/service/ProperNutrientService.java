@@ -3,6 +3,7 @@ package com.petplate.petplate.dailyMealNutrient.service;
 import com.petplate.petplate.common.EmbeddedType.StandardNutrient;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
+import com.petplate.petplate.common.response.error.exception.InternalServerErrorException;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.dailyMealNutrient.domain.entity.ProperNutrient;
 import com.petplate.petplate.dailyMealNutrient.repository.ProperNutrientRepository;
@@ -16,6 +17,7 @@ import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import com.petplate.petplate.utils.DailyMealUtil;
 import com.petplate.petplate.utils.PetUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +30,12 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class ProperNutrientService {
     private final DailyMealRepository dailyMealRepository;
     private final ProperNutrientRepository properNutrientRepository;
     private final PetRepository petRepository;
-    
+
     @Transactional
     public void createProperNutrientsToday(String username, Long petId) {
         Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
@@ -68,6 +71,12 @@ public class ProperNutrientService {
                             .maximumAmount(maximumAmount)
                             .dailyMeal(dailyMealToday)
                             .build();
+
+                    // 알 수 없는 이유로 적정 영양소가 중복 저장되는 경우
+                    if (properNutrientRepository.existsByDailyMealIdAndName(dailyMealToday.getId(), nutrient.getName())) {
+                        log.error("중복 저장 적정영양소: " + nutrient.getName() + " dailyMealId: " + dailyMealToday.getId());
+                        throw new InternalServerErrorException(ErrorCode.SAME_PROPER_NUTRIENT_EXISTS);
+                    }
 
                     properNutrientRepository.save(properNutrient);
                 });
