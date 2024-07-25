@@ -36,6 +36,7 @@ public class DailyMealController {
     private static final String CREATED = "201";
     private static final String BAD_REQUEST = "400";
     private static final String NOT_FOUND = "404";
+    private static final String INTERNAL_SERVER_ERROR = "500";
 
     @Operation(summary = "날짜로 반려견의 식사 내역 조회", description = "식사 내역을 조회합니다.(날짜 미입력시 모든 식사내역 반환) 반환 값으로는 식사의 PK, 식사 날짜 정보가 포함됩니다.")
     @ApiResponses(value = {
@@ -155,6 +156,7 @@ public class DailyMealController {
             @ApiResponse(responseCode = CREATED, description = "영양 분석 성공(오늘 식사에 대한 부족/과잉/적정 영양소 내용을 성공적 저장)"),
             @ApiResponse(responseCode = BAD_REQUEST, description = "조회하려는 반려견이 본인의 반려견이 아닌 경우, 이미 오늘 영양소 분석을 진행 한 경우"),
             @ApiResponse(responseCode = NOT_FOUND, description = "잘못된 petId, 오늘 식사내역이 존재하지 않는 경우"),
+            @ApiResponse(responseCode = INTERNAL_SERVER_ERROR, description = "알 수 없는 이유로 과잉, 적정, 부족 영양소가 중복으로 저장된 경우"),
     })
     @PostMapping("/pet/{petId}/dailyMeals/nutrients")
     public ResponseEntity<BaseResponse> createDailyMealNutrients(@CurrentUserUsername String username, @PathVariable("petId") Long petId) {

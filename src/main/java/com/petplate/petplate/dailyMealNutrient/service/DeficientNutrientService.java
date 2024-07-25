@@ -3,6 +3,7 @@ package com.petplate.petplate.dailyMealNutrient.service;
 import com.petplate.petplate.common.EmbeddedType.StandardNutrient;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
+import com.petplate.petplate.common.response.error.exception.InternalServerErrorException;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.dailyMealNutrient.domain.entity.DeficientNutrient;
 import com.petplate.petplate.dailyMealNutrient.repository.DeficientNutrientRepository;
@@ -16,6 +17,7 @@ import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
 import com.petplate.petplate.utils.DailyMealUtil;
 import com.petplate.petplate.utils.PetUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class DeficientNutrientService {
     private final DailyMealRepository dailyMealRepository;
     private final DeficientNutrientRepository deficientNutrientRepository;
@@ -69,6 +72,11 @@ public class DeficientNutrientService {
                             .dailyMeal(dailyMealToday)
                             .build();
 
+                    // 알 수 없는 이유로 부족 영양소가 중복 저장되는 경우
+                    if (deficientNutrientRepository.existsByDailyMealIdAndName(dailyMealToday.getId(), nutrient.getName())) {
+                        log.error("중복 저장 부족영양소: " + nutrient.getName() + " dailyMealId: " + dailyMealToday.getId());
+                        throw new InternalServerErrorException(ErrorCode.SAME_DEFICIENT_NUTRIENT_EXISTS);
+                    }
                     deficientNutrientRepository.save(deficientNutrient);
                 });
 
@@ -83,15 +91,24 @@ public class DeficientNutrientService {
 
         List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
         deficientNutrientRepository.findByDailyMealId(dailyMealId).forEach(deficientNutrient -> {
-            responses.add(
-                    ReadPetNutrientResponseDto.of(
-                            deficientNutrient.getName(),
-                            deficientNutrient.getUnit(),
-                            deficientNutrient.getDescription(),
-                            deficientNutrient.getAmount(),
-                            deficientNutrient.getProperAmount(),
-                            deficientNutrient.getMaximumAmount())
-            );
+
+            /**
+             * 중복 조회 로직
+             */
+            boolean isDuplicate = responses.stream()
+                    .anyMatch(response -> response.getName().equals(deficientNutrient.getName()));
+
+            if (!isDuplicate) {
+                responses.add(
+                        ReadPetNutrientResponseDto.of(
+                                deficientNutrient.getName(),
+                                deficientNutrient.getUnit(),
+                                deficientNutrient.getDescription(),
+                                deficientNutrient.getAmount(),
+                                deficientNutrient.getProperAmount(),
+                                deficientNutrient.getMaximumAmount())
+                );
+            }
         });
 
         return responses;

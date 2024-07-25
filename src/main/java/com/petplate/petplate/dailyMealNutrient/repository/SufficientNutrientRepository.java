@@ -12,4 +12,6 @@ public interface SufficientNutrientRepository extends JpaRepository<SufficientNu
     List<SufficientNutrient> findByDailyMealId(Long dailyMealId);
     Optional<SufficientNutrient> findByDailyMealIdAndName(Long dailyMealId, String name);
     boolean existsByDailyMealId(Long dailyMealId);
+
+    boolean existsByDailyMealIdAndName(Long dailyMealId, String name);
 }
