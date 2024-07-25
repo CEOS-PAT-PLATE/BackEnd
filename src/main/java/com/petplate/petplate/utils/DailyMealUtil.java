@@ -2,6 +2,8 @@ package com.petplate.petplate.utils;
 
 import com.petplate.petplate.common.EmbeddedType.Nutrient;
 import com.petplate.petplate.common.EmbeddedType.Vitamin;
+import com.petplate.petplate.common.response.error.ErrorCode;
+import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.pet.domain.entity.Pet;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
@@ -63,5 +65,18 @@ public class DailyMealUtil {
                                 pet,
                                 0)
                 ));
+    }
+
+    public static DailyMeal findDailyMealToday(Long petId, DailyMealRepository dailyMealRepository) {
+        return findDailyMeal(petId, LocalDate.now(), dailyMealRepository);
+    }
+
+    public static DailyMeal findDailyMeal(Long petId, LocalDate date, DailyMealRepository dailyMealRepository) {
+        LocalDateTime startDatetime = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
+        LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
+
+        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
+        return dailyMeal;
     }
 }
