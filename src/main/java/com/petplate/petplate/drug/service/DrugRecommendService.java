@@ -56,9 +56,8 @@ public class DrugRecommendService {
 
         standardNutrientList.forEach(standardNutrient -> {
 
-            List<RecommendDrugResponseDto> drugResponseDtoList = drugRepository.findUserProperDrugList(List.of(standardNutrient))
+            List<RecommendDrugResponseDto> drugResponseDtoList = drugRepository.findUserProperDrugWithOneNutrient(standardNutrient)
                     .stream().map(RecommendDrugResponseDto::from).collect(Collectors.toList());
-
 
             drugResponseDtoWithNutrientNames.add(RecommendDrugResponseDtoWithNutrientName.of(standardNutrient.getName(),drugResponseDtoList));
 
@@ -73,19 +72,19 @@ public class DrugRecommendService {
 
         List<ReadPetNutrientResponseDto> ReadPetNutrientResponseDtoList = deficientNutrientService.getDeficientNutrients(username, petId, dailyMealId);
 
+
         List<StandardNutrient> standardNutrientList = ReadPetNutrientResponseDtoList.stream().map(deficientNutrient->toStandardNutrient(deficientNutrient.getName()))
                 .collect(Collectors.toList());
 
 
         List<RecommendDrugResponseDtoWithNutrientName> drugResponseDtoWithNutrientNames = new ArrayList<>();
 
-                    standardNutrientList.forEach(standardNutrient -> {
+        standardNutrientList.forEach(standardNutrient -> {
 
-                        List<RecommendDrugResponseDto> drugResponseDtoList = drugRepository.findUserProperDrugList(List.of(standardNutrient))
-                                .stream().map(RecommendDrugResponseDto::from).collect(Collectors.toList());
+            List<RecommendDrugResponseDto> drugResponseDtoList = drugRepository.findUserProperDrugWithOneNutrient(standardNutrient)
+                    .stream().map(RecommendDrugResponseDto::from).collect(Collectors.toList());
 
-
-                        drugResponseDtoWithNutrientNames.add(RecommendDrugResponseDtoWithNutrientName.of(standardNutrient.getName(),drugResponseDtoList));
+            drugResponseDtoWithNutrientNames.add(RecommendDrugResponseDtoWithNutrientName.of(standardNutrient.getName(),drugResponseDtoList));
 
         });
 
