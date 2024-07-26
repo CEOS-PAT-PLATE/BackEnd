@@ -15,4 +15,9 @@ public interface DrugRepository extends JpaRepository<Drug,Long> {
     List<Drug> findUserProperDrugList(@Param("standardNutrients") List<StandardNutrient> standardNutrients);
 
 
+    @Query("select d from Drug d join d.drugNutrientList dn where dn.standardNutrient=:standardNutrient")
+    List<Drug> findUserProperDrugWithOneNutrient(@Param("standardNutrient")StandardNutrient standardNutrient);
+
+
+
 }

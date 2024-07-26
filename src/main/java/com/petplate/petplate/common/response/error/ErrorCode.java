@@ -23,6 +23,7 @@ public enum ErrorCode {
     REFRESH_TOKEN_NOT_MATCH("리프레시 토큰을 확인해주세요"),
     NO_MEMBERSHIP_EXISTS("멤버쉽이 존재하지 않습니다."),
     SOCIAL_LOGIN_CODE("코드로 부터 소셜 토큰을 가져오지 못했습니다"),
+    DRUG_USEFUL_PART_ALREADY_EXIST("약에 좋은 부분 이름이 이미 존재합니다"),
 
 
 
@@ -57,6 +58,7 @@ public enum ErrorCode {
     IMAGE_NOT_FOUND("존재하지 않는 이미지입니다"),
 
     DRUG_NOT_FOUND("존재하지 않는 약입니다."),
+    DRUG_USEFUL_PART_NOT_FOUND("존재 하지 않는 (약이 도움이 되는 부분) 입니다"),
 
 
     /**
