@@ -15,4 +15,5 @@ public interface DrugRepository extends JpaRepository<Drug,Long> {
     List<Drug> findUserProperDrugList(@Param("standardNutrients") List<StandardNutrient> standardNutrients);
 
 
+
 }

@@ -22,11 +22,12 @@ public class DrugResponseDto {
     private String drugImgPath;
     private String url;
     private List<String> nutrientsName = new ArrayList<>();
+    private List<String> drugUsefulPartsName = new ArrayList<>();
 
 
-    public static DrugResponseDto of(final Drug drug,final List<String> nutrientsName){
+    public static DrugResponseDto of(final Drug drug,final List<String> nutrientsName,final List<String> drugUsefulPartsName){
         return new DrugResponseDto(drug.getId(),drug.getName(),drug.getEnglishName(), drug.getVendor(),
-                drug.getDrugImgPath(), drug.getUrl(),nutrientsName);
+                drug.getDrugImgPath(), drug.getUrl(),nutrientsName,drugUsefulPartsName);
     }
 
 }
