@@ -23,6 +23,7 @@ public enum ErrorCode {
     REFRESH_TOKEN_NOT_MATCH("리프레시 토큰을 확인해주세요"),
     NO_MEMBERSHIP_EXISTS("멤버쉽이 존재하지 않습니다."),
     SOCIAL_LOGIN_CODE("코드로 부터 소셜 토큰을 가져오지 못했습니다"),
+    DRUG_USEFUL_PART_ALREADY_EXIST("약에 좋은 부분 이름이 이미 존재합니다"),
 
 
 
@@ -57,6 +58,7 @@ public enum ErrorCode {
     IMAGE_NOT_FOUND("존재하지 않는 이미지입니다"),
 
     DRUG_NOT_FOUND("존재하지 않는 약입니다."),
+    DRUG_USEFUL_PART_NOT_FOUND("존재 하지 않는 (약이 도움이 되는 부분) 입니다"),
 
 
     /**
@@ -74,7 +76,11 @@ public enum ErrorCode {
     DATA_NOT_READY("데이터가 준비되지 않았습니다"),
     SOCIAL_ACCESS_ERROR("내부 엑세스 토큰으로부터 사용자 정보를 가져오지 못했습니다"),
     SOCIAL_REFRESH_TOKEN_ERROR("리프레시 토큰 기반으로 사용자 정보 연결 해제 실패"),
-    SOCIAL_UNLINK_FAIL("리프레시 토큰 기반 연동 해제 실패");
+    SOCIAL_UNLINK_FAIL("리프레시 토큰 기반 연동 해제 실패"),
+
+    SAME_DEFICIENT_NUTRIENT_EXISTS("부족 영양소 중복 저장"),
+    SAME_PROPER_NUTRIENT_EXISTS("적정 영양소 중복 저장"),
+    SAME_SUFFICIENT_NUTRIENT_EXISTS("과잉 영양소 중복 저장");
 
 
 

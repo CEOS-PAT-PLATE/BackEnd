@@ -71,13 +71,14 @@ class DrugCRUDControllerTest {
     }
 
     private DrugSaveRequestDto drugSaveRequestDto(final String imgPath,final String name,final String englishName,final String url,
-            final List<String> efficientNutrients,final String vendor){
+            final List<String> efficientNutrients,final String vendor,final List<Long> drugUsefulPartList){
 
         return DrugSaveRequestDto.builder()
                 .drugImgPath(imgPath)
                 .englishName(englishName)
                 .name(name)
                 .efficientNutrients(efficientNutrients)
+                .drugUsefulPartList(drugUsefulPartList)
                 .vendor(vendor)
                 .url(url)
                 .build();
@@ -96,7 +97,7 @@ class DrugCRUDControllerTest {
         final ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(DRUG)
                         .content(gson.toJson(drugSaveRequestDto("www.img","약국","druglol",
-                                "www.naver.com",List.of("탄수화물","단백질"),"네이버")))
+                                "www.naver.com",List.of("탄수화물","단백질"),"네이버",List.of(3L))))
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -124,7 +125,8 @@ class DrugCRUDControllerTest {
                                                                 .build();
 
         List<String> nutrientsName = List.of("탄수화물","단백질");
-        given(drugCRUDService.showDrug(anyLong())).willReturn(DrugResponseDto.of(drug,nutrientsName));
+        List<String> drugUsefulPartsName =List.of("암예방");
+        given(drugCRUDService.showDrug(anyLong())).willReturn(DrugResponseDto.of(drug,nutrientsName,drugUsefulPartsName));
 
         //when
         final ResultActions resultActions = mockMvc.perform(
@@ -138,7 +140,9 @@ class DrugCRUDControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.data.name").value("제조약"))
-                .andExpect(jsonPath("$.data.nutrientsName[0]").value("탄수화물"));
+                .andExpect(jsonPath("$.data.nutrientsName[0]").value("탄수화물"))
+                .andExpect(jsonPath("$.data.drugUsefulPartsName[0]").value("암예방"));
+
 
 
     }
@@ -202,7 +206,8 @@ class DrugCRUDControllerTest {
                 .build();
 
         List<String> nutrientsName = List.of("탄수화물","단백질");
-        given(drugCRUDService.showAllDrug()).willReturn(List.of(DrugResponseDto.of(drug,nutrientsName)));
+        List<String> drugUsefulPartsName =List.of("암예방");
+        given(drugCRUDService.showAllDrug()).willReturn(List.of(DrugResponseDto.of(drug,nutrientsName,drugUsefulPartsName)));
 
 
         //when
@@ -216,7 +221,8 @@ class DrugCRUDControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.data[0].name").value("제조약"))
-                .andExpect(jsonPath("$.data[0].nutrientsName[0]").value("탄수화물"));
+                .andExpect(jsonPath("$.data[0].nutrientsName[0]").value("탄수화물"))
+                .andExpect(jsonPath("$.data[0].drugUsefulPartsName[0]").value("암예방"));
 
 
     }

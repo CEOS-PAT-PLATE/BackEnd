@@ -3,6 +3,7 @@ package com.petplate.petplate.dailyMealNutrient.service;
 import com.petplate.petplate.common.EmbeddedType.StandardNutrient;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
+import com.petplate.petplate.common.response.error.exception.InternalServerErrorException;
 import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.dailyMealNutrient.domain.entity.ProperNutrient;
 import com.petplate.petplate.dailyMealNutrient.repository.ProperNutrientRepository;
@@ -13,8 +14,10 @@ import com.petplate.petplate.pet.dto.response.ReadPetNutrientResponseDto;
 import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.petdailymeal.domain.entity.DailyMeal;
 import com.petplate.petplate.petdailymeal.repository.DailyMealRepository;
+import com.petplate.petplate.utils.DailyMealUtil;
 import com.petplate.petplate.utils.PetUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,20 +30,19 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class ProperNutrientService {
     private final DailyMealRepository dailyMealRepository;
     private final ProperNutrientRepository properNutrientRepository;
     private final PetRepository petRepository;
-    
+
     @Transactional
     public void createProperNutrientsToday(String username, Long petId) {
         Pet pet = PetUtil.validUserAndFindPet(username, petId, petRepository);
-        DailyMeal dailyMealToday = findDailyMealToday(petId);
+        DailyMeal dailyMealToday = DailyMealUtil.findDailyMealToday(petId, dailyMealRepository);
 
-        // 이미 적정 영양소 생성했던 경우 생성 안함
-        if (properNutrientRepository.existsByDailyMealId(dailyMealToday.getId())){
-            throw new BadRequestException(ErrorCode.NUTRIENT_ALREADY_EXIST);
-        }
+        // 이미 적정 영양소 생성했던 경우 기존의 적정 영양소들을 제거하고 새로 분석함
+        properNutrientRepository.deleteAll(properNutrientRepository.findByDailyMealId(dailyMealToday.getId()));
 
         double weight = pet.getWeight();
         Activity activity = pet.getActivity();
@@ -70,6 +72,12 @@ public class ProperNutrientService {
                             .dailyMeal(dailyMealToday)
                             .build();
 
+                    // 알 수 없는 이유로 적정 영양소가 중복 저장되는 경우
+                    if (properNutrientRepository.existsByDailyMealIdAndName(dailyMealToday.getId(), nutrient.getName())) {
+                        log.error("중복 저장 적정영양소: " + nutrient.getName() + " dailyMealId: " + dailyMealToday.getId());
+                        throw new InternalServerErrorException(ErrorCode.SAME_PROPER_NUTRIENT_EXISTS);
+                    }
+
                     properNutrientRepository.save(properNutrient);
                 });
 
@@ -84,30 +92,26 @@ public class ProperNutrientService {
 
         List<ReadPetNutrientResponseDto> responses = new ArrayList<>();
         properNutrientRepository.findByDailyMealId(dailyMealId).forEach(properNutrient -> {
-            responses.add(
-                    ReadPetNutrientResponseDto.of(
-                            properNutrient.getName(),
-                            properNutrient.getUnit(),
-                            properNutrient.getDescription(),
-                            properNutrient.getAmount(),
-                            properNutrient.getProperAmount(),
-                            properNutrient.getMaximumAmount())
-            );
+
+            /**
+             * 중복 조회 로직
+             */
+            boolean isDuplicate = responses.stream()
+                    .anyMatch(response -> response.getName().equals(properNutrient.getName()));
+
+            if (!isDuplicate) {
+                responses.add(
+                        ReadPetNutrientResponseDto.of(
+                                properNutrient.getName(),
+                                properNutrient.getUnit(),
+                                properNutrient.getDescription(),
+                                properNutrient.getAmount(),
+                                properNutrient.getProperAmount(),
+                                properNutrient.getMaximumAmount())
+                );
+            }
         });
 
         return responses;
-    }
-    
-    private DailyMeal findDailyMealToday(Long petId) {
-        return findDailyMeal(petId, LocalDate.now());
-    }
-
-    private DailyMeal findDailyMeal(Long petId, LocalDate date) {
-        LocalDateTime startDatetime = LocalDateTime.of(date, LocalTime.of(0, 0, 0));
-        LocalDateTime endDatetime = LocalDateTime.of(date, LocalTime.of(23, 59, 59));
-
-        DailyMeal dailyMeal = dailyMealRepository.findByPetIdAndCreatedAtBetween(petId, startDatetime, endDatetime)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.DAILY_MEAL_NOT_FOUND));
-        return dailyMeal;
     }
 }

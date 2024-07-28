@@ -11,4 +11,5 @@ public interface ProperNutrientRepository extends JpaRepository<ProperNutrient, 
     List<ProperNutrient> findByDailyMealId(Long dailyMealId);
     Optional<ProperNutrient> findByDailyMealIdAndName(Long dailyMealId, String name);
     boolean existsByDailyMealId(Long dailyMealId);
+    boolean existsByDailyMealIdAndName(Long dailyMealId, String name);
 }

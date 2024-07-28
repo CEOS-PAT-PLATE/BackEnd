@@ -49,6 +49,9 @@ public class Drug {
     @OneToMany(mappedBy = "drug")
     List<DrugNutrient> drugNutrientList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "drug")
+    List<DrugDrugUsefulPart> drugDrugUsefulPartList = new ArrayList<>();
+
 
     @Builder
     public Drug(String name, String englishName, String vendor,String drugImgPath, String url) {

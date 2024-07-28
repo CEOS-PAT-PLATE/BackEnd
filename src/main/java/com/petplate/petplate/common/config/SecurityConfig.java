@@ -64,6 +64,7 @@ public class SecurityConfig {
                                 .requestMatchers("/oauth2/authorization/**").permitAll()
                                 .requestMatchers(HttpMethod.POST,"/api/v1/drugs", "/api/v1/raws").hasAuthority(Role.ADMIN.toString())
                                 .requestMatchers(HttpMethod.DELETE,"/api/v1/drugs/**").hasAuthority(Role.ADMIN.toString())
+                                .requestMatchers(HttpMethod.GET,"/api/v1/raws").permitAll()
                                 .requestMatchers("/api/v1/auth/issue").permitAll()
                                 .requestMatchers("/login/oauth2/code/**").permitAll()
                                 .anyRequest().authenticated()

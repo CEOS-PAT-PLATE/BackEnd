@@ -41,14 +41,19 @@ public class DrugSaveRequestDto {
     private List<String> efficientNutrients = new ArrayList<>();
 
 
+    @Schema(description = "구체적으로 어느 부분에 좋은지 입력해주세요(DrugUsefulPartController 참고)")
+    private List<Long> drugUsefulPartList = new ArrayList<>();
+
+
     @Builder
-    public DrugSaveRequestDto(String name, String englishName, String vendor, String drugImgPath,
-            String url, List<String> efficientNutrients) {
+    public DrugSaveRequestDto(final String name, final String englishName, final String vendor, final String drugImgPath,
+            final String url, final List<String> efficientNutrients, final List<Long> drugUsefulPartList) {
         this.name = name;
         this.englishName = englishName;
         this.vendor = vendor;
         this.drugImgPath = drugImgPath;
         this.url = url;
         this.efficientNutrients = efficientNutrients;
+        this.drugUsefulPartList = drugUsefulPartList;
     }
 }

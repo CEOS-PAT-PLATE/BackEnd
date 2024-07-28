@@ -118,10 +118,10 @@ class DrugRecommendServiceTest {
 
         List<DrugNutrient> drugNutrientList = getTestDrugNutrientList(drug);
 
-        given(drugRepository.findUserProperDrugList(eq(List.of(StandardNutrient.CARBON_HYDRATE)))
+        given(drugRepository.findUserProperDrugWithOneNutrient(eq(StandardNutrient.CARBON_HYDRATE))
         ).willReturn(List.of(drug));
 
-        given(drugRepository.findUserProperDrugList(eq(List.of(StandardNutrient.PROTEIN)))
+        given(drugRepository.findUserProperDrugWithOneNutrient(eq(StandardNutrient.PROTEIN))
         ).willReturn(List.of(drug));
 
 
@@ -158,13 +158,13 @@ class DrugRecommendServiceTest {
                       )
         );
 
-        given(drugRepository.findUserProperDrugList(eq(List.of(StandardNutrient.CARBON_HYDRATE)))
+        given(drugRepository.findUserProperDrugWithOneNutrient(eq(StandardNutrient.CARBON_HYDRATE))
         ).willReturn(List.of(drug));
 
-        given(drugRepository.findUserProperDrugList(eq(List.of(StandardNutrient.FAT)))
+        given(drugRepository.findUserProperDrugWithOneNutrient(eq(StandardNutrient.FAT))
         ).willReturn(List.of(drug));
 
-        given(drugRepository.findUserProperDrugList(eq(List.of(StandardNutrient.VITAMIN_A)))
+        given(drugRepository.findUserProperDrugWithOneNutrient(eq(StandardNutrient.VITAMIN_A))
         ).willReturn(List.of());
 
 
