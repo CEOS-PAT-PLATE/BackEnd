@@ -10,6 +10,7 @@ import com.petplate.petplate.auth.oauth.Dto.TokenDto;
 import com.petplate.petplate.auth.oauth.service.SocialLoginTokenUtil;
 import com.petplate.petplate.common.response.error.ErrorCode;
 import com.petplate.petplate.common.response.error.exception.BadRequestException;
+import com.petplate.petplate.common.response.error.exception.NotFoundException;
 import com.petplate.petplate.pet.repository.PetRepository;
 import com.petplate.petplate.user.domain.Role;
 import com.petplate.petplate.user.domain.SocialType;
@@ -80,13 +81,14 @@ public class AuthService {
 
         SocialInfoWithTokenDto socialInfoWithTokenDto = socialLoginTokenUtil.getSocialInfoAndTokenByCode(code);
 
-        User createdMember = userRepository.findBySocialTypeAndUsername(SocialType.NAVER,socialInfoWithTokenDto.getEmail())
+        User createdMember = userRepository.findByUsername(SocialType.NAVER+socialInfoWithTokenDto.getId())
                 .orElseGet(()->{
                     User savedUser = User.builder()
                             .name(socialInfoWithTokenDto.getName())
                             .role(Role.GENERAL)
                             .socialType(SocialType.NAVER)
-                            .username(socialInfoWithTokenDto.getEmail())
+                            .email(socialInfoWithTokenDto.getEmail())
+                            .socialLoginId(socialInfoWithTokenDto.getId())
                             .activated(false)
                             .isReceiveAd(false)
                             .password(UUID.randomUUID()+"password")
@@ -98,6 +100,9 @@ public class AuthService {
                 });
 
         createdMember.changeSocialLoginRefreshToken(socialInfoWithTokenDto.getSocialLoginRefreshToken());
+        createdMember.changeEmailBySocialLogin(socialInfoWithTokenDto.getEmail());
+
+
         socialLoginTokenUtil.saveSocialLoginAccessToken(createdMember.getUsername(),socialInfoWithTokenDto.getSocialLoginAccessToken());
 
         TokenDto tokenDto = tokenProvider.createTokenByUserProperty(createdMember.getUsername(),createdMember.getRole().name());
@@ -115,6 +120,15 @@ public class AuthService {
         return UserEnrollResponseDto.builder()
                 .enrollPet(petRepository.existsByOwnerUsername(username))
                 .build();
+    }
+
+
+    public Long getMemberId(final String username){
+
+        User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        return user.getId();
+
     }
 
 }
