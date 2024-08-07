@@ -49,7 +49,8 @@ public class OAuthAttributes {
                // .phoneNumber(oauth2UserInfo.getPhoneNumber())
                 .password(UUID.randomUUID()+"password")
                 .socialType(socialType)
-                .username(oauth2UserInfo.getEmail())
+                .socialLoginId(oauth2UserInfo.getId())
+                .email(oauth2UserInfo.getEmail())
                 .build();
 
         return user;

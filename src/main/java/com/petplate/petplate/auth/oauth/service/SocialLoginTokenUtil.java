@@ -75,6 +75,7 @@ public class SocialLoginTokenUtil {
                 .socialLoginRefreshToken(socialLoginTokenRequestResponseDto.getRefresh_token())
                 .email(socialLoginProfileResponseDto.getResponse().getEmail())
                 .name(socialLoginProfileResponseDto.getResponse().getName())
+                .id(socialLoginProfileResponseDto.getResponse().getId())
                 .build();
 
         return socialInfoWithTokenDto;

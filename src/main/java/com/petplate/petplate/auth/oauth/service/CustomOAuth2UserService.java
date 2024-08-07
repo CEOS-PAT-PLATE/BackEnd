@@ -90,7 +90,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     //email과 socialtype으로 member
     private User getUser(OAuthAttributes attributes,SocialType socialType){
-        User  findUser=userRepository.findBySocialTypeAndUsername(socialType,attributes.getOauth2UserInfo().getEmail()).orElseGet(()->saveUser(attributes,socialType));
+        User  findUser=userRepository.findByUsername(socialType+attributes.getOauth2UserInfo().getId()).orElseGet(()->saveUser(attributes,socialType));
         return findUser;
     }
 

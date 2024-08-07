@@ -83,4 +83,12 @@ public class AuthController {
 
     }
 
+    @GetMapping("/test")
+    public ResponseEntity<BaseResponse<Long>> getUserInfoTest(@RequestParam("username") String username){
+
+
+        return ResponseEntity.ok().body(BaseResponse.createSuccess(authService.getMemberId(username)));
+
+    }
+
 }

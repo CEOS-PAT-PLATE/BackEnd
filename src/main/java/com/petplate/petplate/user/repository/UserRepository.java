@@ -12,6 +12,9 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("select u from User u where u.socialType=:socialType and u.username=:username")
     Optional<User> findBySocialTypeAndUsername(@Param("socialType")SocialType socialType,@Param("username") String username);
 
+    @Query("select u from User u where u.socialType=:socialType and u.socialLoginId=:socialLoginId")
+    Optional<User> findBySocialTypeAndSocialLoginId(@Param("socialType")SocialType socialType,@Param("socialLoginId") String socialLoginId);
+
     Optional<User> findByUsername(String username);
 
 }

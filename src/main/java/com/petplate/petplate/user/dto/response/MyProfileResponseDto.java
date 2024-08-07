@@ -17,7 +17,7 @@ public class MyProfileResponseDto {
     boolean isReceiveAd;
 
     public static MyProfileResponseDto from(User user){
-        return new MyProfileResponseDto(user.getSocialType().name(),user.getName(),user.getUsername(),
+        return new MyProfileResponseDto(user.getSocialType().name(),user.getName(),user.getEmail(),
                 user.isReceiveAd());
     }
 

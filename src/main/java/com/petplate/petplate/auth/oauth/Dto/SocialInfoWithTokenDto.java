@@ -11,15 +11,17 @@ public class SocialInfoWithTokenDto {
 
     private String socialLoginAccessToken;
     private String socialLoginRefreshToken;
+    private String id;
     private String email;
     private String name;
 
 
     @Builder
     public SocialInfoWithTokenDto(final String socialLoginAccessToken, final String socialLoginRefreshToken,
-            final String email,final String name) {
+            final String id,final String email,final String name) {
         this.socialLoginAccessToken = socialLoginAccessToken;
         this.socialLoginRefreshToken = socialLoginRefreshToken;
+        this.id = id;
         this.email = email;
         this.name = name;
     }
