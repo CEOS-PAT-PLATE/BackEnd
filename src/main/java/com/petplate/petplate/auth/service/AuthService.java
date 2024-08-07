@@ -123,12 +123,6 @@ public class AuthService {
     }
 
 
-    public Long getMemberId(final String username){
 
-        User user = userRepository.findByUsername(username).orElseThrow(()->new NotFoundException(ErrorCode.USER_NOT_FOUND));
-
-        return user.getId();
-
-    }
 
 }
