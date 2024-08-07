@@ -39,6 +39,12 @@ public class User extends BaseEntity {
     private String name;
 
     @Column(length = 50,nullable = false)
+    private String email;
+
+    @Column(length = 100,nullable = false)
+    private String socialLoginId;
+
+    @Column(nullable = false)
     private String username;
 
     @Column(length = 100,nullable = false)
@@ -66,23 +72,29 @@ public class User extends BaseEntity {
     private String socialLoginRefreshToken;
 
     @Builder
-    public User(Role role, String name, String username, String password,
-            String phoneNumber,
-            boolean isReceiveAd, boolean activated,SocialType socialType) {
+    public User(Role role, String name, String password,
+            String phoneNumber,String socialLoginId,
+            boolean isReceiveAd, boolean activated,SocialType socialType, String email) {
         this.role = role;
         this.name = name;
-        this.username = username;
+        this.socialLoginId = socialLoginId;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.isReceiveAd = isReceiveAd;
         this.activated = activated;
         this.level = 1;
         this.socialType = socialType;
+        this.username = socialType+socialLoginId;
         socialLoginRefreshToken = null;
+        this.email = email;
     }
 
     public void changeSocialLoginRefreshToken(final String socialLoginRefreshToken){
         this.socialLoginRefreshToken = socialLoginRefreshToken;
+    }
+
+    public void changeEmailBySocialLogin(final String email){
+        this.email = email;
     }
 
     public void changeMyRole(){
