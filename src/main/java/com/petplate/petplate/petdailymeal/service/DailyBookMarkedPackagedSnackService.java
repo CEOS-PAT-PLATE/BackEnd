@@ -16,6 +16,7 @@ import com.petplate.petplate.petfood.domain.entity.BookMarkedPackagedSnack;
 import com.petplate.petplate.petfood.repository.BookMarkedPackagedSnackRepository;
 import com.petplate.petplate.utils.PetUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import java.util.Objects;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class DailyBookMarkedPackagedSnackService {
     private final BookMarkedPackagedSnackRepository bookMarkedPackagedSnackRepository;
     private final DailyBookMarkedPackagedSnackRepository dailyBookMarkedPackagedSnackRepository;
@@ -46,7 +48,7 @@ public class DailyBookMarkedPackagedSnackService {
         BookMarkedPackagedSnack bookMarkedPackagedSnack = bookMarkedPackagedSnackRepository.findById(requestDto.getBookMarkedPackagedSnackId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.BOOK_MARK_NOT_FOUND));
 
-        DailyMeal dailyMealToday = DailyMealUtil.getDailyMealToday(pet,dailyMealRepository);
+        DailyMeal dailyMealToday = DailyMealUtil.getDailyMealToday(pet, dailyMealRepository);
 
         DailyBookMarkedPackagedSnack dailyBookMarkedPackagedSnack = DailyBookMarkedPackagedSnack.builder()
                 .bookMarkedPackagedSnack(bookMarkedPackagedSnack)
@@ -119,14 +121,21 @@ public class DailyBookMarkedPackagedSnackService {
 
         // 삭제한 만큼 dailyMeal에서 영양소 제거
         dailyBookMarkedPackagedSnacks.forEach(dailyBookMarkedPackagedSnack -> {
-            dailyMeal.subtractKcal(dailyBookMarkedPackagedSnack.getBookMarkedPackagedSnack().getKcal());
-            dailyMeal.subtractNutrient(dailyBookMarkedPackagedSnack.getBookMarkedPackagedSnack().getNutrient());
+
+            // bookMarkedPackagedSnack이 제거되지 않은 경우 (= "존재하지 않는 음식입니다"가 아닌 경우)만 dailyBookMarkedPackagedSnack을 제거 가능
+            if (dailyBookMarkedPackagedSnack.getBookMarkedPackagedSnack() != null) {
+                dailyMeal.subtractKcal(dailyBookMarkedPackagedSnack.getBookMarkedPackagedSnack().getKcal());
+                dailyMeal.subtractNutrient(dailyBookMarkedPackagedSnack.getBookMarkedPackagedSnack().getNutrient());
+
+                // dailyBookMarkedPackagedSnack 제거
+                dailyBookMarkedPackagedSnackRepository.delete(dailyBookMarkedPackagedSnack);
+            } else {
+                log.info("원인: dailyBookMarkedPackagedSnack.getBookMarkedPackagedSnack() 메서드가 null을 반환함\n" +
+                        "결과: 해당 dailyBookMarkedPackagedSnack을 제거할 수 없음");
+            }
         });
 
         // 영양소 보정
         DailyMealUtil.compensatingNutrient(dailyMeal);
-
-        // 전체 삭제
-        dailyBookMarkedPackagedSnackRepository.deleteAll(dailyBookMarkedPackagedSnacks);
     }
 }

@@ -25,11 +25,11 @@ public class RawProhibitedByAllergy {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "allergy_id",nullable = false)
+    @JoinColumn(name = "allergy_id")
     private Allergy allergy;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "raw_id",nullable = false)
+    @JoinColumn(name = "raw_id")
     private Raw raw;
 
     @Builder
