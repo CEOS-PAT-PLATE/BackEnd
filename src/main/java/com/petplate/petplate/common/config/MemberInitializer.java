@@ -57,7 +57,7 @@ public class MemberInitializer implements ApplicationRunner {
 
 
 
-        String sql = "INSERT INTO users (activated,deleted,is_receive_ad,level,password,name,role,social_type,username,email,social_login_id) " +"VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO users (activated,deleted,is_receive_ad,level,password,name,role,social_type,username,email,social_login_id,created_at,updated_at) " +"VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 // jdbc 의 batch 를 이용해서 직접 대용량의 데이터를 저장한다. (GenerationType.Identity이므로)
         jdbcTemplate.batchUpdate(sql,
                 userList,userList.size(),
@@ -73,6 +73,8 @@ public class MemberInitializer implements ApplicationRunner {
                     ps.setString(9,user.getUsername());
                     ps.setString(10,user.getEmail());
                     ps.setString(11,user.getSocialLoginId());
+                    ps.setTimestamp(12,null);
+                    ps.setTimestamp(13,null);
                 });
 
 
