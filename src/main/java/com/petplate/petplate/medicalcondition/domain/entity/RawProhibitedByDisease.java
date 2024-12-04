@@ -25,11 +25,11 @@ public class RawProhibitedByDisease {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "disease_id",nullable = false)
+    @JoinColumn(name = "disease_id")
     private Disease disease;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "raw_id",nullable = false)
+    @JoinColumn(name = "raw_id")
     private Raw raw;
 
     @Builder
@@ -37,7 +37,6 @@ public class RawProhibitedByDisease {
         this.disease = disease;
         this.raw = raw;
     }
-
 
 
 }

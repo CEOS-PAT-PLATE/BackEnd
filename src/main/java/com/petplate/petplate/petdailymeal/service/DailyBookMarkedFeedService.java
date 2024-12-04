@@ -16,6 +16,7 @@ import com.petplate.petplate.petfood.domain.entity.BookMarkedFeed;
 import com.petplate.petplate.petfood.repository.BookMarkedFeedRepository;
 import com.petplate.petplate.utils.PetUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import java.util.Objects;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class DailyBookMarkedFeedService {
     private final BookMarkedFeedRepository bookMarkedFeedRepository;
     private final DailyBookMarkedFeedRepository dailyBookMarkedFeedRepository;
@@ -120,14 +122,21 @@ public class DailyBookMarkedFeedService {
 
         // 삭제한 만큼 dailyMeal에서 영양소 제거
         dailyBookMarkedFeeds.forEach(dailyBookMarkedFeed -> {
-            dailyMeal.subtractKcal(dailyBookMarkedFeed.getBookMarkedFeed().getKcal());
-            dailyMeal.subtractNutrient(dailyBookMarkedFeed.getBookMarkedFeed().getNutrient());
+
+            // bookMarkedFeed가 제거되지 않은 경우 (= "존재하지 않는 음식입니다"가 아닌 경우)만 dailyBookMarkedFeed를 제거 가능
+            if (dailyBookMarkedFeed.getBookMarkedFeed() != null) {
+                dailyMeal.subtractKcal(dailyBookMarkedFeed.getBookMarkedFeed().getKcal());
+                dailyMeal.subtractNutrient(dailyBookMarkedFeed.getBookMarkedFeed().getNutrient());
+
+                // dailyBookMarkedFeed 제거
+                dailyBookMarkedFeedRepository.delete(dailyBookMarkedFeed);
+            } else {
+                log.info("원인: dailyBookMarkedFeed.getBookMarkedFeed() 메서드가 null을 반환함\n" +
+                        "결과: 해당 dailyBookMarkedFeed를 제거할 수 없음");
+            }
         });
 
         // 영양소 보정
         DailyMealUtil.compensatingNutrient(dailyMeal);
-
-        // 전체 삭제
-        dailyBookMarkedFeedRepository.deleteAll(dailyBookMarkedFeeds);
     }
 }

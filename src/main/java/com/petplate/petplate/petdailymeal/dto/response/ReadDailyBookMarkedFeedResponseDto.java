@@ -10,16 +10,16 @@ import lombok.*;
 public class ReadDailyBookMarkedFeedResponseDto {
     private Long dailyBookMarkedFeedId;
     private String name;
-    private double serving;
-    private double kcal;
-    private double carbonHydrate;
-    private double protein;
-    private double fat;
-    private double calcium;
-    private double phosphorus;
-    private double vitaminA;
-    private double vitaminD;
-    private double vitaminE;
+    private Double serving;
+    private Double kcal;
+    private Double carbonHydrate;
+    private Double protein;
+    private Double fat;
+    private Double calcium;
+    private Double phosphorus;
+    private Double vitaminA;
+    private Double vitaminD;
+    private Double vitaminE;
 
     public static ReadDailyBookMarkedFeedResponseDto from(DailyBookMarkedFeed dailybookMarkedFeed) {
         ReadDailyBookMarkedFeedResponseDto response

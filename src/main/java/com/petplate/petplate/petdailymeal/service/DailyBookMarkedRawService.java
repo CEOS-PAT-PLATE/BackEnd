@@ -17,6 +17,7 @@ import com.petplate.petplate.petfood.dto.response.ReadBookMarkedRawResponseDto;
 import com.petplate.petplate.petfood.repository.BookMarkedRawRepository;
 import com.petplate.petplate.utils.PetUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ import java.util.Objects;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class DailyBookMarkedRawService {
     private final DailyMealRepository dailyMealRepository;
     private final DailyBookMarkedRawRepository dailyBookMarkedRawRepository;
@@ -48,7 +50,7 @@ public class DailyBookMarkedRawService {
                 new NotFoundException(ErrorCode.BOOK_MARK_NOT_FOUND)
         );
 
-        DailyMeal dailyMealToday = DailyMealUtil.getDailyMealToday(pet,dailyMealRepository);
+        DailyMeal dailyMealToday = DailyMealUtil.getDailyMealToday(pet, dailyMealRepository);
 
         DailyBookMarkedRaw dailyBookMarkedRaw = DailyBookMarkedRaw.builder()
                 .bookMarkedRaw(bookMarkedRaw)
@@ -137,14 +139,21 @@ public class DailyBookMarkedRawService {
 
         // 삭제한 만큼 dailyMeal에서 영양소 제거
         dailyBookMarkedRaws.forEach(dailyBookMarkedRaw -> {
-            dailyMeal.subtractKcal(dailyBookMarkedRaw.getBookMarkedRaw().getKcal());
-            dailyMeal.subtractNutrient(dailyBookMarkedRaw.getBookMarkedRaw().getNutrient());
+
+            // bookMarkedRaw가 제거되지 않은 경우 (= "존재하지 않는 음식입니다"가 아닌 경우)만 dailyBookMarkedRaw를 제거 가능
+            if (dailyBookMarkedRaw.getBookMarkedRaw() != null) {
+                dailyMeal.subtractKcal(dailyBookMarkedRaw.getBookMarkedRaw().getKcal());
+                dailyMeal.subtractNutrient(dailyBookMarkedRaw.getBookMarkedRaw().getNutrient());
+
+                // dailyBookMarkedRaw 제거
+                dailyBookMarkedRawRepository.delete(dailyBookMarkedRaw);
+            } else {
+                log.info("원인: dailyBookMarkedRaw.getBookMarkedRaw() 메서드가 null을 반환함\n" +
+                        "결과: 해당 dailyBookMarkedRaw을 제거할 수 없음");
+            }
         });
 
         // 영양소 보정
         DailyMealUtil.compensatingNutrient(dailyMeal);
-
-        // 전체 삭제
-        dailyBookMarkedRawRepository.deleteAll(dailyBookMarkedRaws);
     }
 }
